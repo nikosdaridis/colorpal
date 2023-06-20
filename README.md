@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="#">
-    <img src="https://raw.githubusercontent.com/NikosDaridis/ColorPal/main/icons/icon128.png" height="96">
+  <a href="https://chrome.google.com/webstore/detail/colorpal-color-picker-too/mbnpegpimodgjmlbfhkkdgbcfjmgpoad">
+    <img src="https://raw.githubusercontent.com/NikosDaridis/ColorPal/main/icons/icon128.png" height="128">
     <h3 align="center">ColorPal - Color Picker Tool</h3>
   </a>
 </p>
@@ -8,18 +8,14 @@
 ----
 > A color tool to extract every pixel from the screen, pick any color from a palette and save your favorite colors.
 </br>
-Visit this extension  <a href="#">Soon</a>
+Download the chrome extension  <a href="https://chrome.google.com/webstore/detail/colorpal-color-picker-too/mbnpegpimodgjmlbfhkkdgbcfjmgpoad">Here</a>
 
 ----
-
-### :wrench: Created With
-- HTML / CSS / Javascript
-
------
 
 ### Features:<br>
 - Color eye dropper
 - Color palette
+- Save favorite colors
 - Multiple color formats: RGB, HEX, HSL
 - Auto copy color code
 
@@ -29,5 +25,5 @@ Visit this extension  <a href="#">Soon</a>
 
 -----
 
-### ⚙️ Version v1.0.0 released
+### Version v1.0.0 released
 - Initial version
