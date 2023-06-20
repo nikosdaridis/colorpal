@@ -1,0 +1,287 @@
+/* Import Google font - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+:root {
+    --first-color: #0f1314;
+    --second-color: #171c21;
+    --highlight-color: #1587ff;
+    --text-color: #fafcff;
+}
+
+.popup {
+    display: grid;
+    justify-items: center;
+    width: 520px;
+    background: var(--first-color);
+}
+
+.tools {
+    display: flex;
+    margin-top: 1rem;
+}
+
+.tools #eye-dropper {
+    outline: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 2rem;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 0px 10px;
+    margin-right: 2rem;
+    background: var(--highlight-color);
+    box-shadow: 0 0 1rem var(--highlight-color);
+    transition: 0.5s ease;
+}
+
+.tools #eye-dropper:hover {
+    box-shadow: none;
+}
+
+.tools .color-picker i {
+    outline: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 2rem;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 10px 10px;
+    margin-right: 2rem;
+    background: var(--highlight-color);
+    box-shadow: 0 0 1rem var(--highlight-color);
+    transition: 0.5s ease;
+}
+
+.tools .color-picker i:hover {
+    box-shadow: none;
+}
+
+#colorPicker {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
+.tools #settings-button {
+    outline: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 2rem;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 0px 10px;
+    background: var(--highlight-color);
+    box-shadow: 0 0 1rem var(--highlight-color);
+    transition: 0.5s ease;
+}
+
+.tools #settings-button:hover {
+    box-shadow: none;
+}
+
+.settings-panel {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.settings-panel label {
+    font-size: 1.2rem;
+    color: var(--text-color);
+}
+
+.settings-panel.hide {
+    display: none;
+}
+
+.options {
+    display: grid;
+    grid-template: "a a" "b b";
+    align-items: center;
+    gap: 2rem;
+    background-color: var(--second-color);
+    box-shadow: 0 0 1rem var(--second-color);
+    border-color: var(--second-color);
+}
+
+.settings-panel .info {
+    display: grid;
+    justify-items: center;
+    margin-top: 4rem;
+    gap: 0.2rem;
+}
+
+.settings-panel .info h3 {
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+.settings-panel .info h4 {
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.settings-panel .info span {
+    color: var(--highlight-color);
+}
+
+.settings-panel .link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.settings-panel .info i {
+    font-size: 1.8rem;
+    color: var(--highlight-color);
+}
+
+.save-selected-color {
+    display: grid;
+    justify-items: space-between;
+    grid-template: "a a" "b b";
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.save-selected-color.hide {
+    display: none;
+}
+
+.save-color-button {
+    outline: none;
+    border: none;
+    justify-self: center;
+    color: var(--text-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-right: 1rem;
+    background: var(--highlight-color);
+    box-shadow: 0 0 1rem var(--highlight-color);
+    transition: 0.5s ease;
+}
+
+.save-color-button.hide {
+    display: none;
+}
+
+.save-color-button:hover {
+    box-shadow: none;
+}
+
+.selected-color {
+    display: flex;
+    justify-self: center;
+    gap: 1rem;
+    margin: 1rem;
+    box-shadow: 0 0 1rem var(--second-color);
+}
+
+.selected-color .rect {
+    height: 100px;
+    width: 100px;
+    border-radius: 5px;
+    background: black;
+    border: 1px solid var(--text-color);
+    transition: 0.3s ease;
+}
+
+.selected-color .rect:hover {
+    transform: scale(1.2);
+}
+
+.display-message {
+    justify-self: center;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    opacity: 100;
+    transition: 0.5s ease;
+}
+
+.display-message.hide {
+    opacity: 0;
+    pointer-events: none;
+    transition: none;
+}
+
+.color-codes {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    background-color: var(--second-color);
+    box-shadow: 0 0 1rem var(--second-color);
+}
+
+.color-codes.hide {
+    display: none;
+}
+
+.color-codes h2 {
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+
+.saved-colors {
+    background-color: var(--second-color);
+    box-shadow: 0 0 1rem var(--second-color);
+}
+
+.saved-colors.hide {
+    display: none;
+}
+
+.saved-colors header {
+    display: flex;
+    justify-content: space-between;
+    margin: 0.5rem;
+}
+
+.saved-colors header .title {
+    font-size: 1.2rem;
+    color: var(--text-color);
+}
+
+.saved-colors .clear-all {
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--highlight-color);
+}
+
+.all-colors {
+    display: grid;
+    justify-content: space-around;
+    padding: 1.1rem;
+    grid-template-columns: repeat(8, 1fr);
+    list-style-type: none;
+}
+
+.all-colors .color {
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.all-colors .color .rect {
+    display: block;
+    height: 50px;
+    width: 50px;
+    margin-right: 8px;
+    border-radius: 5px;
+    border: 1px solid var(--text-color);
+    transition: 0.3s ease;
+}
+
+.all-colors .color .rect:hover {
+    transform: scale(1.2);
+}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+
+    <!-- Box Icons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+
+<body>
+    <div class="popup">
+        <div class="tools">
+            <button id="eye-dropper"><i class='bx bxs-eyedropper'></i></button>
+            <div class="color-picker">
+                <label for="colorPicker"><i class='bx bx-palette'></i></label>
+            </div>
+            <button id="settings-button"><i class='bx bx-cog'></i></button>
+            <input type="color" id="colorPicker">
+        </div>
+
+        <div class="settings-panel">
+            <div class="options">
+                <div><label for="save-eye-dropper">Auto Save Eye Dropper Color</label><br></div>
+                <div><input type="checkbox" id="save-eye-dropper" name="Save Eye Dropper"></div>
+
+                <div><label for="copy-color-code">Auto Copy Color Code</label><br></div>
+                <div><input type="checkbox" id="copy-color-code" name="Copy Color Code"></div>
+
+                <div><label for="code-format">Copy Color Code Format:</label></div>
+                <div><select name="Code Format" id="code-format" value="HEX">
+                        <option value="RGB">RGB</option>
+                        <option value="HEX">HEX</option>
+                        <option value="HSL">HSL</option>
+                    </select>
+                </div>
+
+                <div><label for="display-messages-option">Display Messages</label><br></div>
+                <div><input type="checkbox" id="display-messages-option" name="Display Messages"></div>
+            </div>
+            <div class="info">
+                <div class="link">
+                    <h3>Suggest Feature/Found Bug</h3>
+                    <a href="https://nikosdaridis.github.io/#contact" target="_blank"><i class='bx bx-envelope'></i></a>
+                </div>
+                <div class="link">
+                    <h3>Open Source Project</h3>
+                    <a href="https://github.com/NikosDaridis/ColorPal" target="_blank"><i class='bx bxl-github'></i></a>
+                </div>
+                <h4>Version <span>1.0.0</span></h4>
+            </div>
+        </div>
+
+        <div class="save-selected-color">
+            <div class="save-color-button"><i class='bx bx-save'></i></div>
+            <div class="selected-color">
+                <span class="rect"></span>
+            </div>
+        </div>
+
+        <div class="display-message"></div>
+
+        <div class="color-codes">
+            <h2 id="rgb"></h2>
+            <h2 id="hex"></h2>
+            <h2 id="hsl"></h2>
+        </div>
+
+        <div class="saved-colors" hide>
+            <header>
+                <p class="title">Your Colors</p>
+                <span class="clear-all">Clear All</span>
+            </header>
+            <ul class="all-colors"></ul>
+        </div>
+    </div>
+</body>
+
+</html>
