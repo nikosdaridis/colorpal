@@ -9,10 +9,10 @@
 }
 
 :root {
-    --first-color: #0f1314;
-    --second-color: #171c21;
+    --first-color: #fafcff;
+    --second-color: #ededf7;
     --highlight-color: #1587ff;
-    --text-color: #fafcff;
+    --text-color: #24282a;
 }
 
 .popup {
@@ -22,48 +22,61 @@
     background: var(--first-color);
 }
 
-.tools {
+.colors-tools {
     display: flex;
     margin-top: 1rem;
 }
 
-.tools #eye-dropper {
+.colors-tools.hide {
+    display: none;
+}
+
+.settings-tools {
+    display: flex;
+    margin-top: 1rem;
+}
+
+.settings-tools.hide {
+    display: none;
+}
+
+#eye-dropper-button {
     outline: none;
     border: none;
-    color: var(--text-color);
+    color: #fafcff;
     font-size: 2rem;
     cursor: pointer;
     border-radius: 5px;
     padding: 0px 10px;
     margin-right: 2rem;
     background: var(--highlight-color);
-    box-shadow: 0 0 1rem var(--highlight-color);
+    box-shadow: 0 0 0.5rem var(--highlight-color);
     transition: 0.5s ease;
 }
 
-.tools #eye-dropper:hover {
+#eye-dropper-button:hover {
     box-shadow: none;
 }
 
-.tools .color-picker i {
+.color-palette-button i {
     outline: none;
     border: none;
-    color: var(--text-color);
+    color: #fafcff;
     font-size: 2rem;
     cursor: pointer;
     border-radius: 5px;
     padding: 10px 10px;
     margin-right: 2rem;
     background: var(--highlight-color);
-    box-shadow: 0 0 1rem var(--highlight-color);
+    box-shadow: 0 0 0.5rem var(--highlight-color);
     transition: 0.5s ease;
 }
 
-.tools .color-picker i:hover {
+.color-palette-button i:hover {
     box-shadow: none;
 }
 
-#colorPicker {
+#color-palette {
     opacity: 0;
     width: 0;
     height: 0;
@@ -72,20 +85,55 @@
     border: 0;
 }
 
-.tools #settings-button {
+#settings-button {
     outline: none;
     border: none;
-    color: var(--text-color);
+    color: #fafcff;
     font-size: 2rem;
     cursor: pointer;
     border-radius: 5px;
     padding: 0px 10px;
     background: var(--highlight-color);
-    box-shadow: 0 0 1rem var(--highlight-color);
+    box-shadow: 0 0 0.5rem var(--highlight-color);
     transition: 0.5s ease;
 }
 
-.tools #settings-button:hover {
+#settings-button:hover {
+    box-shadow: none;
+}
+
+#colors-button {
+    outline: none;
+    border: none;
+    color: #fafcff;
+    font-size: 2rem;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 0px 10px;
+    margin-right: 2rem;
+    background: var(--highlight-color);
+    box-shadow: 0 0 0.5rem var(--highlight-color);
+    transition: 0.5s ease;
+}
+
+#colors-button:hover {
+    box-shadow: none;
+}
+
+#light-dark-mode {
+    outline: none;
+    border: none;
+    color: #fafcff;
+    font-size: 2rem;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 0px 10px;
+    background: var(--highlight-color);
+    box-shadow: 0 0 0.5rem var(--highlight-color);
+    transition: 0.5s ease;
+}
+
+#light-dark-mode:hover {
     box-shadow: none;
 }
 
@@ -109,7 +157,7 @@
     align-items: center;
     gap: 2rem;
     background-color: var(--second-color);
-    box-shadow: 0 0 1rem var(--second-color);
+    box-shadow: 0 0 0.5rem var(--second-color);
     border-color: var(--second-color);
 }
 
@@ -145,9 +193,41 @@
     color: var(--highlight-color);
 }
 
+.color-codes {
+    display: grid;
+    justify-self: left;
+    margin: 30px 0px -142px 1rem;
+    background-color: var(--second-color);
+    box-shadow: 0 0 0.5rem var(--second-color);
+}
+
+.color-codes.hide {
+    display: none;
+}
+
+.color-codes h2 {
+    font-size: 0.85rem;
+    color: #fafcff;
+}
+
+.color-codes button {
+    outline: none;
+    border: none;
+    color: #fafcff;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 0px 5px;
+    margin: 10px;
+    background: var(--highlight-color);
+    box-shadow: 0 0 0.5rem var(--first-color);
+}
+
+.color-codes button:hover {
+    box-shadow: none;
+}
+
 .save-selected-color {
     display: grid;
-    justify-items: space-between;
     grid-template: "a a" "b b";
     align-items: center;
     margin-top: 1rem;
@@ -161,14 +241,15 @@
     outline: none;
     border: none;
     justify-self: center;
-    color: var(--text-color);
+    color: #fafcff;
     font-size: 1.5rem;
     cursor: pointer;
     border-radius: 5px;
     padding: 5px 10px;
+    margin-left: 3rem;
     margin-right: 1rem;
     background: var(--highlight-color);
-    box-shadow: 0 0 1rem var(--highlight-color);
+    box-shadow: 0 0 0.5rem var(--highlight-color);
     transition: 0.5s ease;
 }
 
@@ -185,7 +266,6 @@
     justify-self: center;
     gap: 1rem;
     margin: 1rem;
-    box-shadow: 0 0 1rem var(--second-color);
 }
 
 .selected-color .rect {
@@ -216,26 +296,9 @@
     transition: none;
 }
 
-.color-codes {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    background-color: var(--second-color);
-    box-shadow: 0 0 1rem var(--second-color);
-}
-
-.color-codes.hide {
-    display: none;
-}
-
-.color-codes h2 {
-    font-size: 0.95rem;
-    color: var(--text-color);
-}
-
 .saved-colors {
     background-color: var(--second-color);
-    box-shadow: 0 0 1rem var(--second-color);
+    box-shadow: 0 0 0.5rem var(--second-color);
 }
 
 .saved-colors.hide {

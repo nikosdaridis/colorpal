@@ -1,7 +1,17 @@
-const eyeDropperButton = document.querySelector("#eye-dropper");
+const eyeDropperButton = document.querySelector("#eye-dropper-button");
+const colorPalette = document.querySelector("#color-palette");
+const settingsButton = document.querySelector("#settings-button");
+const copyRGBButton = document.querySelector("#copy-rgb-button");
+const copyHexButton = document.querySelector("#copy-hex-button");
+const copyHslButton = document.querySelector("#copy-hsl-button");
+const colorsTools = document.querySelector(".colors-tools");
+const settingsTools = document.querySelector(".settings-tools");
+const colorsButton = document.querySelector("#colors-button");
+const lightDarkButton = document.querySelector("#light-dark-mode");
 const colorList = document.querySelector(".all-colors");
 const clearAll = document.querySelector(".clear-all");
-const settingsButton = document.querySelector("#settings-button");
+const lightModeIcon = document.querySelector('#light-mode-icon');
+const root = document.querySelector(':root');
 const settingsPanel = document.querySelector(".settings-panel");
 const colorCodes = document.querySelector(".color-codes")
 const saveSelectedColor = document.querySelector(".save-selected-color");
@@ -9,7 +19,6 @@ const savedColors = document.querySelector(".saved-colors")
 const selectedColor = document.querySelector(".selected-color .rect");
 const saveColorButton = document.querySelector(".save-color-button");
 const displayMessage = document.querySelector(".display-message");
-const colorPalette = document.querySelector("#colorPicker");
 const selectedColorRGB = document.getElementById("rgb");
 const selectedColorHex = document.getElementById("hex");
 const selectedColorHSL = document.getElementById("hsl");
@@ -17,22 +26,49 @@ const autoSaveEyeDropper = document.querySelector("#save-eye-dropper");
 const autoCopyColorCode = document.querySelector("#copy-color-code");
 const colorCodeFormat = document.querySelector("#code-format");
 const displayMessagesOption = document.querySelector("#display-messages-option");
-const savedColorsList = JSON.parse(localStorage.getItem("savedColorsList") || "[]");
+const savedColorsArray = JSON.parse(localStorage.getItem("savedColorsArray") || "[]");
 var currSelectedColor = localStorage.getItem("currSelectedColor");
-var timeout;
+var messageTimeout;
 
 // Initialization
 SetOptions();
+SetLightDarkMode(localStorage.getItem("lightDarkMode"));
 ShowSettingsHideColors();
 if (currSelectedColor == null)
     ApplyCurrSelectedColor("#000000");
 else
     ApplyCurrSelectedColor(currSelectedColor);
 
-// Generating li for the selected color and add it to the savedColorsList
+function ToggleLightDarkMode() {
+    if (localStorage.getItem("lightDarkMode") == "light") {
+        localStorage.setItem("lightDarkMode", "dark");
+        root.style.setProperty('--first-color', '#24282a');
+        root.style.setProperty('--second-color', '#2b353e');
+        root.style.setProperty('--text-color', '#fafcff');
+
+    } else if (localStorage.getItem("lightDarkMode") == "dark") {
+        localStorage.setItem("lightDarkMode", "light");
+        root.style.setProperty('--first-color', '#fafcff');
+        root.style.setProperty('--second-color', '#e7e7f4');
+        root.style.setProperty('--text-color', '#24282a');
+    }
+
+    lightModeIcon.classList.toggle('bxs-sun');
+}
+
+function SetLightDarkMode(mode) {
+    if (mode == "dark") {
+        lightModeIcon.classList.toggle('bxs-sun');
+        root.style.setProperty('--first-color', '#24282a');
+        root.style.setProperty('--second-color', '#2b353e');
+        root.style.setProperty('--text-color', '#fafcff');
+    }
+}
+
+// Generating li for the selected color and add it to the savedColorsArray
 const showColors = () => {
-    if (!savedColorsList.length) return;
-    colorList.innerHTML = savedColorsList.map(color => `
+    if (!savedColorsArray.length) return;
+    colorList.innerHTML = savedColorsArray.map(color => `
         <li class="color">
             <span class="rect" data-color="${color}" style="background: ${color};"></span>
         </li>`).join("");
@@ -74,6 +110,10 @@ function SetOptions() {
     else
         displayMessagesOption.value = localStorage.getItem("displayMessagesOption");
 
+    if (localStorage.getItem("lightDarkMode") == null) {
+        localStorage.setItem("lightDarkMode", "light");
+    }
+
     // Update checkbox
     if (autoSaveEyeDropper.value == "true")
         autoSaveEyeDropper.checked = true;
@@ -97,8 +137,8 @@ function DisplayMessageColorFormat(text, color) {
 function DisplayMessage(message) {
     displayMessage.classList.remove("hide");
     displayMessage.innerHTML = message;
-    clearTimeout(timeout);
-    timeout = setTimeout(() => displayMessage.classList.add("hide"), 3000);
+    clearTimeout(messageTimeout);
+    messageTimeout = setTimeout(() => displayMessage.classList.add("hide"), 3000);
 }
 
 const savedColorClicked = elem => {
@@ -112,14 +152,14 @@ const savedColorClicked = elem => {
 }
 
 function SaveColor(color) {
-    if (savedColorsList.includes(color)) {
+    if (savedColorsArray.includes(color)) {
         DisplayMessageColorFormat("Already Saved", color);
         return;
     }
 
     if (color != null || color != "") {
-        savedColorsList.push(color);
-        localStorage.setItem("savedColorsList", JSON.stringify(savedColorsList));
+        savedColorsArray.push(color);
+        localStorage.setItem("savedColorsArray", JSON.stringify(savedColorsArray));
         showColors();
         if (localStorage.getItem("autoCopyColorCode") == "true")
             DisplayMessageColorFormat("Saved and Copied", color);
@@ -136,7 +176,7 @@ function SaveColorButtonClicked() {
 }
 
 function ShowHideSaveColorButton() {
-    if (savedColorsList.includes(currSelectedColor))
+    if (savedColorsArray.includes(currSelectedColor))
         saveColorButton.classList.add("hide");
     else
         saveColorButton.classList.remove("hide");
@@ -151,6 +191,27 @@ function CopyColorCode(color) {
         else if (colorCodeFormat.value == "HSL")
             navigator.clipboard.writeText(hexToHsl(color));
     }
+}
+
+function CopyAndDisplayRgb() {
+    navigator.clipboard.writeText(hexToRgb(currSelectedColor));
+
+    if (localStorage.getItem("displayMessagesOption") == "true")
+        DisplayMessage("Copied " + hexToRgb(currSelectedColor));
+}
+
+function CopyAndDisplayHex() {
+    navigator.clipboard.writeText(currSelectedColor);
+
+    if (localStorage.getItem("displayMessagesOption") == "true")
+        DisplayMessage("Copied " + currSelectedColor);
+}
+
+function CopyAndDisplayHsl() {
+    navigator.clipboard.writeText(hexToHsl(currSelectedColor));
+
+    if (localStorage.getItem("displayMessagesOption") == "true")
+        DisplayMessage("Copied " + hexToHsl(currSelectedColor));
 }
 
 function ApplyCurrSelectedColor(color) {
@@ -175,17 +236,21 @@ function ShowSettingsHideColors() {
     saveSelectedColor.classList.add("hide");
     colorCodes.classList.add("hide");
     displayMessage.classList.add("hide");
+    colorsTools.classList.add("hide");
+    settingsTools.classList.remove("hide");
     settingsPanel.classList.remove("hide");
 }
 
 function ShowColorsHideSettings() {
-    if (savedColorsList.length > 0)
+    if (savedColorsArray.length > 0)
         savedColors.classList.remove("hide");
 
     saveSelectedColor.classList.remove("hide");
     colorCodes.classList.remove("hide");
     displayMessage.classList.remove("hide");
     DisplayMessage("");
+    colorsTools.classList.remove("hide");
+    settingsTools.classList.add("hide");
     settingsPanel.classList.add("hide");
 }
 
@@ -215,10 +280,10 @@ const activateEyeDropper = () => {
 
 const clearAllColors = () => {
     if (confirm("Delete All Your Colors?")) {
-        savedColorsList.length = 0;
-        localStorage.setItem("savedColorsList", JSON.stringify(savedColorsList));
-        ShowSettingsHideColors();
+        savedColorsArray.length = 0;
+        localStorage.setItem("savedColorsArray", JSON.stringify(savedColorsArray));
         ApplyCurrSelectedColor("#000000"); // Apply black as selected color
+        ShowSettingsHideColors();
     }
 }
 
@@ -264,10 +329,16 @@ function hexToHsl(hex, valuesOnly = false) {
 }
 
 eyeDropperButton.addEventListener("click", activateEyeDropper);
-clearAll.addEventListener("click", clearAllColors);
-settingsButton.addEventListener("click", ShowSettingsHideColors);
-saveColorButton.addEventListener("click", SaveColorButtonClicked);
 colorPalette.addEventListener("click", ShowColorsHideSettings);
+settingsButton.addEventListener("click", ShowSettingsHideColors);
+colorsButton.addEventListener("click", ShowColorsHideSettings);
+lightDarkButton.addEventListener("click", ToggleLightDarkMode);
+copyRGBButton.addEventListener("click", CopyAndDisplayRgb);
+copyHexButton.addEventListener("click", CopyAndDisplayHex);
+copyHslButton.addEventListener("click", CopyAndDisplayHsl);
+saveColorButton.addEventListener("click", SaveColorButtonClicked);
+clearAll.addEventListener("click", clearAllColors);
+
 
 colorPalette.addEventListener('input', function () {
     ApplyCurrSelectedColor(colorPalette.value);

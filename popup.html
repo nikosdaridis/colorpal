@@ -12,13 +12,18 @@
 
 <body>
     <div class="popup">
-        <div class="tools">
-            <button id="eye-dropper"><i class='bx bxs-eyedropper'></i></button>
-            <div class="color-picker">
-                <label for="colorPicker"><i class='bx bx-palette'></i></label>
+        <div class="colors-tools">
+            <button id="eye-dropper-button"><i class='bx bxs-eyedropper'></i></button>
+            <div class="color-palette-button">
+                <label for="color-palette"><i class='bx bx-palette'></i></label>
             </div>
             <button id="settings-button"><i class='bx bx-cog'></i></button>
-            <input type="color" id="colorPicker">
+            <input type="color" id="color-palette">
+        </div>
+
+        <div class="settings-tools">
+            <button id="colors-button"><i class='bx bxs-color'></i></button>
+            <button id="light-dark-mode"><i class='bx bxs-moon' id="light-mode-icon"></i></button>
         </div>
 
         <div class="settings-panel">
@@ -49,8 +54,20 @@
                     <h3>Open Source Project</h3>
                     <a href="https://github.com/NikosDaridis/ColorPal" target="_blank"><i class='bx bxl-github'></i></a>
                 </div>
-                <h4>Version <span>1.0.0</span></h4>
+                <h4>Version <span>1.0.1</span></h4>
             </div>
+        </div>
+
+        <div class="color-codes">
+            <button id="copy-rgb-button">
+                <h2 id="rgb"></h2>
+            </button>
+            <button id="copy-hex-button">
+                <h2 id="hex"></h2>
+            </button>
+            <button id="copy-hsl-button">
+                <h2 id="hsl"></h2>
+            </button>
         </div>
 
         <div class="save-selected-color">
@@ -61,12 +78,6 @@
         </div>
 
         <div class="display-message"></div>
-
-        <div class="color-codes">
-            <h2 id="rgb"></h2>
-            <h2 id="hex"></h2>
-            <h2 id="hsl"></h2>
-        </div>
 
         <div class="saved-colors" hide>
             <header>
