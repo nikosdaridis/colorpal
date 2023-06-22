@@ -19,11 +19,9 @@ Download the chrome extension  <a href="https://chrome.google.com/webstore/detai
 - Multiple color formats: RGB, HEX, HSL
 - Auto copy color code
 
+----
+
 ### Preview
-<img width="500" alt="" src=https://raw.githubusercontent.com/NikosDaridis/ColorPal/main/Screenshot1.png>
-<img width="500" alt="" src=https://raw.githubusercontent.com/NikosDaridis/ColorPal/main/Screenshot2.png>
-
------
-
-### Version v1.0.0 released
-- Initial version
+<img width="500" alt="" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot1.jpg>
+<img width="500" alt="" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot2.jpg>
+<img width="500" alt="" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot3.jpg>
