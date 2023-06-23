@@ -16,8 +16,9 @@ Download the chrome extension  <a href="https://chrome.google.com/webstore/detai
 - Color eye dropper
 - Color palette
 - Save favorite colors
-- Multiple color formats: RGB, HEX, HSL
 - Auto copy color code
+- Multiple color formats: RGB, HEX, HSL
+- Delete selected color or all colors
 
 ----
 

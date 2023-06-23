@@ -9,7 +9,8 @@ const settingsTools = document.querySelector(".settings-tools");
 const colorsButton = document.querySelector("#colors-button");
 const lightDarkButton = document.querySelector("#light-dark-mode");
 const colorList = document.querySelector(".all-colors");
-const clearAll = document.querySelector(".clear-all");
+const deleteOnClick = document.querySelector(".delete-onclick");
+const deleteAll = document.querySelector(".delete-all");
 const lightModeIcon = document.querySelector('#light-mode-icon');
 const root = document.querySelector(':root');
 const settingsPanel = document.querySelector(".settings-panel");
@@ -29,6 +30,7 @@ const displayMessagesOption = document.querySelector("#display-messages-option")
 const savedColorsArray = JSON.parse(localStorage.getItem("savedColorsArray") || "[]");
 var currSelectedColor = localStorage.getItem("currSelectedColor");
 var messageTimeout;
+var deleteSelectedColorOnClick = false;
 
 // Initialization
 SetOptions();
@@ -127,11 +129,11 @@ function DisplayMessageColorFormat(text, color) {
     if (localStorage.getItem("displayMessagesOption") != "true") return;
 
     if (localStorage.getItem("colorCodeFormat") == "RGB")
-        DisplayMessage(text + " " + hexToRgb(color));
+        DisplayMessage(text + " " + HexToRgb(color));
     if (localStorage.getItem("colorCodeFormat") == "HEX")
         DisplayMessage(text + " " + color);
     if (localStorage.getItem("colorCodeFormat") == "HSL")
-        DisplayMessage(text + " " + hexToHsl(color));
+        DisplayMessage(text + " " + HexToHsl(color));
 }
 
 function DisplayMessage(message) {
@@ -142,6 +144,12 @@ function DisplayMessage(message) {
 }
 
 const savedColorClicked = elem => {
+    if (deleteSelectedColorOnClick) {
+        ApplyCurrSelectedColor(elem.dataset.color);
+        DeleteOnClickColor(elem.dataset.color);
+        return;
+    }
+
     CopyColorCode(elem.dataset.color);
     ApplyCurrSelectedColor(elem.dataset.color);
 
@@ -185,19 +193,19 @@ function ShowHideSaveColorButton() {
 function CopyColorCode(color) {
     if (localStorage.getItem("autoCopyColorCode") == "true") {
         if (colorCodeFormat.value == "RGB")
-            navigator.clipboard.writeText(hexToRgb(color));
+            navigator.clipboard.writeText(HexToRgb(color));
         else if (colorCodeFormat.value == "HEX")
             navigator.clipboard.writeText(color);
         else if (colorCodeFormat.value == "HSL")
-            navigator.clipboard.writeText(hexToHsl(color));
+            navigator.clipboard.writeText(HexToHsl(color));
     }
 }
 
 function CopyAndDisplayRgb() {
-    navigator.clipboard.writeText(hexToRgb(currSelectedColor));
+    navigator.clipboard.writeText(HexToRgb(currSelectedColor));
 
     if (localStorage.getItem("displayMessagesOption") == "true")
-        DisplayMessage("Copied " + hexToRgb(currSelectedColor));
+        DisplayMessage("Copied " + HexToRgb(currSelectedColor));
 }
 
 function CopyAndDisplayHex() {
@@ -208,10 +216,10 @@ function CopyAndDisplayHex() {
 }
 
 function CopyAndDisplayHsl() {
-    navigator.clipboard.writeText(hexToHsl(currSelectedColor));
+    navigator.clipboard.writeText(HexToHsl(currSelectedColor));
 
     if (localStorage.getItem("displayMessagesOption") == "true")
-        DisplayMessage("Copied " + hexToHsl(currSelectedColor));
+        DisplayMessage("Copied " + HexToHsl(currSelectedColor));
 }
 
 function ApplyCurrSelectedColor(color) {
@@ -223,8 +231,8 @@ function ApplyCurrSelectedColor(color) {
     selectedColor.style.background = color;
     selectedColorHex.textContent = color;
     if (color != "") {
-        selectedColorRGB.textContent = hexToRgb(color);
-        selectedColorHSL.textContent = hexToHsl(color);
+        selectedColorRGB.textContent = HexToRgb(color);
+        selectedColorHSL.textContent = HexToHsl(color);
     } else {
         selectedColorRGB.textContent = "";
         selectedColorHSL.textContent = "";
@@ -278,16 +286,48 @@ const activateEyeDropper = () => {
     }, 20);
 }
 
-const clearAllColors = () => {
+function DeleteOnClickColor(color) {
+    let colorIndex = savedColorsArray.findIndex((c) => {
+        return c == color;
+    });
+    savedColorsArray.splice(colorIndex, 1);
+    localStorage.setItem("savedColorsArray", JSON.stringify(savedColorsArray));
+    showColors();
+    DisplayMessageColorFormat("Deleted", color);
+
+    if (currSelectedColor == color)
+        ShowHideSaveColorButton();
+
+    if (savedColorsArray.length <= 0) {
+        ShowSettingsHideColors();
+        ApplyCurrSelectedColor("#000000");
+        ToggleDeleteOnClick();
+    }
+}
+
+function DeleteAllColors() {
     if (confirm("Delete All Your Colors?")) {
         savedColorsArray.length = 0;
+        deleteSelectedColorOnClick = false;
+        deleteOnClick.innerHTML = "Delete On Click";
         localStorage.setItem("savedColorsArray", JSON.stringify(savedColorsArray));
-        ApplyCurrSelectedColor("#000000"); // Apply black as selected color
+        ApplyCurrSelectedColor("#000000");
         ShowSettingsHideColors();
     }
 }
 
-function hexToRgb(hex) {
+function ToggleDeleteOnClick() {
+
+    if (deleteSelectedColorOnClick) {
+        deleteSelectedColorOnClick = false;
+        deleteOnClick.innerHTML = "Delete On Click";
+    } else {
+        deleteSelectedColorOnClick = true;
+        deleteOnClick.innerHTML = "Done Deleting";
+    }
+}
+
+function HexToRgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     var r = parseInt(result[1], 16);
     var g = parseInt(result[2], 16);
@@ -297,7 +337,7 @@ function hexToRgb(hex) {
     return cssString;
 }
 
-function hexToHsl(hex, valuesOnly = false) {
+function HexToHsl(hex, valuesOnly = false) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     var r = parseInt(result[1], 16);
     var g = parseInt(result[2], 16);
@@ -337,7 +377,8 @@ copyRGBButton.addEventListener("click", CopyAndDisplayRgb);
 copyHexButton.addEventListener("click", CopyAndDisplayHex);
 copyHslButton.addEventListener("click", CopyAndDisplayHsl);
 saveColorButton.addEventListener("click", SaveColorButtonClicked);
-clearAll.addEventListener("click", clearAllColors);
+deleteOnClick.addEventListener("click", ToggleDeleteOnClick);
+deleteAll.addEventListener("click", DeleteAllColors);
 
 
 colorPalette.addEventListener('input', function () {
