@@ -17,7 +17,7 @@ Download the chrome extension  <a href="https://chrome.google.com/webstore/detai
 - Color palette
 - Save favorite colors
 - Auto copy color code
-- Multiple color formats: RGB, HEX, HSL
+- Multiple color formats: RGB, HEX, HSL, HSV
 - Delete selected color or all colors
 
 ----
