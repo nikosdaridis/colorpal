@@ -13,6 +13,10 @@
     --second-color: #ededf7;
     --highlight-color: #1587ff;
     --text-color: #24282a;
+
+    --rect-height: 42px;
+    --rect-width: 42px;
+    --rect-margin: 4px;
 }
 
 .popup {
@@ -281,7 +285,7 @@
 
 .display-message {
     justify-self: center;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     margin-top: 1rem;
     margin-bottom: 1rem;
     color: var(--text-color);
@@ -329,27 +333,26 @@
 
 .all-colors {
     display: grid;
-    justify-content: space-around;
-    padding: 1.1rem;
-    grid-template-columns: repeat(8, 1fr);
+    justify-self: center;
+    padding: 0.5rem;
+    grid-template-columns: repeat(10, 1fr);
     list-style-type: none;
 }
 
 .all-colors .color {
     cursor: pointer;
-    margin-bottom: 10px;
 }
 
 .all-colors .color .rect {
     display: block;
-    height: 50px;
-    width: 50px;
-    margin-right: 8px;
+    height: var(--rect-height);
+    width: var(--rect-width);
+    margin: var(--rect-margin);
     border-radius: 5px;
     border: 1px solid var(--text-color);
     transition: 0.3s ease;
 }
 
 .all-colors .color .rect:hover {
-    transform: scale(1.2);
+    transform: scale(1.3);
 }

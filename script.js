@@ -28,6 +28,8 @@ const selectedColorHSV = document.getElementById("hsv");
 const autoSaveEyeDropper = document.querySelector("#save-eye-dropper");
 const autoCopyColorCode = document.querySelector("#copy-color-code");
 const colorCodeFormat = document.querySelector("#code-format");
+const colorsPerLine = document.querySelector("#colors-per-line");
+const allColors = document.querySelector('.all-colors');
 const displayMessagesOption = document.querySelector("#display-messages-option");
 const savedColorsArray = JSON.parse(localStorage.getItem("savedColorsArray") || "[]");
 var currSelectedColor = localStorage.getItem("currSelectedColor");
@@ -75,6 +77,35 @@ function SetOptions() {
             break;
     }
 
+    // Update colors per line visual
+    switch (localStorage.getItem("colorsPerLine")) {
+        case null:
+            localStorage.setItem("colorsPerLine", "8");
+            colorsPerLine.value = "8";
+            SetColorsPerLine(8);
+            break;
+        case "6":
+            colorsPerLine.value = "6";
+            SetColorsPerLine(6);
+            break;
+        case "8":
+            colorsPerLine.value = "8";
+            SetColorsPerLine(8);
+            break;
+        case "10":
+            colorsPerLine.value = "10";
+            SetColorsPerLine(10);
+            break;
+        case "12":
+            colorsPerLine.value = "12";
+            SetColorsPerLine(12);
+            break;
+        default:
+            localStorage.setItem("colorsPerLine", "8");
+            colorsPerLine.value = "8";
+            break;
+    }
+
     if (localStorage.getItem("displayMessagesOption") == null)
         localStorage.setItem("displayMessagesOption", "true");
 
@@ -96,6 +127,35 @@ function SetLightDarkMode(mode) {
         root.style.setProperty('--first-color', '#24282a');
         root.style.setProperty('--second-color', '#2b353e');
         root.style.setProperty('--text-color', '#fafcff');
+    }
+}
+
+function SetColorsPerLine(colorsPerLine) {
+    switch (colorsPerLine) {
+        case 6:
+            allColors.style.setProperty("grid-template-columns", "repeat(6, 1fr)");
+            root.style.setProperty("--rect-height", "71.2px");
+            root.style.setProperty("--rect-width", "71.2px");
+            root.style.setProperty("--rect-margin", "6.5px");
+            break;
+        case 8:
+            allColors.style.setProperty("grid-template-columns", "repeat(8, 1fr)");
+            root.style.setProperty("--rect-height", "53.2px");
+            root.style.setProperty("--rect-width", "53.2px");
+            root.style.setProperty("--rect-margin", "5px");
+            break;
+        case 10:
+            allColors.style.setProperty("grid-template-columns", "repeat(10, 1fr)");
+            root.style.setProperty("--rect-height", "42.2px");
+            root.style.setProperty("--rect-width", "42.2px");
+            root.style.setProperty("--rect-margin", "4.2px");
+            break;
+        case 12:
+            allColors.style.setProperty("grid-template-columns", "repeat(12, 1fr)");
+            root.style.setProperty("--rect-height", "35.2px");
+            root.style.setProperty("--rect-width", "35.2px");
+            root.style.setProperty("--rect-margin", "3.5px");
+            break;
     }
 }
 
@@ -487,6 +547,22 @@ colorCodeFormat.addEventListener('change', function () {
         localStorage.setItem("colorCodeFormat", "HSL");
     } else if (colorCodeFormat.value == "HSV") {
         localStorage.setItem("colorCodeFormat", "HSV");
+    }
+});
+
+colorsPerLine.addEventListener('change', function () {
+    if (colorsPerLine.value == "6") {
+        localStorage.setItem("colorsPerLine", "6");
+        SetColorsPerLine(6);
+    } else if (colorsPerLine.value == "8") {
+        localStorage.setItem("colorsPerLine", "8");
+        SetColorsPerLine(8);
+    } else if (colorsPerLine.value == "10") {
+        localStorage.setItem("colorsPerLine", "10");
+        SetColorsPerLine(10);
+    } else if (colorsPerLine.value == "12") {
+        localStorage.setItem("colorsPerLine", "12");
+        SetColorsPerLine(12);
     }
 });
 
