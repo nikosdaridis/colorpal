@@ -14,8 +14,8 @@
     --highlight-color: #1587ff;
     --text-color: #24282a;
 
-    --rect-height: 42px;
-    --rect-width: 42px;
+    --rect-height: 42.1px;
+    --rect-width: 42.1px;
     --rect-margin: 4px;
 }
 
@@ -29,6 +29,7 @@
 .colors-tools {
     display: flex;
     margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 .colors-tools.hide {
@@ -54,7 +55,7 @@
     padding: 0px 10px;
     margin-right: 2rem;
     background: var(--highlight-color);
-    box-shadow: 0 0 0.5rem var(--highlight-color);
+    box-shadow: 0 0 0.3rem var(--highlight-color);
     transition: 0.5s ease;
 }
 
@@ -72,7 +73,7 @@
     padding: 10px 10px;
     margin-right: 2rem;
     background: var(--highlight-color);
-    box-shadow: 0 0 0.5rem var(--highlight-color);
+    box-shadow: 0 0 0.3rem var(--highlight-color);
     transition: 0.5s ease;
 }
 
@@ -98,7 +99,7 @@
     border-radius: 5px;
     padding: 0px 10px;
     background: var(--highlight-color);
-    box-shadow: 0 0 0.5rem var(--highlight-color);
+    box-shadow: 0 0 0.3rem var(--highlight-color);
     transition: 0.5s ease;
 }
 
@@ -116,7 +117,7 @@
     padding: 0px 10px;
     margin-right: 2rem;
     background: var(--highlight-color);
-    box-shadow: 0 0 0.5rem var(--highlight-color);
+    box-shadow: 0 0 0.3rem var(--highlight-color);
     transition: 0.5s ease;
 }
 
@@ -133,7 +134,7 @@
     border-radius: 5px;
     padding: 0px 10px;
     background: var(--highlight-color);
-    box-shadow: 0 0 0.5rem var(--highlight-color);
+    box-shadow: 0 0 0.3rem var(--highlight-color);
     transition: 0.5s ease;
 }
 
@@ -161,7 +162,7 @@
     align-items: center;
     gap: 2rem;
     background-color: var(--second-color);
-    box-shadow: 0 0 0.5rem var(--second-color);
+    box-shadow: 0 0 0.3rem var(--second-color);
     border-color: var(--second-color);
 }
 
@@ -197,18 +198,25 @@
     color: var(--highlight-color);
 }
 
-.color-codes {
-    display: grid;
-    justify-self: left;
-    margin: 30px 0px -162px 1rem;
+.codes-messages {
+    display: flex;
+    justify-content: space-around;
+    width: 520px;
+    margin-bottom: -135px;
 }
 
-.color-codes.hide {
+.codes-messages.hide {
     display: none;
 }
 
+.color-codes {
+    position: absolute;
+    margin-right: 20rem;
+    display: grid;
+}
+
 .color-codes h2 {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: #fafcff;
 }
 
@@ -219,20 +227,48 @@
     cursor: pointer;
     border-radius: 5px;
     padding: 0px 5px;
-    margin: 10px;
+    margin: 8px;
     background: var(--highlight-color);
-    box-shadow: 0 0 0.5rem var(--first-color);
+    box-shadow: 0 0 0.3rem var(--highlight-color);
+    transition: 0.3s ease;
 }
 
 .color-codes button:hover {
     box-shadow: none;
 }
 
+.display-messages {
+    position: absolute;
+    display: grid;
+    justify-items: center;
+    margin-top: 48px;
+    margin-left: 20rem;
+    color: var(--text-color);
+    opacity: 100;
+    transition: 0.5s ease;
+}
+
+.display-messages.hide {
+    opacity: 0;
+    pointer-events: none;
+    transition: none;
+}
+
+#text {
+    font-size: 0.9rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#color-code {
+    font-size: 0.9rem;
+}
+
 .save-selected-color {
     display: grid;
     grid-template: "a a" "b b";
     align-items: center;
-    margin-top: 1rem;
 }
 
 .save-selected-color.hide {
@@ -248,10 +284,9 @@
     cursor: pointer;
     border-radius: 5px;
     padding: 5px 10px;
-    margin-left: 3rem;
-    margin-right: 1rem;
+    margin-left: 20px;
     background: var(--highlight-color);
-    box-shadow: 0 0 0.5rem var(--highlight-color);
+    box-shadow: 0 0 0.3rem var(--highlight-color);
     transition: 0.5s ease;
 }
 
@@ -283,25 +318,10 @@
     transform: scale(1.2);
 }
 
-.display-message {
-    justify-self: center;
-    font-size: 1.1rem;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    color: var(--text-color);
-    opacity: 100;
-    transition: 0.5s ease;
-}
-
-.display-message.hide {
-    opacity: 0;
-    pointer-events: none;
-    transition: none;
-}
-
 .saved-colors {
+    margin-top: 1rem;
     background-color: var(--second-color);
-    box-shadow: 0 0 0.5rem var(--second-color);
+    box-shadow: 0 0 0.3rem var(--second-color);
 }
 
 .saved-colors.hide {
