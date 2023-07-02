@@ -35,10 +35,10 @@ const allColors = document.querySelector('.all-colors');
 const displayMessagesOption = document.querySelector("#display-messages-option");
 const savedColorsArray = JSON.parse(localStorage.getItem("savedColorsArray") || "[]");
 var currSelectedColor = localStorage.getItem("currSelectedColor");
-var messageTimeout;
+var messageTimeout, deleteColorOnClick;
 
 // Initialization
-var deleteColorOnClick = false;
+DisableDeleteOnClick();
 SetOptions();
 SetLightDarkMode(localStorage.getItem("lightDarkMode"));
 ShowSettingsHideColors();
@@ -61,12 +61,12 @@ function SetOptions() {
             localStorage.setItem("colorCodeFormat", "HEX");
             colorCodeFormat.value = "HEX";
             break;
-        case "HEX":
-            colorCodeFormat.value = "HEX";
-            break;
         case "RGB":
             colorCodeFormat.value = "RGB";
             break;
+            case "HEX":
+                colorCodeFormat.value = "HEX";
+                break;
         case "HSL":
             colorCodeFormat.value = "HSL";
             break;
@@ -185,8 +185,7 @@ function ShowSettingsHideColors() {
     colorsTools.classList.add("hide");
     settingsTools.classList.remove("hide");
     settingsPanel.classList.remove("hide");
-    deleteColorOnClick = false;
-    deleteOnClick.innerHTML = "Delete On Click";
+    DisableDeleteOnClick();
 }
 
 function ShowColorsHideSettings() {
@@ -262,6 +261,8 @@ function SavedColorClicked(element) {
     if (deleteColorOnClick) {
         ApplyCurrSelectedColor(element.dataset.color);
         DeleteOnClickColor(element.dataset.color);
+        if (savedColorsArray.length <= 0)
+            DisableDeleteOnClick();
         return;
     }
 
@@ -400,8 +401,7 @@ function DeleteAllColors() {
         savedColorsArray.length = 0;
         localStorage.setItem("savedColorsArray", JSON.stringify(savedColorsArray));
         ApplyCurrSelectedColor("#000000");
-        deleteColorOnClick = false;
-        deleteOnClick.innerHTML = "Delete On Click";
+        DisableDeleteOnClick();
         ShowSettingsHideColors();
     }
 }
@@ -414,6 +414,11 @@ function ToggleDeleteOnClick() {
         deleteColorOnClick = true;
         deleteOnClick.innerHTML = "Done Deleting";
     }
+}
+
+function DisableDeleteOnClick() {
+    deleteColorOnClick = false;
+    deleteOnClick.innerHTML = "Delete On Click";
 }
 
 function HexToRgb(hex) {
