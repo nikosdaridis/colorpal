@@ -64,9 +64,9 @@ function SetOptions() {
         case "RGB":
             colorCodeFormat.value = "RGB";
             break;
-            case "HEX":
-                colorCodeFormat.value = "HEX";
-                break;
+        case "HEX":
+            colorCodeFormat.value = "HEX";
+            break;
         case "HSL":
             colorCodeFormat.value = "HSL";
             break;
@@ -409,16 +409,16 @@ function DeleteAllColors() {
 function ToggleDeleteOnClick() {
     if (deleteColorOnClick) {
         deleteColorOnClick = false;
-        deleteOnClick.innerHTML = "Delete On Click";
+        deleteOnClick.textContent = "Delete On Click";
     } else {
         deleteColorOnClick = true;
-        deleteOnClick.innerHTML = "Done Deleting";
+        deleteOnClick.textContent = "Done Deleting";
     }
 }
 
 function DisableDeleteOnClick() {
     deleteColorOnClick = false;
-    deleteOnClick.innerHTML = "Delete On Click";
+    deleteOnClick.textContent = "Delete On Click";
 }
 
 function HexToRgb(hex) {
