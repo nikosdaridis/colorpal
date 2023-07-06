@@ -45,7 +45,7 @@
     display: none;
 }
 
-#eye-dropper-button {
+.colors-tools button {
     outline: none;
     border: none;
     color: #fafcff;
@@ -59,7 +59,7 @@
     transition: 0.5s ease;
 }
 
-#eye-dropper-button:hover {
+.colors-tools button:hover {
     box-shadow: none;
 }
 
@@ -91,23 +91,10 @@
 }
 
 #settings-button {
-    outline: none;
-    border: none;
-    color: #fafcff;
-    font-size: 2rem;
-    cursor: pointer;
-    border-radius: 5px;
-    padding: 0px 10px;
-    background: var(--highlight-color);
-    box-shadow: 0 0 0.3rem var(--highlight-color);
-    transition: 0.5s ease;
+    margin-right: 0rem;
 }
 
-#settings-button:hover {
-    box-shadow: none;
-}
-
-#colors-button {
+.settings-tools button {
     outline: none;
     border: none;
     color: #fafcff;
@@ -121,25 +108,12 @@
     transition: 0.5s ease;
 }
 
-#colors-button:hover {
+.settings-tools button:hover {
     box-shadow: none;
 }
 
 #light-dark-mode {
-    outline: none;
-    border: none;
-    color: #fafcff;
-    font-size: 2rem;
-    cursor: pointer;
-    border-radius: 5px;
-    padding: 0px 10px;
-    background: var(--highlight-color);
-    box-shadow: 0 0 0.3rem var(--highlight-color);
-    transition: 0.5s ease;
-}
-
-#light-dark-mode:hover {
-    box-shadow: none;
+    margin-right: 0rem;
 }
 
 .settings-panel {
@@ -201,8 +175,6 @@
 .codes-messages {
     display: flex;
     justify-content: space-around;
-    width: 520px;
-    margin-bottom: -135px;
 }
 
 .codes-messages.hide {
@@ -251,7 +223,6 @@
 .display-messages.hide {
     opacity: 0;
     pointer-events: none;
-    transition: none;
 }
 
 #text {
@@ -309,7 +280,6 @@
     height: 100px;
     width: 100px;
     border-radius: 5px;
-    background: black;
     border: 1px solid var(--text-color);
     transition: 0.3s ease;
 }
