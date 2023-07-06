@@ -9,11 +9,11 @@ const colorsTools = document.querySelector(".colors-tools");
 const settingsTools = document.querySelector(".settings-tools");
 const colorsButton = document.querySelector("#colors-button");
 const lightDarkButton = document.querySelector("#light-dark-mode");
-const colorList = document.querySelector(".all-colors");
+const allColors = document.querySelector(".all-colors");
 const deleteOnClick = document.querySelector(".delete-onclick");
 const deleteAll = document.querySelector(".delete-all");
-const lightModeIcon = document.querySelector('#light-mode-icon');
-const root = document.querySelector(':root');
+const lightModeIcon = document.querySelector("#light-mode-icon");
+const root = document.querySelector(":root");
 const settingsPanel = document.querySelector(".settings-panel");
 const codesMessages = document.querySelector(".codes-messages")
 const saveSelectedColor = document.querySelector(".save-selected-color");
@@ -31,24 +31,23 @@ const autoSaveEyeDropper = document.querySelector("#save-eye-dropper");
 const autoCopyColorCode = document.querySelector("#copy-color-code");
 const colorCodeFormat = document.querySelector("#code-format");
 const colorsPerLine = document.querySelector("#colors-per-line");
-const allColors = document.querySelector('.all-colors');
 const displayMessagesOption = document.querySelector("#display-messages-option");
 const savedColorsArray = JSON.parse(localStorage.getItem("savedColorsArray") || "[]");
-var currSelectedColor = localStorage.getItem("currSelectedColor");
+var currentSelectedColor = localStorage.getItem("currSelectedColor");
 var messageTimeout, deleteColorOnClick;
 
 // Initialization
-DisableDeleteOnClick();
-SetOptions();
-SetLightDarkMode(localStorage.getItem("lightDarkMode"));
-ShowSettingsHideColors();
-if (currSelectedColor == null)
-    ApplyCurrSelectedColor("#000000");
+disableDeleteOnClick();
+setOptions();
+setLightDarkMode(localStorage.getItem("lightDarkMode"));
+showSettingsHideColors();
+if (currentSelectedColor == null)
+    applyCurrSelectedColor("#000000");
 else
-    ApplyCurrSelectedColor(currSelectedColor);
-ShowColors();
+    applyCurrSelectedColor(currentSelectedColor);
+showColors();
 
-function SetOptions() {
+function setOptions() {
     if (localStorage.getItem("autoSaveEyeDropper") == null)
         localStorage.setItem("autoSaveEyeDropper", "true");
 
@@ -84,23 +83,23 @@ function SetOptions() {
         case null:
             localStorage.setItem("colorsPerLine", "8");
             colorsPerLine.value = "8";
-            SetColorsPerLine(8);
+            setColorsPerLine(8);
             break;
         case "6":
             colorsPerLine.value = "6";
-            SetColorsPerLine(6);
+            setColorsPerLine(6);
             break;
         case "8":
             colorsPerLine.value = "8";
-            SetColorsPerLine(8);
+            setColorsPerLine(8);
             break;
         case "10":
             colorsPerLine.value = "10";
-            SetColorsPerLine(10);
+            setColorsPerLine(10);
             break;
         case "12":
             colorsPerLine.value = "12";
-            SetColorsPerLine(12);
+            setColorsPerLine(12);
             break;
         default:
             localStorage.setItem("colorsPerLine", "8");
@@ -123,7 +122,7 @@ function SetOptions() {
         displayMessagesOption.checked = true;
 }
 
-function SetLightDarkMode(mode) {
+function setLightDarkMode(mode) {
     if (mode == "dark") {
         lightModeIcon.classList.toggle('bxs-sun');
         root.style.setProperty('--first-color', '#24282a');
@@ -132,7 +131,7 @@ function SetLightDarkMode(mode) {
     }
 }
 
-function SetColorsPerLine(colorsPerLine) {
+function setColorsPerLine(colorsPerLine) {
     switch (colorsPerLine) {
         case 6:
             allColors.style.setProperty("grid-template-columns", "repeat(6, 1fr)");
@@ -161,7 +160,7 @@ function SetColorsPerLine(colorsPerLine) {
     }
 }
 
-function ToggleLightDarkMode() {
+function toggleLightDarkMode() {
     if (localStorage.getItem("lightDarkMode") == "light") {
         localStorage.setItem("lightDarkMode", "dark");
         root.style.setProperty('--first-color', '#24282a');
@@ -178,17 +177,17 @@ function ToggleLightDarkMode() {
     lightModeIcon.classList.toggle('bxs-sun');
 }
 
-function ShowSettingsHideColors() {
+function showSettingsHideColors() {
     savedColors.classList.add("hide");
     saveSelectedColor.classList.add("hide");
     codesMessages.classList.add("hide");
     colorsTools.classList.add("hide");
     settingsTools.classList.remove("hide");
     settingsPanel.classList.remove("hide");
-    DisableDeleteOnClick();
+    disableDeleteOnClick();
 }
 
-function ShowColorsHideSettings() {
+function showColorsHideSettings() {
     if (savedColorsArray.length > 0)
         savedColors.classList.remove("hide");
 
@@ -199,39 +198,37 @@ function ShowColorsHideSettings() {
     settingsPanel.classList.add("hide");
 }
 
-function ApplyCurrSelectedColor(color) {
+function applyCurrSelectedColor(color) {
     if (color == null || color == "")
         return;
 
     localStorage.setItem("currSelectedColor", color);
-    currSelectedColor = localStorage.getItem("currSelectedColor");
-    ShowHideSaveColorButton();
-    colorPalette.value = currSelectedColor;
+    currentSelectedColor = localStorage.getItem("currSelectedColor");
+    showHideSaveColorButton();
+    colorPalette.value = currentSelectedColor;
     selectedColor.style.background = color;
     selectedColorHex.textContent = color;
-    selectedColorRGB.textContent = HexToRgb(color);
-    selectedColorHSL.textContent = HexToHsl(color);
-    selectedColorHSV.textContent = HexToHsv(color);
+    selectedColorRGB.textContent = hexToRgb(color);
+    selectedColorHSL.textContent = hexToHsl(color);
+    selectedColorHSV.textContent = hexToHsv(color);
 }
 
-// Generating li for the selected color and add it to the savedColorsArray
-function ShowColors() {
+function showColors() {
     if (savedColorsArray.length <= 0)
         return;
 
-    colorList.innerHTML = savedColorsArray.map(color => `
+    allColors.innerHTML = savedColorsArray.map(color => `
         <li class="color">
             <span class="rect" data-color="${color}" style="background: ${color};"></span>
         </li>`).join("");
-    ShowColorsHideSettings();
+    showColorsHideSettings();
 
-    // Add a click event listener to each color
     document.querySelectorAll(".color").forEach(lin => {
-        lin.addEventListener("click", element => SavedColorClicked(element.currentTarget.lastElementChild));
+        lin.addEventListener("click", element => savedColorClicked(element.currentTarget.lastElementChild));
     });
 }
 
-function DisplayMessageAndColorFormat(text, color) {
+function displayMessageAndColorFormat(text, color) {
     if (localStorage.getItem("displayMessagesOption") == "false")
         return;
 
@@ -240,16 +237,16 @@ function DisplayMessageAndColorFormat(text, color) {
     displayMessageText.textContent = text;
     switch (localStorage.getItem("colorCodeFormat")) {
         case "RGB":
-            displayMessageColorCode.textContent = HexToRgb(color);
+            displayMessageColorCode.textContent = hexToRgb(color);
             break;
         case "HEX":
             displayMessageColorCode.textContent = color;
             break;
         case "HSL":
-            displayMessageColorCode.textContent = HexToHsl(color);
+            displayMessageColorCode.textContent = hexToHsl(color);
             break;
         case "HSV":
-            displayMessageColorCode.textContent = HexToHsv(color);
+            displayMessageColorCode.textContent = hexToHsv(color);
             break;
     }
 
@@ -257,118 +254,118 @@ function DisplayMessageAndColorFormat(text, color) {
     messageTimeout = setTimeout(() => displayMessages.classList.add("hide"), 3000);
 }
 
-function SavedColorClicked(element) {
+function savedColorClicked(colorClicked) {
     if (deleteColorOnClick) {
-        ApplyCurrSelectedColor(element.dataset.color);
-        DeleteOnClickColor(element.dataset.color);
+        applyCurrSelectedColor(colorClicked.dataset.color);
+        deleteOnClickColor(colorClicked.dataset.color);
         if (savedColorsArray.length <= 0)
-            DisableDeleteOnClick();
+            disableDeleteOnClick();
         return;
     }
 
-    CopyColorCode(element.dataset.color);
-    ApplyCurrSelectedColor(element.dataset.color);
+    copyColorCode(colorClicked.dataset.color);
+    applyCurrSelectedColor(colorClicked.dataset.color);
 
     if (localStorage.getItem("autoCopyColorCode") == "true")
-        DisplayMessageAndColorFormat("Copied", currSelectedColor);
+        displayMessageAndColorFormat("Copied", currentSelectedColor);
     else
-        DisplayMessageAndColorFormat("Selected", currSelectedColor);
+        displayMessageAndColorFormat("Selected", currentSelectedColor);
 }
 
-function SaveColor(color) {
+function saveColor(color) {
     if (savedColorsArray.includes(color)) {
-        DisplayMessageAndColorFormat("Already Saved", color);
+        displayMessageAndColorFormat("Already Saved", color);
         return;
     }
 
     if (color != null || color != "") {
         savedColorsArray.push(color);
         localStorage.setItem("savedColorsArray", JSON.stringify(savedColorsArray));
-        ShowColors();
+        showColors();
         if (localStorage.getItem("autoCopyColorCode") == "true")
-            DisplayMessageAndColorFormat("Saved and Copied", color);
+            displayMessageAndColorFormat("Saved and Copied", color);
         else
-            DisplayMessageAndColorFormat("Saved", color);
-        CopyColorCode(color);
-        ShowHideSaveColorButton();
+            displayMessageAndColorFormat("Saved", color);
+        copyColorCode(color);
+        showHideSaveColorButton();
     }
 }
 
-function SaveColorButtonClicked() {
-    SaveColor(currSelectedColor);
-    ShowHideSaveColorButton();
+function saveColorButtonClicked() {
+    saveColor(currentSelectedColor);
+    showHideSaveColorButton();
 }
 
-function ShowHideSaveColorButton() {
-    if (savedColorsArray.includes(currSelectedColor))
+function showHideSaveColorButton() {
+    if (savedColorsArray.includes(currentSelectedColor))
         saveColorButton.classList.add("hide");
     else
         saveColorButton.classList.remove("hide");
 }
 
-function CopyColorCode(color) {
+function copyColorCode(color) {
     if (localStorage.getItem("autoCopyColorCode") == "false")
         return;
 
     switch (localStorage.getItem("colorCodeFormat")) {
         case "RGB":
-            navigator.clipboard.writeText(HexToRgb(color));
+            navigator.clipboard.writeText(hexToRgb(color));
             break;
         case "HEX":
             navigator.clipboard.writeText(color);
             break;
         case "HSL":
-            navigator.clipboard.writeText(HexToHsl(color));
+            navigator.clipboard.writeText(hexToHsl(color));
             break;
         case "HSV":
-            navigator.clipboard.writeText(HexToHsv(color));
+            navigator.clipboard.writeText(hexToHsv(color));
             break;
     }
 }
 
-function CopyAndDisplayRgb() {
-    navigator.clipboard.writeText(HexToRgb(currSelectedColor));
+function copyAndDisplayRgb() {
+    navigator.clipboard.writeText(hexToRgb(currentSelectedColor));
 
     if (localStorage.getItem("displayMessagesOption") == "true")
-        DisplayMessageAndColorFormat("Copied", HexToRgb(currSelectedColor));
+        displayMessageAndColorFormat("Copied", hexToRgb(currentSelectedColor));
 }
 
-function CopyAndDisplayHex() {
-    navigator.clipboard.writeText(currSelectedColor);
+function copyAndDisplayHex() {
+    navigator.clipboard.writeText(currentSelectedColor);
 
     if (localStorage.getItem("displayMessagesOption") == "true")
-        DisplayMessageAndColorFormat("Copied", currSelectedColor);
+        displayMessageAndColorFormat("Copied", currentSelectedColor);
 }
 
-function CopyAndDisplayHsl() {
-    navigator.clipboard.writeText(HexToHsl(currSelectedColor));
+function copyAndDisplayHsl() {
+    navigator.clipboard.writeText(hexToHsl(currentSelectedColor));
 
     if (localStorage.getItem("displayMessagesOption") == "true")
-        DisplayMessageAndColorFormat("Copied", HexToHsl(currSelectedColor));
+        displayMessageAndColorFormat("Copied", hexToHsl(currentSelectedColor));
 }
 
-function CopyAndDisplayHsv() {
-    navigator.clipboard.writeText(HexToHsv(currSelectedColor));
+function copyAndDisplayHsv() {
+    navigator.clipboard.writeText(hexToHsv(currentSelectedColor));
 
     if (localStorage.getItem("displayMessagesOption") == "true")
-        DisplayMessageAndColorFormat("Copied", HexToHsv(currSelectedColor));
+        displayMessageAndColorFormat("Copied", hexToHsv(currentSelectedColor));
 }
 
-function ActivateEyeDropper() {
+function activateEyeDropper() {
     document.body.style.display = "none";
-    ShowColorsHideSettings();
+    showColorsHideSettings();
     setTimeout(async () => {
         try {
             const eyeDropper = new EyeDropper();
             const { sRGBHex } = await eyeDropper.open();
-            ApplyCurrSelectedColor(sRGBHex);
+            applyCurrSelectedColor(sRGBHex);
 
             if (localStorage.getItem("autoSaveEyeDropper") == "true") {
-                SaveColor(sRGBHex);
-                CopyColorCode(sRGBHex);
+                saveColor(sRGBHex);
+                copyColorCode(sRGBHex);
             }
             else
-                DisplayMessageAndColorFormat("Selected", sRGBHex);
+                displayMessageAndColorFormat("Selected", sRGBHex);
         } catch (error) {
             console.log(error);
         }
@@ -376,37 +373,37 @@ function ActivateEyeDropper() {
     }, 10);
 }
 
-function DeleteOnClickColor(color) {
+function deleteOnClickColor(color) {
     let colorIndex = savedColorsArray.findIndex((clr) => {
         return clr == color;
     });
 
     savedColorsArray.splice(colorIndex, 1);
     localStorage.setItem("savedColorsArray", JSON.stringify(savedColorsArray));
-    ShowColors();
-    DisplayMessageAndColorFormat("Deleted", color);
+    showColors();
+    displayMessageAndColorFormat("Deleted", color);
 
-    if (currSelectedColor == color)
-        ShowHideSaveColorButton();
+    if (currentSelectedColor == color)
+        showHideSaveColorButton();
 
     if (savedColorsArray.length <= 0) {
-        ShowSettingsHideColors();
-        ApplyCurrSelectedColor("#000000");
-        ToggleDeleteOnClick();
+        showSettingsHideColors();
+        applyCurrSelectedColor("#000000");
+        toggleDeleteOnClick();
     }
 }
 
-function DeleteAllColors() {
+function deleteAllColors() {
     if (confirm("Delete All Your Colors?")) {
         savedColorsArray.length = 0;
         localStorage.setItem("savedColorsArray", JSON.stringify(savedColorsArray));
-        ApplyCurrSelectedColor("#000000");
-        DisableDeleteOnClick();
-        ShowSettingsHideColors();
+        applyCurrSelectedColor("#000000");
+        disableDeleteOnClick();
+        showSettingsHideColors();
     }
 }
 
-function ToggleDeleteOnClick() {
+function toggleDeleteOnClick() {
     if (deleteColorOnClick) {
         deleteColorOnClick = false;
         deleteOnClick.textContent = "Delete On Click";
@@ -416,12 +413,12 @@ function ToggleDeleteOnClick() {
     }
 }
 
-function DisableDeleteOnClick() {
+function disableDeleteOnClick() {
     deleteColorOnClick = false;
     deleteOnClick.textContent = "Delete On Click";
 }
 
-function HexToRgb(hex) {
+function hexToRgb(hex) {
     let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     let r = parseInt(result[1], 16);
     let g = parseInt(result[2], 16);
@@ -430,7 +427,7 @@ function HexToRgb(hex) {
     return `rgb(${r}, ${g}, ${b})`;
 }
 
-function HexToHsl(hex) {
+function hexToHsl(hex) {
     let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     let r = parseInt(result[1], 16);
     let g = parseInt(result[2], 16);
@@ -465,7 +462,7 @@ function HexToHsl(hex) {
     return `hsl(${h}, ${s}%, ${l}%)`;
 }
 
-function HexToHsv(hex) {
+function hexToHsv(hex) {
     let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     let r = parseInt(result[1], 16);
     let g = parseInt(result[2], 16);
@@ -508,23 +505,23 @@ function HexToHsv(hex) {
     return `hsv(${h}, ${s}%, ${v}%)`;
 }
 
-eyeDropperButton.addEventListener("click", ActivateEyeDropper);
-colorPalette.addEventListener("click", ShowColorsHideSettings);
-settingsButton.addEventListener("click", ShowSettingsHideColors);
-colorsButton.addEventListener("click", ShowColorsHideSettings);
-lightDarkButton.addEventListener("click", ToggleLightDarkMode);
-copyRGBButton.addEventListener("click", CopyAndDisplayRgb);
-copyHexButton.addEventListener("click", CopyAndDisplayHex);
-copyHslButton.addEventListener("click", CopyAndDisplayHsl);
-copyHsvButton.addEventListener("click", CopyAndDisplayHsv);
-saveColorButton.addEventListener("click", SaveColorButtonClicked);
-deleteOnClick.addEventListener("click", ToggleDeleteOnClick);
-deleteAll.addEventListener("click", DeleteAllColors);
+eyeDropperButton.addEventListener("click", activateEyeDropper);
+colorPalette.addEventListener("click", showColorsHideSettings);
+settingsButton.addEventListener("click", showSettingsHideColors);
+colorsButton.addEventListener("click", showColorsHideSettings);
+lightDarkButton.addEventListener("click", toggleLightDarkMode);
+copyRGBButton.addEventListener("click", copyAndDisplayRgb);
+copyHexButton.addEventListener("click", copyAndDisplayHex);
+copyHslButton.addEventListener("click", copyAndDisplayHsl);
+copyHsvButton.addEventListener("click", copyAndDisplayHsv);
+saveColorButton.addEventListener("click", saveColorButtonClicked);
+deleteOnClick.addEventListener("click", toggleDeleteOnClick);
+deleteAll.addEventListener("click", deleteAllColors);
 
 
 colorPalette.addEventListener('input', function () {
-    ApplyCurrSelectedColor(colorPalette.value);
-    DisplayMessageAndColorFormat("Selected", colorPalette.value);
+    applyCurrSelectedColor(colorPalette.value);
+    displayMessageAndColorFormat("Selected", colorPalette.value);
 });
 
 autoSaveEyeDropper.addEventListener('change', function () {
@@ -558,16 +555,16 @@ colorCodeFormat.addEventListener('change', function () {
 colorsPerLine.addEventListener('change', function () {
     if (colorsPerLine.value == "6") {
         localStorage.setItem("colorsPerLine", "6");
-        SetColorsPerLine(6);
+        setColorsPerLine(6);
     } else if (colorsPerLine.value == "8") {
         localStorage.setItem("colorsPerLine", "8");
-        SetColorsPerLine(8);
+        setColorsPerLine(8);
     } else if (colorsPerLine.value == "10") {
         localStorage.setItem("colorsPerLine", "10");
-        SetColorsPerLine(10);
+        setColorsPerLine(10);
     } else if (colorsPerLine.value == "12") {
         localStorage.setItem("colorsPerLine", "12");
-        SetColorsPerLine(12);
+        setColorsPerLine(12);
     }
 });
 
