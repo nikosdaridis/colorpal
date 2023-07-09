@@ -10,6 +10,7 @@ const settingsTools = document.querySelector(".settings-tools");
 const colorsButton = document.querySelector("#colors-button");
 const lightDarkButton = document.querySelector("#light-dark-mode");
 const allColors = document.querySelector(".all-colors");
+const savedColorsCount = document.querySelector(".saved-colors-count");
 const deleteOnClick = document.querySelector(".delete-onclick");
 const deleteAll = document.querySelector(".delete-all");
 const lightModeIcon = document.querySelector("#light-mode-icon");
@@ -37,14 +38,15 @@ var currentSelectedColor = localStorage.getItem("currSelectedColor");
 var messageTimeout, deleteColorOnClick;
 
 // Initialization
+displaySavedColorsCount(savedColorsArray.length);
 disableDeleteOnClick();
 setOptions();
 setLightDarkMode(localStorage.getItem("lightDarkMode"));
 showSettingsHideColors();
 if (currentSelectedColor == null)
-    applyCurrSelectedColor("#000000");
+    applyCurrentSelectedColor("#000000");
 else
-    applyCurrSelectedColor(currentSelectedColor);
+    applyCurrentSelectedColor(currentSelectedColor);
 showColors();
 
 function setOptions() {
@@ -125,26 +127,26 @@ function setOptions() {
 function toggleLightDarkMode() {
     if (localStorage.getItem("lightDarkMode") == "light") {
         localStorage.setItem("lightDarkMode", "dark");
-        root.style.setProperty('--first-color', '#24282a');
-        root.style.setProperty('--second-color', '#2b353e');
-        root.style.setProperty('--text-color', '#fafcff');
+        root.style.setProperty("--first-color", "#24282a");
+        root.style.setProperty("--second-color", "#2b353e");
+        root.style.setProperty("--text-color", "#fafcff");
 
     } else if (localStorage.getItem("lightDarkMode") == "dark") {
         localStorage.setItem("lightDarkMode", "light");
-        root.style.setProperty('--first-color', '#fafcff');
-        root.style.setProperty('--second-color', '#e7e7f4');
-        root.style.setProperty('--text-color', '#24282a');
+        root.style.setProperty("--first-color", "#fafcff");
+        root.style.setProperty("--second-color", "#e7e7f4");
+        root.style.setProperty("--text-color", "#24282a");
     }
 
-    lightModeIcon.classList.toggle('bxs-sun');
+    lightModeIcon.classList.toggle("bxs-sun");
 }
 
 function setLightDarkMode(mode) {
     if (mode == "dark") {
-        lightModeIcon.classList.toggle('bxs-sun');
-        root.style.setProperty('--first-color', '#24282a');
-        root.style.setProperty('--second-color', '#2b353e');
-        root.style.setProperty('--text-color', '#fafcff');
+        lightModeIcon.classList.toggle("bxs-sun");
+        root.style.setProperty("--first-color", "#24282a");
+        root.style.setProperty("--second-color", "#2b353e");
+        root.style.setProperty("--text-color", "#fafcff");
     }
 }
 
@@ -198,7 +200,7 @@ function showColorsHideSettings() {
     settingsPanel.classList.add("hide");
 }
 
-function applyCurrSelectedColor(color) {
+function applyCurrentSelectedColor(color) {
     if (color == null || color == "")
         return;
 
@@ -208,6 +210,7 @@ function applyCurrSelectedColor(color) {
     colorPalette.value = currentSelectedColor;
     selectedColor.style.background = color;
     selectedColorHex.textContent = color;
+    root.style.setProperty("--selected-color", currentSelectedColor);
     let rgbColor = hexToRgb(color);
     selectedColorRGB.textContent = rgbString(rgbColor);
     selectedColorHSL.textContent = hslString(rgbToHsl(rgbColor));
@@ -257,7 +260,7 @@ function displayColorString(color, colorFormat) {
 
 function savedColorClicked(colorClicked) {
     if (deleteColorOnClick) {
-        applyCurrSelectedColor(colorClicked.dataset.color);
+        applyCurrentSelectedColor(colorClicked.dataset.color);
         deleteOnClickColor(colorClicked.dataset.color);
         if (savedColorsArray.length <= 0)
             disableDeleteOnClick();
@@ -265,7 +268,7 @@ function savedColorClicked(colorClicked) {
     }
 
     copyColorCode(colorClicked.dataset.color);
-    applyCurrSelectedColor(colorClicked.dataset.color);
+    applyCurrentSelectedColor(colorClicked.dataset.color);
 
     if (localStorage.getItem("autoCopyColorCode") == "true")
         displayMessageAndColor("Copied", currentSelectedColor, localStorage.getItem("colorCodeFormat"));
@@ -289,6 +292,7 @@ function saveColor(color) {
             displayMessageAndColor("Saved", color, localStorage.getItem("colorCodeFormat"));
         copyColorCode(color);
         showHideSaveColorButton();
+        displaySavedColorsCount(savedColorsArray.length);
     }
 }
 
@@ -354,7 +358,7 @@ function activateEyeDropper() {
         try {
             const eyeDropper = new EyeDropper();
             const { sRGBHex } = await eyeDropper.open();
-            applyCurrSelectedColor(sRGBHex);
+            applyCurrentSelectedColor(sRGBHex);
 
             if (localStorage.getItem("autoSaveEyeDropper") == "true") {
                 saveColor(sRGBHex);
@@ -376,6 +380,7 @@ function deleteOnClickColor(color) {
 
     savedColorsArray.splice(colorIndex, 1);
     localStorage.setItem("savedColorsArray", JSON.stringify(savedColorsArray));
+    displaySavedColorsCount(savedColorsArray.length);
     showColors();
     displayMessageAndColor("Deleted", color, localStorage.getItem("colorCodeFormat"));
 
@@ -384,7 +389,7 @@ function deleteOnClickColor(color) {
 
     if (savedColorsArray.length <= 0) {
         showSettingsHideColors();
-        applyCurrSelectedColor("#000000");
+        applyCurrentSelectedColor("#000000");
         toggleDeleteOnClick();
     }
 }
@@ -393,7 +398,8 @@ function deleteAllColors() {
     if (confirm("Delete All Your Colors?")) {
         savedColorsArray.length = 0;
         localStorage.setItem("savedColorsArray", JSON.stringify(savedColorsArray));
-        applyCurrSelectedColor("#000000");
+        displaySavedColorsCount(0);
+        applyCurrentSelectedColor("#000000");
         disableDeleteOnClick();
         showSettingsHideColors();
     }
@@ -412,6 +418,14 @@ function toggleDeleteOnClick() {
 function disableDeleteOnClick() {
     deleteColorOnClick = false;
     deleteOnClick.textContent = "Delete On Click";
+}
+
+function displaySavedColorsCount(count) {
+    if (count != null)
+        if (count == 1)
+            savedColorsCount.textContent = `${count} Color`;
+        else
+            savedColorsCount.textContent = `${count} Colors`;
 }
 
 function hexToRgb(hex) {
@@ -518,12 +532,12 @@ selectedColor.addEventListener("click", function () { colorPalette.click(); });
 deleteOnClick.addEventListener("click", toggleDeleteOnClick);
 deleteAll.addEventListener("click", deleteAllColors);
 
-colorPalette.addEventListener('input', function () {
-    applyCurrSelectedColor(colorPalette.value);
+colorPalette.addEventListener("input", function () {
+    applyCurrentSelectedColor(colorPalette.value);
     displayMessageAndColor("Selected", colorPalette.value, localStorage.getItem("colorCodeFormat"));
 });
 
-autoSaveEyeDropper.addEventListener('change', function () {
+autoSaveEyeDropper.addEventListener("change", function () {
     if (this.checked) {
         localStorage.setItem("autoSaveEyeDropper", "true");
     } else {
@@ -531,7 +545,7 @@ autoSaveEyeDropper.addEventListener('change', function () {
     }
 });
 
-autoCopyColorCode.addEventListener('change', function () {
+autoCopyColorCode.addEventListener("change", function () {
     if (this.checked) {
         localStorage.setItem("autoCopyColorCode", "true");
     } else {
@@ -539,7 +553,7 @@ autoCopyColorCode.addEventListener('change', function () {
     }
 });
 
-colorCodeFormat.addEventListener('change', function () {
+colorCodeFormat.addEventListener("change", function () {
     if (colorCodeFormat.value == "RGB") {
         localStorage.setItem("colorCodeFormat", "RGB");
     } else if (colorCodeFormat.value == "HEX") {
@@ -551,7 +565,7 @@ colorCodeFormat.addEventListener('change', function () {
     }
 });
 
-colorsPerLine.addEventListener('change', function () {
+colorsPerLine.addEventListener("change", function () {
     if (colorsPerLine.value == "6") {
         localStorage.setItem("colorsPerLine", "6");
         setColorsPerLine(6);
@@ -567,7 +581,7 @@ colorsPerLine.addEventListener('change', function () {
     }
 });
 
-displayMessagesOption.addEventListener('change', function () {
+displayMessagesOption.addEventListener("change", function () {
     if (this.checked) {
         localStorage.setItem("displayMessagesOption", "true");
     } else {
