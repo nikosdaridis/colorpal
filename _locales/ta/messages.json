@@ -1,11 +1,11 @@
 {
-   "name": {
-      "message": "ColorPal - Color Picker Tool"
-   },
-   "description": {
-      "message": "Color picker tool to extract every pixel from the screen, pick any color from a palette and save your favorite colors."
-   },
-   "defaultTitle": {
-      "message": "Click to activate ColorPal - Color Picker Tool."
-   }
+  "name": {
+    "message": "ColorPal - Color Picker Tool"
+  },
+  "description": {
+    "message": "Color picker tool to extract any pixel from the screen, pick any color from a palette and save your favorite colors."
+  },
+  "defaultTitle": {
+    "message": "Click to activate ColorPal - Color Picker Tool."
+  }
 }

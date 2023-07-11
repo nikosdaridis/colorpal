@@ -1,111 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="style.css">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="style.css" />
     <script src="script.js" defer></script>
 
     <!-- Box Icons -->
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-</head>
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+  </head>
 
-<body>
+  <body>
     <div class="popup">
-        <div class="colors-tools">
-            <button id="eye-dropper-button"><i class='bx bxs-eyedropper'></i></button>
-            <div class="color-palette-button">
-                <label for="color-palette"><i class='bx bx-palette'></i></label>
-            </div>
-            <button id="settings-button"><i class='bx bx-cog'></i></button>
-            <input type="color" id="color-palette">
+      <div class="colors-tools">
+        <button id="eye-dropper-button">
+          <i class="bx bxs-eyedropper"></i>
+        </button>
+        <div class="color-palette-button">
+          <label for="color-palette"><i class="bx bx-palette"></i></label>
+        </div>
+        <button id="settings-button"><i class="bx bx-cog"></i></button>
+        <input type="color" id="color-palette" />
+      </div>
+
+      <div class="settings-tools">
+        <button id="colors-button"><i class="bx bxs-color"></i></button>
+        <button id="light-dark-mode">
+          <i class="bx bxs-moon" id="light-mode-icon"></i>
+        </button>
+      </div>
+
+      <div class="settings-panel">
+        <div class="options">
+          <div>
+            <label for="save-eye-dropper">Auto Save Eye Dropper Color</label
+            ><br />
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              id="save-eye-dropper"
+              name="Save Eye Dropper"
+            />
+          </div>
+
+          <div>
+            <label for="copy-color-code">Auto Copy Color Code</label><br />
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              id="copy-color-code"
+              name="Copy Color Code"
+            />
+          </div>
+
+          <div><label for="code-format">Copy Color Code Format:</label></div>
+          <div>
+            <select name="Code Format" id="code-format">
+              <option value="RGB">RGB</option>
+              <option value="HEX">HEX</option>
+              <option value="HSL">HSL</option>
+              <option value="HSV">HSV</option>
+            </select>
+          </div>
+
+          <div><label for="colors-per-line">Colors Per Line:</label></div>
+          <div>
+            <select name="Colors Per Line" id="colors-per-line">
+              <option value="6">6</option>
+              <option value="8">8</option>
+              <option value="10">10</option>
+              <option value="12">12</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="display-messages-option">Display Messages</label><br />
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              id="display-messages-option"
+              name="Display Messages"
+            />
+          </div>
+        </div>
+        <div class="info">
+          <div class="link">
+            <h3>Suggest Feature/Found Bug</h3>
+            <a href="https://nikosdaridis.github.io/#contact" target="_blank"
+              ><i class="bx bx-envelope"></i
+            ></a>
+          </div>
+          <div class="link">
+            <h3>Open Source Project</h3>
+            <a href="https://github.com/nikosdaridis/colorpal" target="_blank"
+              ><i class="bx bxl-github"></i
+            ></a>
+          </div>
+          <h4>Version <span>1.1.1</span></h4>
+        </div>
+      </div>
+
+      <div class="codes-messages">
+        <div class="color-codes">
+          <button id="copy-rgb-button">
+            <h2 id="rgb"></h2>
+          </button>
+          <button id="copy-hex-button">
+            <h2 id="hex"></h2>
+          </button>
+          <button id="copy-hsl-button">
+            <h2 id="hsl"></h2>
+          </button>
+          <button id="copy-hsv-button">
+            <h2 id="hsv"></h2>
+          </button>
         </div>
 
-        <div class="settings-tools">
-            <button id="colors-button"><i class='bx bxs-color'></i></button>
-            <button id="light-dark-mode"><i class='bx bxs-moon' id="light-mode-icon"></i></button>
+        <div class="display-messages">
+          <h2 id="text"></h2>
+          <h3 id="color-code"></h3>
         </div>
+      </div>
 
-        <div class="settings-panel">
-            <div class="options">
-                <div><label for="save-eye-dropper">Auto Save Eye Dropper Color</label><br></div>
-                <div><input type="checkbox" id="save-eye-dropper" name="Save Eye Dropper"></div>
-
-                <div><label for="copy-color-code">Auto Copy Color Code</label><br></div>
-                <div><input type="checkbox" id="copy-color-code" name="Copy Color Code"></div>
-
-                <div><label for="code-format">Copy Color Code Format:</label></div>
-                <div><select name="Code Format" id="code-format">
-                        <option value="RGB">RGB</option>
-                        <option value="HEX">HEX</option>
-                        <option value="HSL">HSL</option>
-                        <option value="HSV">HSV</option>
-                    </select>
-                </div>
-
-                <div><label for="colors-per-line">Colors Per Line:</label></div>
-                <div><select name="Colors Per Line" id="colors-per-line">
-                        <option value="6">6</option>
-                        <option value="8">8</option>
-                        <option value="10">10</option>
-                        <option value="12">12</option>
-                    </select>
-                </div>
-
-                <div><label for="display-messages-option">Display Messages</label><br></div>
-                <div><input type="checkbox" id="display-messages-option" name="Display Messages"></div>
-            </div>
-            <div class="info">
-                <div class="link">
-                    <h3>Suggest Feature/Found Bug</h3>
-                    <a href="https://nikosdaridis.github.io/#contact" target="_blank"><i class='bx bx-envelope'></i></a>
-                </div>
-                <div class="link">
-                    <h3>Open Source Project</h3>
-                    <a href="https://github.com/nikosdaridis/colorpal" target="_blank"><i class='bx bxl-github'></i></a>
-                </div>
-                <h4>Version <span>1.1.1</span></h4>
-            </div>
+      <div class="save-selected-color">
+        <div class="save-color-button"><i class="bx bx-save"></i></div>
+        <div class="selected-color">
+          <span class="rect"></span>
         </div>
+      </div>
 
-        <div class="codes-messages">
-            <div class="color-codes">
-                <button id="copy-rgb-button">
-                    <h2 id="rgb"></h2>
-                </button>
-                <button id="copy-hex-button">
-                    <h2 id="hex"></h2>
-                </button>
-                <button id="copy-hsl-button">
-                    <h2 id="hsl"></h2>
-                </button>
-                <button id="copy-hsv-button">
-                    <h2 id="hsv"></h2>
-                </button>
-            </div>
-
-            <div class="display-messages">
-                <h2 id="text"></h2>
-                <h3 id="color-code"></h3>
-            </div>
-        </div>
-
-        <div class="save-selected-color">
-            <div class="save-color-button"><i class='bx bx-save'></i></div>
-            <div class="selected-color">
-                <span class="rect"></span>
-            </div>
-        </div>
-
-        <div class="saved-colors" hide>
-            <header>
-                <span class="delete-onclick">Delete On Click</span>
-                <span class="saved-colors-count"></span>
-                <span class="delete-all">Delete All</span>
-            </header>
-            <ul class="all-colors"></ul>
-        </div>
+      <div class="saved-colors" hide>
+        <header>
+          <span class="delete-onclick">Delete On Click</span>
+          <span class="saved-colors-count"></span>
+          <span class="delete-all">Delete All</span>
+        </header>
+        <ul class="all-colors"></ul>
+      </div>
     </div>
-</body>
-
+  </body>
 </html>

@@ -1,366 +1,366 @@
 /* Import Google font - Poppins */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
 }
 
 *::selection {
-    background: none;
+  background: none;
 }
 
 *::-moz-selection {
-    background: none;
+  background: none;
 }
 
 :root {
-    --first-color: #fafcff;
-    --second-color: #ededf7;
-    --highlight-color: #1587ff;
-    --text-color: #24282a;
-    --selected-color: #000000;
+  --first-color: #fafcff;
+  --second-color: #ededf7;
+  --highlight-color: #1587ff;
+  --text-color: #24282a;
+  --selected-color: #000000;
 
-    --rect-height: 42.1px;
-    --rect-width: 42.1px;
-    --rect-margin: 4px;
+  --rect-height: 42.1px;
+  --rect-width: 42.1px;
+  --rect-margin: 4px;
 }
 
 .popup {
-    display: grid;
-    justify-items: center;
-    width: 520px;
-    background: var(--first-color);
+  display: grid;
+  justify-items: center;
+  width: 520px;
+  background: var(--first-color);
 }
 
 .colors-tools {
-    display: flex;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+  display: flex;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .colors-tools.hide {
-    display: none;
+  display: none;
 }
 
 .settings-tools {
-    display: flex;
-    margin-top: 1rem;
+  display: flex;
+  margin-top: 1rem;
 }
 
 .settings-tools.hide {
-    display: none;
+  display: none;
 }
 
 .colors-tools button {
-    outline: none;
-    border: none;
-    color: #fafcff;
-    font-size: 2rem;
-    cursor: pointer;
-    border-radius: 5px;
-    padding: 0px 10px;
-    margin-right: 2rem;
-    background: var(--highlight-color);
-    box-shadow: 0 0 0.3rem var(--highlight-color);
-    transition: 0.5s ease;
+  outline: none;
+  border: none;
+  color: #fafcff;
+  font-size: 2rem;
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 0px 10px;
+  margin-right: 2rem;
+  background: var(--highlight-color);
+  box-shadow: 0 0 0.3rem var(--highlight-color);
+  transition: 0.5s ease;
 }
 
 .colors-tools button:hover {
-    box-shadow: none;
+  box-shadow: none;
 }
 
 .color-palette-button i {
-    outline: none;
-    border: none;
-    color: #fafcff;
-    font-size: 2rem;
-    cursor: pointer;
-    border-radius: 5px;
-    padding: 10px 10px;
-    margin-right: 2rem;
-    background: var(--highlight-color);
-    box-shadow: 0 0 0.3rem var(--highlight-color);
-    transition: 0.5s ease;
+  outline: none;
+  border: none;
+  color: #fafcff;
+  font-size: 2rem;
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 10px 10px;
+  margin-right: 2rem;
+  background: var(--highlight-color);
+  box-shadow: 0 0 0.3rem var(--highlight-color);
+  transition: 0.5s ease;
 }
 
 .color-palette-button i:hover {
-    box-shadow: none;
+  box-shadow: none;
 }
 
 #color-palette {
-    opacity: 0;
-    width: 0;
-    height: 0;
-    padding: 0;
-    margin: 0;
-    border: 0;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
 }
 
 #settings-button {
-    margin-right: 0rem;
+  margin-right: 0rem;
 }
 
 .settings-tools button {
-    outline: none;
-    border: none;
-    color: #fafcff;
-    font-size: 2rem;
-    cursor: pointer;
-    border-radius: 5px;
-    padding: 0px 10px;
-    margin-right: 2rem;
-    background: var(--highlight-color);
-    box-shadow: 0 0 0.3rem var(--highlight-color);
-    transition: 0.5s ease;
+  outline: none;
+  border: none;
+  color: #fafcff;
+  font-size: 2rem;
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 0px 10px;
+  margin-right: 2rem;
+  background: var(--highlight-color);
+  box-shadow: 0 0 0.3rem var(--highlight-color);
+  transition: 0.5s ease;
 }
 
 .settings-tools button:hover {
-    box-shadow: none;
+  box-shadow: none;
 }
 
 #light-dark-mode {
-    margin-right: 0rem;
+  margin-right: 0rem;
 }
 
 .settings-panel {
-    margin-top: 2rem;
-    margin-bottom: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
 }
 
 .settings-panel label {
-    font-size: 1.2rem;
-    color: var(--text-color);
+  font-size: 1.2rem;
+  color: var(--text-color);
 }
 
 .settings-panel.hide {
-    display: none;
+  display: none;
 }
 
 .options {
-    display: grid;
-    grid-template: "a a" "b b";
-    align-items: center;
-    gap: 2rem;
-    background-color: var(--second-color);
-    box-shadow: 0 0 0.3rem var(--second-color);
-    border-color: var(--second-color);
+  display: grid;
+  grid-template: "a a" "b b";
+  align-items: center;
+  gap: 2rem;
+  background-color: var(--second-color);
+  box-shadow: 0 0 0.3rem var(--second-color);
+  border-color: var(--second-color);
 }
 
 .settings-panel .info {
-    display: grid;
-    justify-items: center;
-    margin-top: 2rem;
-    gap: 0.2rem;
+  display: grid;
+  justify-items: center;
+  margin-top: 2rem;
+  gap: 0.2rem;
 }
 
 .settings-panel .info h3 {
-    font-size: 1rem;
-    color: var(--text-color);
+  font-size: 1rem;
+  color: var(--text-color);
 }
 
 .settings-panel .info h4 {
-    font-size: 0.9rem;
-    color: var(--text-color);
+  font-size: 0.9rem;
+  color: var(--text-color);
 }
 
 .settings-panel .info span {
-    color: var(--highlight-color);
+  color: var(--highlight-color);
 }
 
 .settings-panel .link {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .settings-panel .info i {
-    font-size: 1.8rem;
-    color: var(--highlight-color);
+  font-size: 1.8rem;
+  color: var(--highlight-color);
 }
 
 .codes-messages {
-    display: flex;
-    justify-content: space-around;
+  display: flex;
+  justify-content: space-around;
 }
 
 .codes-messages.hide {
-    display: none;
+  display: none;
 }
 
 .color-codes {
-    position: absolute;
-    margin-right: 20rem;
-    display: grid;
+  position: absolute;
+  margin-right: 20rem;
+  display: grid;
 }
 
 .color-codes h2 {
-    font-size: 0.8rem;
-    color: #fafcff;
+  font-size: 0.8rem;
+  color: #fafcff;
 }
 
 .color-codes button {
-    outline: none;
-    border: none;
-    color: #fafcff;
-    cursor: pointer;
-    border-radius: 5px;
-    padding: 0px 5px;
-    margin: 8px;
-    background: var(--highlight-color);
-    box-shadow: 0 0 0.3rem var(--highlight-color);
-    transition: 0.3s ease;
+  outline: none;
+  border: none;
+  color: #fafcff;
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 0px 5px;
+  margin: 8px;
+  background: var(--highlight-color);
+  box-shadow: 0 0 0.3rem var(--highlight-color);
+  transition: 0.3s ease;
 }
 
 .color-codes button:hover {
-    box-shadow: none;
+  box-shadow: none;
 }
 
 .display-messages {
-    position: absolute;
-    display: grid;
-    justify-items: center;
-    margin-top: 48px;
-    margin-left: 20rem;
-    color: var(--text-color);
-    opacity: 100;
-    transition: 0.5s ease;
+  position: absolute;
+  display: grid;
+  justify-items: center;
+  margin-top: 48px;
+  margin-left: 20rem;
+  color: var(--text-color);
+  opacity: 100;
+  transition: 0.5s ease;
 }
 
 .display-messages.hide {
-    opacity: 0;
-    pointer-events: none;
+  opacity: 0;
+  pointer-events: none;
 }
 
 #text {
-    font-size: 0.9rem;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+  font-size: 0.9rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 #color-code {
-    font-size: 0.9rem;
+  font-size: 0.9rem;
 }
 
 .save-selected-color {
-    display: grid;
-    grid-template: "a a" "b b";
-    align-items: center;
+  display: grid;
+  grid-template: "a a" "b b";
+  align-items: center;
 }
 
 .save-selected-color.hide {
-    display: none;
+  display: none;
 }
 
 .save-color-button {
-    outline: none;
-    border: none;
-    justify-self: center;
-    color: #fafcff;
-    font-size: 1.5rem;
-    cursor: pointer;
-    border-radius: 5px;
-    padding: 5px 10px;
-    margin-left: 25px;
-    margin-right: 5px;
-    background: var(--highlight-color);
-    box-shadow: 0 0 0.3rem var(--highlight-color);
-    transition: 0.5s ease;
+  outline: none;
+  border: none;
+  justify-self: center;
+  color: #fafcff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin-left: 25px;
+  margin-right: 5px;
+  background: var(--highlight-color);
+  box-shadow: 0 0 0.3rem var(--highlight-color);
+  transition: 0.5s ease;
 }
 
 .save-color-button.hide {
-    display: none;
+  display: none;
 }
 
 .save-color-button:hover {
-    box-shadow: none;
+  box-shadow: none;
 }
 
 .selected-color {
-    display: flex;
-    justify-self: center;
-    gap: 1rem;
-    margin: 1rem;
+  display: flex;
+  justify-self: center;
+  gap: 1rem;
+  margin: 1rem;
 }
 
 .selected-color .rect {
-    height: 100px;
-    width: 100px;
-    border-radius: 15%;
-    border: 1px solid var(--text-color);
-    box-shadow: 0 0 10px var(--selected-color);
-    transition: 0.3s ease;
+  height: 100px;
+  width: 100px;
+  border-radius: 15%;
+  border: 1px solid var(--text-color);
+  box-shadow: 0 0 10px var(--selected-color);
+  transition: 0.3s ease;
 }
 
 .selected-color .rect:hover {
-    transform: scale(1.25);
-    border-radius: 5%;
-    box-shadow: none;
+  transform: scale(1.25);
+  border-radius: 5%;
+  box-shadow: none;
 }
 
 .saved-colors {
-    margin-top: 1rem;
-    background-color: var(--second-color);
-    box-shadow: 0 0 0.3rem var(--second-color);
+  margin-top: 1rem;
+  background-color: var(--second-color);
+  box-shadow: 0 0 0.3rem var(--second-color);
 }
 
 .saved-colors.hide {
-    display: none;
+  display: none;
 }
 
 .saved-colors header {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    margin: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0.5rem;
 }
 
 .saved-colors .delete-onclick {
-    cursor: pointer;
-    font-size: 1.2rem;
-    justify-self: left;
-    color: var(--highlight-color);
+  cursor: pointer;
+  font-size: 1.2rem;
+  justify-self: left;
+  color: var(--highlight-color);
 }
 
 .saved-colors header .saved-colors-count {
-    font-size: 1.2rem;
-    justify-self: center;
-    color: var(--text-color);
+  font-size: 1.2rem;
+  justify-self: center;
+  color: var(--text-color);
 }
 
 .saved-colors .delete-all {
-    cursor: pointer;
-    font-size: 1.2rem;
-    justify-self: right;
-    color: var(--highlight-color);
+  cursor: pointer;
+  font-size: 1.2rem;
+  justify-self: right;
+  color: var(--highlight-color);
 }
 
 .all-colors {
-    display: grid;
-    justify-self: center;
-    padding: 0.5rem;
-    grid-template-columns: repeat(10, 1fr);
-    list-style-type: none;
+  display: grid;
+  justify-self: center;
+  padding: 0.5rem;
+  grid-template-columns: repeat(10, 1fr);
+  list-style-type: none;
 }
 
 .all-colors .color {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .all-colors .color .rect {
-    display: block;
-    height: var(--rect-height);
-    width: var(--rect-width);
-    margin: var(--rect-margin);
-    border-radius: 15%;
-    border: 1px solid var(--text-color);
-    transition: 0.3s ease;
+  display: block;
+  height: var(--rect-height);
+  width: var(--rect-width);
+  margin: var(--rect-margin);
+  border-radius: 15%;
+  border: 1px solid var(--text-color);
+  transition: 0.3s ease;
 }
 
 .all-colors .color .rect:hover {
-    transform: scale(1.25);
-    border-radius: 5%;
-    border: 1px solid var(--highlight-color);
+  transform: scale(1.25);
+  border-radius: 5%;
+  border: 1px solid var(--highlight-color);
 }
