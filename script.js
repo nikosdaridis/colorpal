@@ -45,7 +45,7 @@ var messageTimeout, deleteColorOnClick;
 setOptions();
 setLightDarkMode(localStorage.getItem("lightDarkMode"));
 showSettingsHideColors();
-currentSelectedColor == null
+currentSelectedColor === null
   ? applyCurrentSelectedColor("#000000")
   : applyCurrentSelectedColor(currentSelectedColor);
 displaySavedColorsCount(savedColorsArray.length);
@@ -53,88 +53,45 @@ disableDeleteOnClick();
 showColors();
 
 function setOptions() {
-  if (localStorage.getItem("autoSaveEyeDropper") == null)
+  localStorage.getItem("autoSaveEyeDropper") === null &&
     localStorage.setItem("autoSaveEyeDropper", "true");
 
-  if (localStorage.getItem("autoCopyColorCode") == null)
+  localStorage.getItem("autoCopyColorCode") === null &&
     localStorage.setItem("autoCopyColorCode", "true");
 
-  // Update color code format visual
-  switch (localStorage.getItem("colorCodeFormat")) {
-    case null:
-      localStorage.setItem("colorCodeFormat", "HEX");
-      colorCodeFormat.value = "HEX";
-      break;
-    case "RGB":
-      colorCodeFormat.value = "RGB";
-      break;
-    case "HEX":
-      colorCodeFormat.value = "HEX";
-      break;
-    case "HSL":
-      colorCodeFormat.value = "HSL";
-      break;
-    case "HSV":
-      colorCodeFormat.value = "HSV";
-      break;
-    default:
-      localStorage.setItem("colorCodeFormat", "HEX");
-      colorCodeFormat.value = "HEX";
-      break;
-  }
+  localStorage.getItem("colorCodeFormat") === null &&
+    localStorage.setItem("colorCodeFormat", "HEX");
+  colorCodeFormat.value = localStorage.getItem("colorCodeFormat");
 
-  // Update colors per line visual
-  switch (localStorage.getItem("colorsPerLine")) {
-    case null:
-      localStorage.setItem("colorsPerLine", "8");
-      colorsPerLine.value = "8";
-      setColorsPerLine(8);
-      break;
-    case "6":
-      colorsPerLine.value = "6";
-      setColorsPerLine(6);
-      break;
-    case "8":
-      colorsPerLine.value = "8";
-      setColorsPerLine(8);
-      break;
-    case "10":
-      colorsPerLine.value = "10";
-      setColorsPerLine(10);
-      break;
-    case "12":
-      colorsPerLine.value = "12";
-      setColorsPerLine(12);
-      break;
-    default:
-      localStorage.setItem("colorsPerLine", "8");
-      colorsPerLine.value = "8";
-      setColorsPerLine(8);
-      break;
-  }
+  localStorage.getItem("colorsPerLine") === null &&
+    localStorage.setItem("colorsPerLine", "8");
+  colorsPerLine.value = localStorage.getItem("colorsPerLine");
+  setColorsPerLine(parseInt(localStorage.getItem("colorsPerLine")));
 
-  if (localStorage.getItem("displayMessagesOption") == null)
+  localStorage.getItem("displayMessagesOption") === null &&
     localStorage.setItem("displayMessagesOption", "true");
 
-  if (localStorage.getItem("lightDarkMode") == null)
+  localStorage.getItem("lightDarkMode") === null &&
     localStorage.setItem("lightDarkMode", "light");
 
-  // Update check box visual
-  if (localStorage.getItem("autoSaveEyeDropper") == "true")
-    autoSaveEyeDropper.checked = true;
-  if (localStorage.getItem("autoCopyColorCode") == "true")
-    autoCopyColorCode.checked = true;
-  if (localStorage.getItem("displayMessagesOption") == "true")
-    displayMessagesOption.checked = true;
+  localStorage.getItem("autoSaveEyeDropper") === "true"
+    ? (autoSaveEyeDropper.checked = true)
+    : (autoSaveEyeDropper.checked = false);
+  localStorage.getItem("autoCopyColorCode") === "true"
+    ? (autoCopyColorCode.checked = true)
+    : (autoCopyColorCode.checked = false);
+  localStorage.getItem("displayMessagesOption") === "true"
+    ? (displayMessagesOption.checked = true)
+    : (displayMessagesOption.checked = false);
 }
 
 function toggleLightDarkMode() {
-  if (localStorage.getItem("lightDarkMode") == "light") {
+  if (localStorage.getItem("lightDarkMode") === "light") {
     localStorage.setItem("lightDarkMode", "dark");
     root.style.setProperty("--first-color", "#24282a");
     root.style.setProperty("--second-color", "#2b353e");
     root.style.setProperty("--text-color", "#fafcff");
-  } else if (localStorage.getItem("lightDarkMode") == "dark") {
+  } else if (localStorage.getItem("lightDarkMode") === "dark") {
     localStorage.setItem("lightDarkMode", "light");
     root.style.setProperty("--first-color", "#fafcff");
     root.style.setProperty("--second-color", "#e7e7f4");
@@ -145,7 +102,7 @@ function toggleLightDarkMode() {
 }
 
 function setLightDarkMode(mode) {
-  if (mode == "dark") {
+  if (mode === "dark") {
     lightModeIcon.classList.toggle("bxs-sun");
     root.style.setProperty("--first-color", "#24282a");
     root.style.setProperty("--second-color", "#2b353e");
@@ -193,7 +150,7 @@ function showSettingsHideColors() {
 }
 
 function showColorsHideSettings() {
-  if (savedColorsArray.length > 0) savedColors.classList.remove("hide");
+  savedColorsArray.length > 0 && savedColors.classList.remove("hide");
 
   saveSelectedColor.classList.remove("hide");
   codesMessages.classList.remove("hide");
@@ -203,7 +160,7 @@ function showColorsHideSettings() {
 }
 
 function applyCurrentSelectedColor(color) {
-  if (color == null || color == "") return;
+  if (color === null || color === "") return;
 
   localStorage.setItem("currSelectedColor", color);
   currentSelectedColor = localStorage.getItem("currSelectedColor");
@@ -231,15 +188,15 @@ function showColors() {
     .join("");
   showColorsHideSettings();
 
-  document.querySelectorAll(".color").forEach((lin) => {
-    lin.addEventListener("click", (element) =>
+  document.querySelectorAll(".color").forEach((li) => {
+    li.addEventListener("click", (element) =>
       savedColorClicked(element.currentTarget.lastElementChild)
     );
   });
 }
 
 function displayMessageAndColor(text, color, colorFormat) {
-  if (localStorage.getItem("displayMessagesOption") == "false") return;
+  if (localStorage.getItem("displayMessagesOption") === "false") return;
 
   displayMessages.classList.remove("hide");
   displayMessageText.textContent = text;
@@ -252,9 +209,11 @@ function displayMessageAndColor(text, color, colorFormat) {
   );
 }
 
-function displayColorString(color, colorFormat) {
+function displayColorString(color, format) {
+  if (color === null || format === null) return;
+
   let rgbColor = hexToRgb(color);
-  switch (colorFormat) {
+  switch (format) {
     case "RGB":
       return rgbString(rgbColor);
     case "HEX":
@@ -270,14 +229,19 @@ function savedColorClicked(colorClicked) {
   if (deleteColorOnClick) {
     applyCurrentSelectedColor(colorClicked.dataset.color);
     deleteOnClickColor(colorClicked.dataset.color);
-    if (savedColorsArray.length <= 0) disableDeleteOnClick();
+    savedColorsArray.length <= 0 && disableDeleteOnClick();
     return;
   }
 
-  copyColorCode(colorClicked.dataset.color);
+  localStorage.getItem("autoCopyColorCode") === "true" &&
+    copyToClipboard(
+      colorClicked.dataset.color,
+      localStorage.getItem("colorCodeFormat")
+    );
+
   applyCurrentSelectedColor(colorClicked.dataset.color);
 
-  localStorage.getItem("autoCopyColorCode") == "true"
+  localStorage.getItem("autoCopyColorCode") === "true"
     ? (text = "Copied")
     : (text = "Selected");
 
@@ -303,7 +267,7 @@ function saveColor(color) {
     localStorage.setItem("savedColorsArray", JSON.stringify(savedColorsArray));
     showColors();
 
-    localStorage.getItem("autoCopyColorCode") == "true"
+    localStorage.getItem("autoCopyColorCode") === "true"
       ? (text = "Saved and Copied")
       : (text = "Saved");
 
@@ -313,7 +277,9 @@ function saveColor(color) {
       localStorage.getItem("colorCodeFormat")
     );
 
-    copyColorCode(color);
+    localStorage.getItem("autoCopyColorCode") === "true" &&
+      copyToClipboard(color, localStorage.getItem("colorCodeFormat"));
+
     showHideSaveColorButton();
     displaySavedColorsCount(savedColorsArray.length);
   }
@@ -330,45 +296,20 @@ function showHideSaveColorButton() {
     : saveColorButton.classList.remove("hide");
 }
 
-function copyColorCode(color) {
-  if (localStorage.getItem("autoCopyColorCode") == "false") return;
-
+function copyToClipboard(color, format) {
   let rgbColor = hexToRgb(color);
-  switch (localStorage.getItem("colorCodeFormat")) {
-    case "RGB":
-      navigator.clipboard.writeText(rgbString(rgbColor));
-      break;
-    case "HEX":
-      navigator.clipboard.writeText(color);
-      break;
-    case "HSL":
-      navigator.clipboard.writeText(hslString(rgbToHsl(rgbColor)));
-      break;
-    case "HSV":
-      navigator.clipboard.writeText(hsvString(rgbToHsv(rgbColor)));
-      break;
-  }
-}
-
-function copyAndDisplayColorFormat(format) {
-  let rgbColor = hexToRgb(currentSelectedColor);
   switch (format) {
     case "RGB":
       navigator.clipboard.writeText(rgbString(rgbColor));
-      displayMessageAndColor("Copied", currentSelectedColor, "RGB");
       break;
     case "HEX":
       navigator.clipboard.writeText(currentSelectedColor);
-      displayMessageAndColor("Copied", currentSelectedColor, "HEX");
       break;
     case "HSL":
       navigator.clipboard.writeText(hslString(rgbToHsl(rgbColor)));
-      displayMessageAndColor("Copied", currentSelectedColor, "HSL");
       break;
     case "HSV":
       navigator.clipboard.writeText(hsvString(rgbToHsv(rgbColor)));
-      displayMessageAndColor("Copied", currentSelectedColor, "HSV");
-      break;
   }
 }
 
@@ -381,17 +322,18 @@ function activateEyeDropper() {
       const { sRGBHex } = await eyeDropper.open();
       applyCurrentSelectedColor(sRGBHex);
 
-      if (localStorage.getItem("autoSaveEyeDropper") == "true") {
+      if (localStorage.getItem("autoSaveEyeDropper") === "true") {
         saveColor(sRGBHex);
-        copyColorCode(sRGBHex);
+        localStorage.getItem("autoCopyColorCode") === "true" &&
+          copyToClipboard(sRGBHex, localStorage.getItem("colorCodeFormat"));
       } else
         displayMessageAndColor(
           "Selected",
           sRGBHex,
           localStorage.getItem("colorCodeFormat")
         );
-    } catch (error) {
-      console.log(error);
+    } catch {
+      displayMessageAndColor("Closed Eye Dropper", null, null);
     }
     document.body.style.display = "block";
   }, 10);
@@ -399,7 +341,7 @@ function activateEyeDropper() {
 
 function deleteOnClickColor(color) {
   let colorIndex = savedColorsArray.findIndex((clr) => {
-    return clr == color;
+    return clr === color;
   });
 
   savedColorsArray.splice(colorIndex, 1);
@@ -412,7 +354,7 @@ function deleteOnClickColor(color) {
     localStorage.getItem("colorCodeFormat")
   );
 
-  if (currentSelectedColor == color) showHideSaveColorButton();
+  currentSelectedColor === color && showHideSaveColorButton();
 
   if (savedColorsArray.length <= 0) {
     showSettingsHideColors();
@@ -433,13 +375,10 @@ function deleteAllColors() {
 }
 
 function toggleDeleteOnClick() {
-  if (deleteColorOnClick) {
-    deleteColorOnClick = false;
-    deleteOnClick.textContent = "Delete On Click";
-  } else {
-    deleteColorOnClick = true;
-    deleteOnClick.textContent = "Done Deleting";
-  }
+  deleteColorOnClick = !deleteColorOnClick;
+  deleteColorOnClick
+    ? (deleteOnClick.textContent = "Done Deleting")
+    : (deleteOnClick.textContent = "Delete On Click");
 }
 
 function disableDeleteOnClick() {
@@ -448,7 +387,7 @@ function disableDeleteOnClick() {
 }
 
 function displaySavedColorsCount(count) {
-  count == 1
+  count === 1
     ? (savedColorsCount.textContent = `1 Color`)
     : (savedColorsCount.textContent = `${count} Colors`);
 }
@@ -474,7 +413,7 @@ function rgbToHsl(rbg) {
     s,
     l = (max + min) / 2;
 
-  if (max == min) {
+  if (max === min) {
     h = s = 0;
   } else {
     let d = max - min;
@@ -512,7 +451,7 @@ function rgbToHsv(rbg) {
   (v = Math.max(rabs, gabs, babs)), (diff = v - Math.min(rabs, gabs, babs));
   diffc = (c) => (v - c) / 6 / diff + 1 / 2;
   percentRoundFn = (num) => Math.round(num * 100) / 100;
-  if (diff == 0) {
+  if (diff === 0) {
     h = s = 0;
   } else {
     s = diff / v;
@@ -551,16 +490,20 @@ settingsButton.addEventListener("click", showSettingsHideColors);
 colorsButton.addEventListener("click", showColorsHideSettings);
 lightDarkButton.addEventListener("click", toggleLightDarkMode);
 copyRGBButton.addEventListener("click", function () {
-  copyAndDisplayColorFormat("RGB");
+  copyToClipboard(currentSelectedColor, "RGB");
+  displayMessageAndColor("Copied", currentSelectedColor, "RGB");
 });
 copyHexButton.addEventListener("click", function () {
-  copyAndDisplayColorFormat("HEX");
+  copyToClipboard(currentSelectedColor, "HEX");
+  displayMessageAndColor("Copied", currentSelectedColor, "HEX");
 });
 copyHslButton.addEventListener("click", function () {
-  copyAndDisplayColorFormat("HSL");
+  copyToClipboard(currentSelectedColor, "HSL");
+  displayMessageAndColor("Copied", currentSelectedColor, "HSL");
 });
 copyHsvButton.addEventListener("click", function () {
-  copyAndDisplayColorFormat("HSV");
+  copyToClipboard(currentSelectedColor, "HSV");
+  displayMessageAndColor("Copied", currentSelectedColor, "HSV");
 });
 saveColorButton.addEventListener("click", saveColorButtonClicked);
 selectedColor.addEventListener("click", function () {
@@ -591,31 +534,12 @@ autoCopyColorCode.addEventListener("change", function () {
 });
 
 colorCodeFormat.addEventListener("change", function () {
-  if (colorCodeFormat.value == "RGB") {
-    localStorage.setItem("colorCodeFormat", "RGB");
-  } else if (colorCodeFormat.value == "HEX") {
-    localStorage.setItem("colorCodeFormat", "HEX");
-  } else if (colorCodeFormat.value == "HSL") {
-    localStorage.setItem("colorCodeFormat", "HSL");
-  } else if (colorCodeFormat.value == "HSV") {
-    localStorage.setItem("colorCodeFormat", "HSV");
-  }
+  localStorage.setItem("colorCodeFormat", colorCodeFormat.value);
 });
 
 colorsPerLine.addEventListener("change", function () {
-  if (colorsPerLine.value == "6") {
-    localStorage.setItem("colorsPerLine", "6");
-    setColorsPerLine(6);
-  } else if (colorsPerLine.value == "8") {
-    localStorage.setItem("colorsPerLine", "8");
-    setColorsPerLine(8);
-  } else if (colorsPerLine.value == "10") {
-    localStorage.setItem("colorsPerLine", "10");
-    setColorsPerLine(10);
-  } else if (colorsPerLine.value == "12") {
-    localStorage.setItem("colorsPerLine", "12");
-    setColorsPerLine(12);
-  }
+  setColorsPerLine(parseInt(colorsPerLine.value));
+  localStorage.setItem("colorsPerLine", colorsPerLine.value);
 });
 
 displayMessagesOption.addEventListener("change", function () {
