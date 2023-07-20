@@ -42,7 +42,6 @@ var messageTimeout,
   deleteColorOnClick = false;
 
 setOptions();
-displaySavedColorsCount(savedColorsArray.length);
 showPage("colors");
 
 function setOptions() {
@@ -141,6 +140,7 @@ function showPage(page) {
     colorsTools.classList.remove("hide");
     settingsTools.classList.add("hide");
     settingsPanel.classList.add("hide");
+    displaySavedColorsCount(savedColorsArray.length);
     showColors();
   } else {
     // settings
