@@ -11,8 +11,8 @@ const colorsButton = document.querySelector("#colors-button");
 const lightDarkButton = document.querySelector("#light-dark-mode");
 const allColors = document.querySelector(".all-colors");
 const savedColorsCount = document.querySelector(".saved-colors-count");
-const deleteOnClick = document.querySelector(".delete-onclick");
-const deleteAll = document.querySelector(".delete-all");
+const deleteOnClick = document.querySelector("#delete-on-click");
+const deleteAll = document.querySelector("#delete-all");
 const lightModeIcon = document.querySelector("#light-mode-icon");
 const root = document.querySelector(":root");
 const settingsPanel = document.querySelector(".settings-panel");
@@ -38,12 +38,12 @@ const displayMessagesOption = document.querySelector(
 const savedColorsArray = JSON.parse(
   localStorage.getItem("savedColorsArray") ?? "[]"
 );
-var messageTimeout, deleteColorOnClick;
+var messageTimeout,
+  deleteColorOnClick = false;
 
 setOptions();
 displaySavedColorsCount(savedColorsArray.length);
 showPage("colors");
-showColors();
 
 function setOptions() {
   setLightDarkMode(localStorage.getItem("lightDarkMode"));
@@ -141,6 +141,7 @@ function showPage(page) {
     colorsTools.classList.remove("hide");
     settingsTools.classList.add("hide");
     settingsPanel.classList.add("hide");
+    showColors();
   } else {
     // settings
     savedColors.classList.add("hide");
@@ -149,7 +150,7 @@ function showPage(page) {
     colorsTools.classList.add("hide");
     settingsTools.classList.remove("hide");
     settingsPanel.classList.remove("hide");
-    setDeleteOnClick(false);
+    deleteColorOnClick && setDeleteOnClick(false, false);
   }
 }
 
@@ -184,9 +185,13 @@ function showColors() {
   allColors.innerHTML = savedColorsArray
     .map(
       (color) => `
-        <li class="color">
-            <span class="rect" data-color="${color}" style="background: ${color};"></span>
-        </li>`
+    <li class="color">
+        <span class="${
+          deleteColorOnClick ? "rect-delete" : "rect"
+        }" data-color="${color}" style="background: ${color};">${
+        deleteColorOnClick ? "<i class='bx bx-trash-alt' ></i>" : ""
+      }</span>
+    </li>`
     )
     .join("");
 
@@ -307,6 +312,7 @@ function copyToClipboard(color, format) {
 
 function activateEyeDropper() {
   document.body.style.display = "none";
+  deleteOnClick && setDeleteOnClick(false, true);
   setTimeout(async () => {
     try {
       const eyeDropper = new EyeDropper();
@@ -350,7 +356,7 @@ function deleteColor(color) {
 
   if (!savedColorsArray.length) {
     applyCurrentSelectedColor("#000000");
-    setDeleteOnClick(false);
+    deleteOnClick && setDeleteOnClick(false, true);
     showColors();
   }
 }
@@ -362,19 +368,18 @@ function deleteAllColors() {
     displaySavedColorsCount(0);
     displayMessageAndColor("Deleted All", null, null);
     applyCurrentSelectedColor("#000000");
-    setDeleteOnClick(false);
+    deleteOnClick && setDeleteOnClick(false, true);
     showColors();
   }
 }
 
-function setDeleteOnClick(enable) {
-  if (enable) {
-    deleteColorOnClick = true;
-    deleteOnClick.textContent = "Done Deleting";
-  } else {
-    deleteColorOnClick = false;
-    deleteOnClick.textContent = "Delete On Click";
-  }
+function setDeleteOnClick(setDelete, reRenderColors) {
+  deleteColorOnClick = setDelete;
+  deleteColorOnClick
+    ? deleteOnClick.setAttribute("class", "bx bx-check")
+    : deleteOnClick.setAttribute("class", "bx bx-trash");
+
+  reRenderColors && showColors();
 }
 
 function displaySavedColorsCount(count) {
@@ -513,9 +518,10 @@ copyHsvButton.addEventListener("click", function () {
 saveColorButton.addEventListener("click", saveColorButtonClicked);
 selectedColor.addEventListener("click", function () {
   colorPalette.click();
+  deleteOnClick && setDeleteOnClick(false, true);
 });
 deleteOnClick.addEventListener("click", function () {
-  setDeleteOnClick(!deleteColorOnClick);
+  setDeleteOnClick(!deleteColorOnClick, true);
 });
 deleteAll.addEventListener("click", deleteAllColors);
 
@@ -526,6 +532,10 @@ colorPalette.addEventListener("input", function () {
     colorPalette.value,
     localStorage.getItem("colorCodeFormat")
   );
+});
+
+colorPalette.addEventListener("click", function () {
+  deleteOnClick && setDeleteOnClick(false, true);
 });
 
 autoSaveEyeDropper.addEventListener("change", function () {

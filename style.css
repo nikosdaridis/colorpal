@@ -235,14 +235,14 @@
 }
 
 #text {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
 
 #color-code {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .save-selected-color {
@@ -317,9 +317,9 @@
   margin: 0.5rem;
 }
 
-.saved-colors .delete-onclick {
+.saved-colors #delete-on-click {
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   justify-self: left;
   color: var(--highlight-color);
 }
@@ -330,9 +330,9 @@
   color: var(--text-color);
 }
 
-.saved-colors .delete-all {
+.saved-colors #delete-all {
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   justify-self: right;
   color: var(--highlight-color);
 }
@@ -363,4 +363,48 @@
   transform: scale(1.25);
   border-radius: 5%;
   border: 1px solid var(--highlight-color);
+}
+
+.all-colors .color .rect-delete {
+  display: block;
+  height: var(--rect-height);
+  width: var(--rect-width);
+  margin: var(--rect-margin);
+  border-radius: 15%;
+  border: 1px solid var(--text-color);
+  transition: 0.3s ease;
+  animation: 2s infinite normal shake;
+}
+
+.all-colors .color .rect-delete:hover {
+  border-radius: 5%;
+  border: 1px solid red;
+  animation: 0.2s infinite normal shake;
+}
+
+@keyframes shake {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(3deg);
+  }
+  50% {
+    transform: rotate(0eg);
+  }
+  75% {
+    transform: rotate(-3deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.all-colors .color i {
+  display: block;
+  color: red;
+  text-shadow: 1px 1px 3px black, 0 0 25px black, 0 0 5px black;
+  font-size: calc(var(--rect-height) * 0.5);
+  text-align: center;
+  margin-top: calc(var(--rect-margin) * 2.5);
 }
