@@ -23,9 +23,9 @@
   --text-color: #24282a;
   --selected-color: #000000;
 
-  --rect-height: 42px;
-  --rect-width: 42px;
-  --rect-margin: 4px;
+  --rect-height: 53px;
+  --rect-width: 53px;
+  --rect-margin: 5px;
 }
 
 .popup {
@@ -318,8 +318,6 @@
   text-align: center;
   font-size: 1.5rem;
   color: var(--highlight-color);
-  text-shadow: 0px 0px 1px var(--highlight-color),
-    0 0 1px var(--highlight-color), 0 0 1px var(--highlight-color);
 }
 
 .saved-colors .saved-colors-tools {
@@ -338,14 +336,13 @@
   font-size: 1.5rem;
   justify-self: left;
   margin-left: 20px;
-  text-shadow: 0px 0px 1px red, 0 0 1px red, 0 0 1px red;
 }
 
 .saved-colors .saved-colors-tools .saved-colors-count {
   color: var(--text-color);
   font-size: 1.2rem;
   justify-self: center;
-  margin-left: 30px;
+  margin-left: 25px;
 }
 
 .saved-colors #delete-all {
@@ -354,7 +351,6 @@
   font-size: 1.5rem;
   justify-self: right;
   margin-right: 20px;
-  text-shadow: 0px 0px 1px red, 0 0 1px red, 0 0 1px red;
 }
 
 .all-colors {

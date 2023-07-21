@@ -16,7 +16,7 @@ const collapseSavedColorsTools = document.querySelector(
 const collapseSavedColorsToolsIcon = document.querySelector(
   "#collapse-saved-colors-tools-icon"
 );
-const savedColorsHeader = document.querySelector(".saved-colors-tools");
+const savedColorsTools = document.querySelector(".saved-colors-tools");
 const savedColorsCount = document.querySelector(".saved-colors-count");
 const deleteOnClick = document.querySelector("#delete-on-click");
 const deleteAll = document.querySelector("#delete-all");
@@ -129,7 +129,7 @@ function setColorsPerLine(colorsPerLine) {
       allColors.style.setProperty("grid-template-columns", "repeat(10, 1fr)");
       root.style.setProperty("--rect-height", "42px");
       root.style.setProperty("--rect-width", "42px");
-      root.style.setProperty("--rect-margin", "4.2px");
+      root.style.setProperty("--rect-margin", "4.3px");
       break;
     case 12:
       allColors.style.setProperty("grid-template-columns", "repeat(12, 1fr)");
@@ -143,10 +143,10 @@ function setColorsPerLine(colorsPerLine) {
 function setCollapseSavedColorsTools(setCollapse) {
   localStorage.setItem("collapseSavedColorsTools", setCollapse);
   if (setCollapse === "true") {
-    savedColorsHeader.classList.add("hide");
+    savedColorsTools.classList.add("hide");
     collapseSavedColorsToolsIcon.setAttribute("class", "bx bxs-chevrons-down");
   } else {
-    savedColorsHeader.classList.remove("hide");
+    savedColorsTools.classList.remove("hide");
     collapseSavedColorsToolsIcon.setAttribute("class", "bx bxs-chevrons-up");
   }
 
@@ -402,17 +402,9 @@ function setDeleteOnClick(setDelete, reRenderColors) {
   if (deleteColorOnClick) {
     deleteOnClick.setAttribute("class", "bx bx-check");
     deleteOnClick.style.setProperty("color", "green");
-    deleteOnClick.style.setProperty(
-      "text-shadow",
-      "0px 0px 1px green, 0 0 1px green, 0 0 1px green"
-    );
   } else {
     deleteOnClick.setAttribute("class", "bx bx-trash");
     deleteOnClick.style.setProperty("color", "red");
-    deleteOnClick.style.setProperty(
-      "text-shadow",
-      "0px 0px 1px red, 0 0 1px red, 0 0 1px red"
-    );
   }
 
   reRenderColors && showColors();
