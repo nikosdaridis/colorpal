@@ -10,6 +10,13 @@ const settingsTools = document.querySelector(".settings-tools");
 const colorsButton = document.querySelector("#colors-button");
 const lightDarkButton = document.querySelector("#light-dark-mode");
 const allColors = document.querySelector(".all-colors");
+const collapseSavedColorsTools = document.querySelector(
+  ".collapse-saved-colors-tools"
+);
+const collapseSavedColorsToolsIcon = document.querySelector(
+  "#collapse-saved-colors-tools-icon"
+);
+const savedColorsHeader = document.querySelector(".saved-colors-tools");
 const savedColorsCount = document.querySelector(".saved-colors-count");
 const deleteOnClick = document.querySelector("#delete-on-click");
 const deleteAll = document.querySelector("#delete-all");
@@ -81,6 +88,10 @@ function setOptions() {
   localStorage.getItem("displayMessagesOption") === "true"
     ? (displayMessagesOption.checked = true)
     : (displayMessagesOption.checked = false);
+
+  localStorage.getItem("collapseSavedColorsTools") === null &&
+    localStorage.setItem("collapseSavedColorsTools", "false");
+  setCollapseSavedColorsTools(localStorage.getItem("collapseSavedColorsTools"));
 }
 
 function setLightDarkMode(mode) {
@@ -104,29 +115,42 @@ function setColorsPerLine(colorsPerLine) {
   switch (colorsPerLine) {
     case 6:
       allColors.style.setProperty("grid-template-columns", "repeat(6, 1fr)");
-      root.style.setProperty("--rect-height", "71.1px");
-      root.style.setProperty("--rect-width", "71.1px");
+      root.style.setProperty("--rect-height", "71px");
+      root.style.setProperty("--rect-width", "71px");
       root.style.setProperty("--rect-margin", "6.5px");
       break;
     case 8:
       allColors.style.setProperty("grid-template-columns", "repeat(8, 1fr)");
-      root.style.setProperty("--rect-height", "53.1px");
-      root.style.setProperty("--rect-width", "53.1px");
+      root.style.setProperty("--rect-height", "53px");
+      root.style.setProperty("--rect-width", "53px");
       root.style.setProperty("--rect-margin", "5px");
       break;
     case 10:
       allColors.style.setProperty("grid-template-columns", "repeat(10, 1fr)");
-      root.style.setProperty("--rect-height", "42.1px");
-      root.style.setProperty("--rect-width", "42.1px");
+      root.style.setProperty("--rect-height", "42px");
+      root.style.setProperty("--rect-width", "42px");
       root.style.setProperty("--rect-margin", "4.2px");
       break;
     case 12:
       allColors.style.setProperty("grid-template-columns", "repeat(12, 1fr)");
-      root.style.setProperty("--rect-height", "35.1px");
-      root.style.setProperty("--rect-width", "35.1px");
+      root.style.setProperty("--rect-height", "35px");
+      root.style.setProperty("--rect-width", "35px");
       root.style.setProperty("--rect-margin", "3.5px");
       break;
   }
+}
+
+function setCollapseSavedColorsTools(setCollapse) {
+  localStorage.setItem("collapseSavedColorsTools", setCollapse);
+  if (setCollapse === "true") {
+    savedColorsHeader.classList.add("hide");
+    collapseSavedColorsToolsIcon.setAttribute("class", "bx bxs-chevrons-down");
+  } else {
+    savedColorsHeader.classList.remove("hide");
+    collapseSavedColorsToolsIcon.setAttribute("class", "bx bxs-chevrons-up");
+  }
+
+  deleteOnClick && setDeleteOnClick(false, true);
 }
 
 function showPage(page) {
@@ -375,9 +399,21 @@ function deleteAllColors() {
 
 function setDeleteOnClick(setDelete, reRenderColors) {
   deleteColorOnClick = setDelete;
-  deleteColorOnClick
-    ? deleteOnClick.setAttribute("class", "bx bx-check")
-    : deleteOnClick.setAttribute("class", "bx bx-trash");
+  if (deleteColorOnClick) {
+    deleteOnClick.setAttribute("class", "bx bx-check");
+    deleteOnClick.style.setProperty("color", "green");
+    deleteOnClick.style.setProperty(
+      "text-shadow",
+      "0px 0px 1px green, 0 0 1px green, 0 0 1px green"
+    );
+  } else {
+    deleteOnClick.setAttribute("class", "bx bx-trash");
+    deleteOnClick.style.setProperty("color", "red");
+    deleteOnClick.style.setProperty(
+      "text-shadow",
+      "0px 0px 1px red, 0 0 1px red, 0 0 1px red"
+    );
+  }
 
   reRenderColors && showColors();
 }
@@ -520,6 +556,13 @@ selectedColor.addEventListener("click", function () {
   colorPalette.click();
   deleteOnClick && setDeleteOnClick(false, true);
 });
+
+collapseSavedColorsTools.addEventListener("click", function () {
+  localStorage.getItem("collapseSavedColorsTools") === "true"
+    ? setCollapseSavedColorsTools("false")
+    : setCollapseSavedColorsTools("true");
+});
+
 deleteOnClick.addEventListener("click", function () {
   setDeleteOnClick(!deleteColorOnClick, true);
 });

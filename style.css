@@ -23,8 +23,8 @@
   --text-color: #24282a;
   --selected-color: #000000;
 
-  --rect-height: 42.1px;
-  --rect-width: 42.1px;
+  --rect-height: 42px;
+  --rect-width: 42px;
   --rect-margin: 4px;
 }
 
@@ -311,36 +311,57 @@
   display: none;
 }
 
-.saved-colors header {
+.saved-colors .collapse-saved-colors-tools {
+  float: right;
+  width: 25px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 1.5rem;
+  color: var(--highlight-color);
+  text-shadow: 0px 0px 1px var(--highlight-color),
+    0 0 1px var(--highlight-color), 0 0 1px var(--highlight-color);
+}
+
+.saved-colors .saved-colors-tools {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  margin: 0.5rem;
+  margin-bottom: -29px;
+}
+
+.saved-colors .saved-colors-tools.hide {
+  display: none;
 }
 
 .saved-colors #delete-on-click {
   cursor: pointer;
+  color: red;
   font-size: 1.5rem;
   justify-self: left;
-  color: var(--highlight-color);
+  margin-left: 20px;
+  text-shadow: 0px 0px 1px red, 0 0 1px red, 0 0 1px red;
 }
 
-.saved-colors header .saved-colors-count {
+.saved-colors .saved-colors-tools .saved-colors-count {
+  color: var(--text-color);
   font-size: 1.2rem;
   justify-self: center;
-  color: var(--text-color);
+  margin-left: 30px;
 }
 
 .saved-colors #delete-all {
   cursor: pointer;
+  color: red;
   font-size: 1.5rem;
   justify-self: right;
-  color: var(--highlight-color);
+  margin-right: 20px;
+  text-shadow: 0px 0px 1px red, 0 0 1px red, 0 0 1px red;
 }
 
 .all-colors {
   display: grid;
   justify-self: center;
   padding: 0.5rem;
+  margin-top: 20px;
   grid-template-columns: repeat(10, 1fr);
   list-style-type: none;
 }
