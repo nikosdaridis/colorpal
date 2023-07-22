@@ -27,7 +27,7 @@
 
       <div class="settings-tools">
         <button id="colors-button"><i class="bx bxs-color"></i></button>
-        <button id="light-dark-mode">
+        <button id="light-dark-button">
           <i class="bx bxs-moon" id="light-mode-icon"></i>
         </button>
       </div>
@@ -35,31 +35,33 @@
       <div class="settings-panel">
         <div class="options">
           <div>
-            <label for="save-eye-dropper">Auto Save Eye Dropper Color</label
+            <label for="auto-save-eye-dropper">Auto Save Eye Dropper</label
             ><br />
           </div>
           <div>
             <input
               type="checkbox"
-              id="save-eye-dropper"
+              id="auto-save-eye-dropper"
               name="Save Eye Dropper"
             />
           </div>
 
           <div>
-            <label for="copy-color-code">Auto Copy Color Code</label><br />
+            <label for="auto-copy-color-code">Auto Copy Color Code</label><br />
           </div>
           <div>
             <input
               type="checkbox"
-              id="copy-color-code"
+              id="auto-copy-color-code"
               name="Copy Color Code"
             />
           </div>
 
-          <div><label for="code-format">Copy Color Code Format:</label></div>
           <div>
-            <select name="Code Format" id="code-format">
+            <label for="color-code-format">Color Code Format:</label>
+          </div>
+          <div>
+            <select name="Code Format" id="color-code-format">
               <option value="RGB">RGB</option>
               <option value="HEX">HEX</option>
               <option value="HSL">HSL</option>
@@ -90,7 +92,7 @@
         </div>
         <div class="info">
           <div class="link">
-            <h3>Suggest Feature/Found Bug</h3>
+            <h3>Suggest Feature - Found Bug</h3>
             <a href="https://nikosdaridis.github.io/#contact" target="_blank"
               ><i class="bx bx-envelope"></i
             ></a>
@@ -101,7 +103,7 @@
               ><i class="bx bxl-github"></i
             ></a>
           </div>
-          <h4>Version <span>1.1.3</span></h4>
+          <h4>Version <span>1.1.4</span></h4>
         </div>
       </div>
 
@@ -122,8 +124,8 @@
         </div>
 
         <div class="display-messages">
-          <h2 id="text"></h2>
-          <h3 id="color-code"></h3>
+          <h2 id="display-message-text"></h2>
+          <h3 id="display-message-color-code"></h3>
         </div>
       </div>
 
@@ -134,7 +136,7 @@
         </div>
       </div>
 
-      <div class="saved-colors">
+      <div class="saved-colors-panel">
         <div class="collapse-saved-colors-tools">
           <i
             class="bx bx-chevrons-up"
@@ -143,10 +145,10 @@
         </div>
         <div class="saved-colors-tools">
           <i id="delete-on-click" class="bx bx-trash"></i>
-          <span class="saved-colors-count"></span>
           <i id="delete-all" class="bx bx-trash"><spa>All</spa></i>
+          <span class="saved-colors-count"></span>
         </div>
-        <ul class="all-colors"></ul>
+        <ul class="saved-colors"></ul>
       </div>
     </div>
   </body>

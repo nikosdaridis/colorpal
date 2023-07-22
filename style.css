@@ -6,14 +6,8 @@
   padding: 0;
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
-}
 
-*::selection {
-  background: none;
-}
-
-*::-moz-selection {
-  background: none;
+  user-select: none;
 }
 
 :root {
@@ -21,7 +15,7 @@
   --second-color: #ededf7;
   --highlight-color: #1587ff;
   --text-color: #24282a;
-  --selected-color: #000000;
+  --selectedColor-color: #000000;
 
   --rect-height: 53px;
   --rect-width: 53px;
@@ -35,74 +29,20 @@
   background: var(--first-color);
 }
 
-.colors-tools {
+.colors-tools,
+.settings-tools {
   display: flex;
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
 
-.colors-tools.hide {
-  display: none;
-}
-
-.settings-tools {
-  display: flex;
-  margin-top: 1rem;
-}
-
+.colors-tools.hide,
 .settings-tools.hide {
   display: none;
 }
 
-.colors-tools button {
-  outline: none;
-  border: none;
-  color: #fafcff;
-  font-size: 2rem;
-  cursor: pointer;
-  border-radius: 5px;
-  padding: 0px 10px;
-  margin-right: 2rem;
-  background: var(--highlight-color);
-  box-shadow: 0 0 0.3rem var(--highlight-color);
-  transition: 0.5s ease;
-}
-
-.colors-tools button:hover {
-  box-shadow: none;
-}
-
-.color-palette-button i {
-  outline: none;
-  border: none;
-  color: #fafcff;
-  font-size: 2rem;
-  cursor: pointer;
-  border-radius: 5px;
-  padding: 10px 10px;
-  margin-right: 2rem;
-  background: var(--highlight-color);
-  box-shadow: 0 0 0.3rem var(--highlight-color);
-  transition: 0.5s ease;
-}
-
-.color-palette-button i:hover {
-  box-shadow: none;
-}
-
-#color-palette {
-  opacity: 0;
-  width: 0;
-  height: 0;
-  padding: 0;
-  margin: 0;
-  border: 0;
-}
-
-#settings-button {
-  margin-right: 0rem;
-}
-
+.colors-tools button,
+.color-palette-button i,
 .settings-tools button {
   outline: none;
   border: none;
@@ -117,12 +57,29 @@
   transition: 0.5s ease;
 }
 
+.color-palette-button i {
+  padding: 10px 10px;
+}
+
+.colors-tools button:hover,
+.color-palette-button i:hover,
 .settings-tools button:hover {
   box-shadow: none;
 }
 
-#light-dark-mode {
+#settings-button,
+#light-dark-button {
   margin-right: 0rem;
+}
+
+#color-palette {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  padding: 0;
+  border: 0;
+  margin-top: -16px;
+  margin-left: 5px;
 }
 
 .settings-panel {
@@ -152,17 +109,18 @@
 .settings-panel .info {
   display: grid;
   justify-items: center;
+  text-align: center;
   margin-top: 2rem;
   gap: 0.2rem;
 }
 
 .settings-panel .info h3 {
-  font-size: 1rem;
+  font-size: 0.8rem;
   color: var(--text-color);
 }
 
 .settings-panel .info h4 {
-  font-size: 0.9rem;
+  font-size: 0.7rem;
   color: var(--text-color);
 }
 
@@ -177,7 +135,7 @@
 }
 
 .settings-panel .info i {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   color: var(--highlight-color);
 }
 
@@ -234,14 +192,14 @@
   pointer-events: none;
 }
 
-#text {
+#display-message-text {
   font-size: 0.8rem;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
 
-#color-code {
+#display-message-color-code {
   font-size: 0.8rem;
 }
 
@@ -291,7 +249,7 @@
   width: 100px;
   border-radius: 15%;
   border: 1px solid var(--text-color);
-  box-shadow: 0 0 10px var(--selected-color);
+  box-shadow: 0 0 10px var(--selectedColor-color);
   transition: 0.3s ease;
 }
 
@@ -301,17 +259,17 @@
   box-shadow: none;
 }
 
-.saved-colors {
+.saved-colors-panel {
   margin-top: 1rem;
   background-color: var(--second-color);
   box-shadow: 0 0 0.3rem var(--second-color);
 }
 
-.saved-colors.hide {
+.saved-colors-panel.hide {
   display: none;
 }
 
-.saved-colors .collapse-saved-colors-tools {
+.saved-colors-panel .collapse-saved-colors-tools {
   float: right;
   width: 25px;
   cursor: pointer;
@@ -320,40 +278,34 @@
   color: var(--highlight-color);
 }
 
-.saved-colors .saved-colors-tools {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.saved-colors-panel .saved-colors-tools {
+  display: flex;
+  gap: 30px;
   margin-bottom: -29px;
 }
 
-.saved-colors .saved-colors-tools.hide {
+.saved-colors-panel .saved-colors-tools.hide {
   display: none;
 }
 
-.saved-colors #delete-on-click {
+.saved-colors-panel #delete-on-click,
+#delete-all {
   cursor: pointer;
   color: red;
   font-size: 1.5rem;
   justify-self: left;
-  margin-left: 20px;
+  margin-top: 3px;
+  margin-left: 15px;
 }
 
-.saved-colors .saved-colors-tools .saved-colors-count {
+.saved-colors-panel .saved-colors-tools .saved-colors-count {
+  position: fixed;
+  left: 220px;
   color: var(--text-color);
   font-size: 1.2rem;
-  justify-self: center;
-  margin-left: 25px;
 }
 
-.saved-colors #delete-all {
-  cursor: pointer;
-  color: red;
-  font-size: 1.5rem;
-  justify-self: right;
-  margin-right: 20px;
-}
-
-.all-colors {
+.saved-colors {
   display: grid;
   justify-self: center;
   padding: 0.5rem;
@@ -362,11 +314,11 @@
   list-style-type: none;
 }
 
-.all-colors .color {
+.saved-colors .color {
   cursor: pointer;
 }
 
-.all-colors .color .rect {
+.saved-colors .color .rect {
   display: block;
   height: var(--rect-height);
   width: var(--rect-width);
@@ -376,13 +328,13 @@
   transition: 0.3s ease;
 }
 
-.all-colors .color .rect:hover {
+.saved-colors .color .rect:hover {
   transform: scale(1.25);
   border-radius: 5%;
   border: 1px solid var(--highlight-color);
 }
 
-.all-colors .color .rect-delete {
+.saved-colors .color .rect-delete {
   display: block;
   height: var(--rect-height);
   width: var(--rect-width);
@@ -390,13 +342,13 @@
   border-radius: 15%;
   border: 1px solid var(--text-color);
   transition: 0.3s ease;
-  animation: 2s infinite normal shake;
+  animation: 1.5s infinite normal shake;
 }
 
-.all-colors .color .rect-delete:hover {
+.saved-colors .color .rect-delete:hover {
   border-radius: 5%;
-  border: 1px solid red;
-  animation: 0.2s infinite normal shake;
+  border-color: red;
+  animation-duration: 0.3s;
 }
 
 @keyframes shake {
@@ -417,7 +369,7 @@
   }
 }
 
-.all-colors .color i {
+.saved-colors .color i {
   display: block;
   color: red;
   text-shadow: 1px 1px 3px black, 0 0 25px black, 0 0 5px black;

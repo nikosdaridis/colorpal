@@ -1,3 +1,4 @@
+const root = document.querySelector(":root");
 const eyeDropperButton = document.querySelector("#eye-dropper-button");
 const colorPalette = document.querySelector("#color-palette");
 const settingsButton = document.querySelector("#settings-button");
@@ -8,8 +9,8 @@ const copyHsvButton = document.querySelector("#copy-hsv-button");
 const colorsTools = document.querySelector(".colors-tools");
 const settingsTools = document.querySelector(".settings-tools");
 const colorsButton = document.querySelector("#colors-button");
-const lightDarkButton = document.querySelector("#light-dark-mode");
-const allColors = document.querySelector(".all-colors");
+const lightDarkButton = document.querySelector("#light-dark-button");
+const savedColors = document.querySelector(".saved-colors");
 const collapseSavedColorsTools = document.querySelector(
   ".collapse-saved-colors-tools"
 );
@@ -21,23 +22,24 @@ const savedColorsCount = document.querySelector(".saved-colors-count");
 const deleteOnClick = document.querySelector("#delete-on-click");
 const deleteAll = document.querySelector("#delete-all");
 const lightModeIcon = document.querySelector("#light-mode-icon");
-const root = document.querySelector(":root");
 const settingsPanel = document.querySelector(".settings-panel");
 const codesMessages = document.querySelector(".codes-messages");
 const saveSelectedColor = document.querySelector(".save-selected-color");
-const savedColors = document.querySelector(".saved-colors");
+const savedColorsPanel = document.querySelector(".saved-colors-panel");
 const selectedColor = document.querySelector(".selected-color .rect");
 const saveColorButton = document.querySelector(".save-color-button");
 const displayMessages = document.querySelector(".display-messages");
-const displayMessageText = document.querySelector("#text");
-const displayMessageColorCode = document.querySelector("#color-code");
+const displayMessageText = document.querySelector("#display-message-text");
+const displayMessageColorCode = document.querySelector(
+  "#display-message-color-code"
+);
 const selectedColorRGB = document.querySelector("#rgb");
 const selectedColorHex = document.querySelector("#hex");
 const selectedColorHSL = document.querySelector("#hsl");
 const selectedColorHSV = document.querySelector("#hsv");
-const autoSaveEyeDropper = document.querySelector("#save-eye-dropper");
-const autoCopyColorCode = document.querySelector("#copy-color-code");
-const colorCodeFormat = document.querySelector("#code-format");
+const autoSaveEyeDropper = document.querySelector("#auto-save-eye-dropper");
+const autoCopyColorCode = document.querySelector("#auto-copy-color-code");
+const colorCodeFormat = document.querySelector("#color-code-format");
 const colorsPerLine = document.querySelector("#colors-per-line");
 const displayMessagesOption = document.querySelector(
   "#display-messages-option"
@@ -49,36 +51,39 @@ var messageTimeout,
   deleteColorOnClick = false;
 
 setOptions();
-showPage("colors");
+setPage("colors");
 
 function setOptions() {
+  // set default values if null
   setLightDarkMode(localStorage.getItem("lightDarkMode"));
 
   localStorage.getItem("currSelectedColor") === null
-    ? applyCurrentSelectedColor("#000000")
-    : applyCurrentSelectedColor(localStorage.getItem("currSelectedColor"));
+    ? setCurrentSelectedColor("#000000")
+    : setCurrentSelectedColor(localStorage.getItem("currSelectedColor"));
 
-  localStorage.getItem("autoSaveEyeDropper") === null &&
+  localStorage.getItem("autoSaveEyeDropper") ||
     localStorage.setItem("autoSaveEyeDropper", "true");
 
-  localStorage.getItem("autoCopyColorCode") === null &&
+  localStorage.getItem("autoCopyColorCode") ||
     localStorage.setItem("autoCopyColorCode", "true");
 
-  localStorage.getItem("colorCodeFormat") === null &&
+  localStorage.getItem("colorCodeFormat") ||
     localStorage.setItem("colorCodeFormat", "HEX");
   colorCodeFormat.value = localStorage.getItem("colorCodeFormat");
 
-  localStorage.getItem("colorsPerLine") === null &&
+  localStorage.getItem("colorsPerLine") ||
     localStorage.setItem("colorsPerLine", "8");
   colorsPerLine.value = localStorage.getItem("colorsPerLine");
   setColorsPerLine(parseInt(localStorage.getItem("colorsPerLine")));
 
-  localStorage.getItem("displayMessagesOption") === null &&
+  localStorage.getItem("displayMessagesOption") ||
     localStorage.setItem("displayMessagesOption", "true");
 
-  localStorage.getItem("lightDarkMode") === null &&
-    localStorage.setItem("lightDarkMode", "light");
+  localStorage.getItem("collapseSavedColorsTools") ||
+    localStorage.setItem("collapseSavedColorsTools", "false");
+  setCollapseSavedColorsTools(localStorage.getItem("collapseSavedColorsTools"));
 
+  // set visual check boxes
   localStorage.getItem("autoSaveEyeDropper") === "true"
     ? (autoSaveEyeDropper.checked = true)
     : (autoSaveEyeDropper.checked = false);
@@ -88,10 +93,6 @@ function setOptions() {
   localStorage.getItem("displayMessagesOption") === "true"
     ? (displayMessagesOption.checked = true)
     : (displayMessagesOption.checked = false);
-
-  localStorage.getItem("collapseSavedColorsTools") === null &&
-    localStorage.setItem("collapseSavedColorsTools", "false");
-  setCollapseSavedColorsTools(localStorage.getItem("collapseSavedColorsTools"));
 }
 
 function setLightDarkMode(mode) {
@@ -102,7 +103,7 @@ function setLightDarkMode(mode) {
     root.style.setProperty("--text-color", "#fafcff");
     lightModeIcon.setAttribute("class", "bx bxs-sun");
   } else {
-    // light
+    // default set light
     localStorage.setItem("lightDarkMode", "light");
     root.style.setProperty("--first-color", "#fafcff");
     root.style.setProperty("--second-color", "#e7e7f4");
@@ -111,28 +112,49 @@ function setLightDarkMode(mode) {
   }
 }
 
+function setCurrentSelectedColor(currentColor) {
+  localStorage.setItem("currSelectedColor", currentColor);
+  savedColorsArray.includes(currentColor)
+    ? saveColorButton.classList.add("hide")
+    : saveColorButton.classList.remove("hide");
+
+  colorPalette.value = localStorage.getItem("currSelectedColor");
+  selectedColor.style.background = currentColor;
+  root.style.setProperty(
+    "--selectedColor-color",
+    localStorage.getItem("currSelectedColor")
+  );
+
+  selectedColorRGB.textContent = hexToRgb(currentColor, true);
+  selectedColorHex.textContent = currentColor;
+  let rgbColor = hexToRgb(currentColor, false);
+  selectedColorHSL.textContent = rgbToHsl(rgbColor, true);
+  selectedColorHSV.textContent = rgbToHsv(rgbColor, true);
+}
+
 function setColorsPerLine(colorsPerLine) {
+  savedColors.style.setProperty(
+    "grid-template-columns",
+    `repeat(${String(colorsPerLine)}, 1fr)`
+  );
+
   switch (colorsPerLine) {
     case 6:
-      allColors.style.setProperty("grid-template-columns", "repeat(6, 1fr)");
       root.style.setProperty("--rect-height", "71px");
       root.style.setProperty("--rect-width", "71px");
       root.style.setProperty("--rect-margin", "6.5px");
       break;
     case 8:
-      allColors.style.setProperty("grid-template-columns", "repeat(8, 1fr)");
       root.style.setProperty("--rect-height", "53px");
       root.style.setProperty("--rect-width", "53px");
       root.style.setProperty("--rect-margin", "5px");
       break;
     case 10:
-      allColors.style.setProperty("grid-template-columns", "repeat(10, 1fr)");
       root.style.setProperty("--rect-height", "42px");
       root.style.setProperty("--rect-width", "42px");
       root.style.setProperty("--rect-margin", "4.3px");
       break;
     case 12:
-      allColors.style.setProperty("grid-template-columns", "repeat(12, 1fr)");
       root.style.setProperty("--rect-height", "35px");
       root.style.setProperty("--rect-width", "35px");
       root.style.setProperty("--rect-margin", "3.5px");
@@ -150,80 +172,88 @@ function setCollapseSavedColorsTools(setCollapse) {
     collapseSavedColorsToolsIcon.setAttribute("class", "bx bxs-chevrons-up");
   }
 
-  deleteOnClick && setDeleteOnClick(false, true);
+  if (deleteOnClick) {
+    setDeleteOnClick(false);
+    renderColors();
+  }
 }
 
-function showPage(page) {
+function setPage(page) {
   if (page === "colors") {
     !savedColorsArray.length
-      ? savedColors.classList.add("hide")
-      : savedColors.classList.remove("hide");
+      ? savedColorsPanel.classList.add("hide")
+      : savedColorsPanel.classList.remove("hide");
 
     saveSelectedColor.classList.remove("hide");
     codesMessages.classList.remove("hide");
     colorsTools.classList.remove("hide");
     settingsTools.classList.add("hide");
     settingsPanel.classList.add("hide");
-    displaySavedColorsCount(savedColorsArray.length);
-    showColors();
+
+    savedColorsCount.textContent =
+      savedColorsArray.length === 1
+        ? "1 Color"
+        : `${savedColorsArray.length} Colors`;
+
+    renderColors();
   } else {
-    // settings
-    savedColors.classList.add("hide");
+    // default set settings page
+    savedColorsPanel.classList.add("hide");
     saveSelectedColor.classList.add("hide");
     codesMessages.classList.add("hide");
     colorsTools.classList.add("hide");
     settingsTools.classList.remove("hide");
     settingsPanel.classList.remove("hide");
-    deleteColorOnClick && setDeleteOnClick(false, false);
+    deleteColorOnClick && setDeleteOnClick(false);
   }
 }
 
-function applyCurrentSelectedColor(color) {
-  localStorage.setItem("currSelectedColor", color);
-  savedColorsArray.includes(color)
-    ? saveColorButton.classList.add("hide")
-    : saveColorButton.classList.remove("hide");
-
-  colorPalette.value = localStorage.getItem("currSelectedColor");
-  selectedColor.style.background = color;
-  selectedColorHex.textContent = color;
-  root.style.setProperty(
-    "--selected-color",
-    localStorage.getItem("currSelectedColor")
-  );
-
-  selectedColorRGB.textContent = hexToRgb(color, true);
-  let rgbColor = hexToRgb(color, false);
-  selectedColorHSL.textContent = rgbToHsl(rgbColor, true);
-  selectedColorHSV.textContent = rgbToHsv(rgbColor, true);
-}
-
-function showColors() {
+function renderColors() {
   if (!savedColorsArray.length) {
-    savedColors.classList.add("hide");
+    savedColorsPanel.classList.add("hide");
     return;
   }
-  savedColors.classList.remove("hide");
+
+  savedColorsPanel.classList.remove("hide");
 
   // add li for each color
-  allColors.innerHTML = savedColorsArray
+  savedColors.innerHTML = savedColorsArray
     .map(
       (color) => `
     <li class="color">
         <span class="${
           deleteColorOnClick ? "rect-delete" : "rect"
         }" data-color="${color}" style="background: ${color};">${
-        deleteColorOnClick ? "<i class='bx bx-trash-alt' ></i>" : ""
+        deleteColorOnClick ? `<i class=""></i>` : ""
       }</span>
     </li>`
     )
     .join("");
 
-  // add listeners
+  // color click listener
   document.querySelectorAll(".color").forEach((li) => {
-    li.addEventListener("click", (element) =>
-      savedColorClicked(element.currentTarget.lastElementChild)
+    li.addEventListener("click", (elem) =>
+      savedColorClicked(elem.currentTarget.lastElementChild.dataset.color)
     );
+  });
+
+  // mouse enter color listener
+  document.querySelectorAll(".color").forEach((li) => {
+    li.addEventListener("mouseenter", (elem) => {
+      deleteColorOnClick && // if delete on click add trash icon
+        elem.target.lastElementChild.lastElementChild.setAttribute(
+          "class",
+          "bx bx-trash-alt"
+        );
+    });
+  });
+
+  // mouse leave color listener
+  document.querySelectorAll(".color").forEach((li) => {
+    li.addEventListener("mouseleave", (elem) => {
+      deleteColorOnClick && // if delete on click remove trash icon
+        elem.target.lastElementChild.lastElementChild.setAttribute("class", "");
+    });
   });
 }
 
@@ -232,7 +262,10 @@ function displayMessageAndColor(text, color, colorFormat) {
 
   displayMessages.classList.remove("hide");
   displayMessageText.textContent = text;
-  displayMessageColorCode.textContent = displayColorString(color, colorFormat);
+  displayMessageColorCode.textContent = displayColorCodeString(
+    color,
+    colorFormat
+  );
 
   // hide message after 2 seconds
   clearTimeout(messageTimeout);
@@ -242,11 +275,11 @@ function displayMessageAndColor(text, color, colorFormat) {
   );
 }
 
-function displayColorString(color, format) {
-  if (color === null || format === null) return;
+function displayColorCodeString(color, colorFormat) {
+  if (color === null || colorFormat === null) return;
 
   let rgbColor = hexToRgb(color, false);
-  switch (format) {
+  switch (colorFormat) {
     case "RGB":
       return hexToRgb(color, true);
     case "HEX":
@@ -259,19 +292,15 @@ function displayColorString(color, format) {
 }
 
 function savedColorClicked(colorClicked) {
+  setCurrentSelectedColor(colorClicked);
+
   if (deleteColorOnClick) {
-    applyCurrentSelectedColor(colorClicked.dataset.color);
-    deleteColor(colorClicked.dataset.color);
+    deleteColor(colorClicked);
     return;
   }
 
   localStorage.getItem("autoCopyColorCode") === "true" &&
-    copyToClipboard(
-      colorClicked.dataset.color,
-      localStorage.getItem("colorCodeFormat")
-    );
-
-  applyCurrentSelectedColor(colorClicked.dataset.color);
+    copyToClipboard(colorClicked, localStorage.getItem("colorCodeFormat"));
 
   localStorage.getItem("autoCopyColorCode") === "true"
     ? (text = "Copied")
@@ -279,7 +308,7 @@ function savedColorClicked(colorClicked) {
 
   displayMessageAndColor(
     text,
-    localStorage.getItem("currSelectedColor"),
+    colorClicked,
     localStorage.getItem("colorCodeFormat")
   );
 }
@@ -296,7 +325,13 @@ function saveColor(color) {
 
   savedColorsArray.push(color);
   localStorage.setItem("savedColorsArray", JSON.stringify(savedColorsArray));
-  showColors();
+
+  savedColorsCount.textContent =
+    savedColorsArray.length === 1
+      ? "1 Color"
+      : `${savedColorsArray.length} Colors`;
+
+  renderColors();
   saveColorButton.classList.add("hide");
 
   localStorage.getItem("autoCopyColorCode") === "true"
@@ -307,18 +342,11 @@ function saveColor(color) {
 
   localStorage.getItem("autoCopyColorCode") === "true" &&
     copyToClipboard(color, localStorage.getItem("colorCodeFormat"));
-
-  displaySavedColorsCount(savedColorsArray.length);
 }
 
-function saveColorButtonClicked() {
-  saveColor(localStorage.getItem("currSelectedColor"));
-  saveColorButton.classList.add("hide");
-}
-
-function copyToClipboard(color, format) {
+function copyToClipboard(color, colorFormat) {
   let rgbColor = hexToRgb(color, false);
-  switch (format) {
+  switch (colorFormat) {
     case "RGB":
       navigator.clipboard.writeText(hexToRgb(color, true));
       break;
@@ -335,13 +363,18 @@ function copyToClipboard(color, format) {
 }
 
 function activateEyeDropper() {
+  if (deleteOnClick) {
+    setDeleteOnClick(false);
+    renderColors();
+  }
+
   document.body.style.display = "none";
-  deleteOnClick && setDeleteOnClick(false, true);
+
   setTimeout(async () => {
     try {
       const eyeDropper = new EyeDropper();
       const { sRGBHex } = await eyeDropper.open(); // hex color
-      applyCurrentSelectedColor(sRGBHex);
+      setCurrentSelectedColor(sRGBHex);
 
       if (localStorage.getItem("autoSaveEyeDropper") === "true") {
         saveColor(sRGBHex);
@@ -361,15 +394,19 @@ function activateEyeDropper() {
 }
 
 function deleteColor(color) {
-  let colorIndex = savedColorsArray.findIndex((clr) => {
+  let deleteColorIndex = savedColorsArray.findIndex((clr) => {
     return clr === color;
   });
 
-  savedColorsArray.splice(colorIndex, 1);
+  savedColorsArray.splice(deleteColorIndex, 1);
   localStorage.setItem("savedColorsArray", JSON.stringify(savedColorsArray));
 
-  displaySavedColorsCount(savedColorsArray.length);
-  showColors();
+  savedColorsCount.textContent =
+    savedColorsArray.length === 1
+      ? "1 Color"
+      : `${savedColorsArray.length} Colors`;
+
+  renderColors();
   saveColorButton.classList.remove("hide");
 
   displayMessageAndColor(
@@ -379,9 +416,9 @@ function deleteColor(color) {
   );
 
   if (!savedColorsArray.length) {
-    applyCurrentSelectedColor("#000000");
-    deleteOnClick && setDeleteOnClick(false, true);
-    showColors();
+    setCurrentSelectedColor("#000000");
+    deleteOnClick && setDeleteOnClick(false);
+    savedColorsPanel.classList.add("hide");
   }
 }
 
@@ -389,31 +426,24 @@ function deleteAllColors() {
   if (confirm("Delete All Your Colors?")) {
     savedColorsArray.length = 0;
     localStorage.setItem("savedColorsArray", "[]");
-    displaySavedColorsCount(0);
     displayMessageAndColor("Deleted All", null, null);
-    applyCurrentSelectedColor("#000000");
-    deleteOnClick && setDeleteOnClick(false, true);
-    showColors();
+    setCurrentSelectedColor("#000000");
+    deleteOnClick && setDeleteOnClick(false);
+    savedColorsPanel.classList.add("hide");
   }
 }
 
-function setDeleteOnClick(setDelete, reRenderColors) {
+function setDeleteOnClick(setDelete) {
   deleteColorOnClick = setDelete;
-  if (deleteColorOnClick) {
-    deleteOnClick.setAttribute("class", "bx bx-check");
-    deleteOnClick.style.setProperty("color", "green");
-  } else {
-    deleteOnClick.setAttribute("class", "bx bx-trash");
-    deleteOnClick.style.setProperty("color", "red");
-  }
 
-  reRenderColors && showColors();
-}
-
-function displaySavedColorsCount(count) {
-  count === 1
-    ? (savedColorsCount.textContent = `1 Color`)
-    : (savedColorsCount.textContent = `${count} Colors`);
+  deleteOnClick.setAttribute(
+    "class",
+    deleteColorOnClick ? "bx bx-check" : "bx bx-trash"
+  );
+  deleteOnClick.style.setProperty(
+    "color",
+    deleteColorOnClick ? "green" : "red"
+  );
 }
 
 function hexToRgb(hex, returnString) {
@@ -501,16 +531,20 @@ function rgbToHsv(rbg, returnString) {
 
 eyeDropperButton.addEventListener("click", activateEyeDropper);
 settingsButton.addEventListener("click", function () {
-  showPage("settings");
+  setPage("settings");
 });
+
 colorsButton.addEventListener("click", function () {
-  showPage("colors");
+  setPage("colors");
 });
+
 lightDarkButton.addEventListener("click", function () {
+  // toggle mode
   localStorage.getItem("lightDarkMode") === "light"
     ? setLightDarkMode("dark")
     : setLightDarkMode("light");
 });
+
 copyRGBButton.addEventListener("click", function () {
   copyToClipboard(localStorage.getItem("currSelectedColor"), "RGB");
   displayMessageAndColor(
@@ -519,6 +553,7 @@ copyRGBButton.addEventListener("click", function () {
     "RGB"
   );
 });
+
 copyHexButton.addEventListener("click", function () {
   copyToClipboard(localStorage.getItem("currSelectedColor"), "HEX");
   displayMessageAndColor(
@@ -527,6 +562,7 @@ copyHexButton.addEventListener("click", function () {
     "HEX"
   );
 });
+
 copyHslButton.addEventListener("click", function () {
   copyToClipboard(localStorage.getItem("currSelectedColor"), "HSL");
   displayMessageAndColor(
@@ -535,6 +571,7 @@ copyHslButton.addEventListener("click", function () {
     "HSL"
   );
 });
+
 copyHsvButton.addEventListener("click", function () {
   copyToClipboard(localStorage.getItem("currSelectedColor"), "HSV");
   displayMessageAndColor(
@@ -543,10 +580,13 @@ copyHsvButton.addEventListener("click", function () {
     "HSV"
   );
 });
-saveColorButton.addEventListener("click", saveColorButtonClicked);
+
+saveColorButton.addEventListener("click", function () {
+  saveColor(localStorage.getItem("currSelectedColor"));
+});
+
 selectedColor.addEventListener("click", function () {
   colorPalette.click();
-  deleteOnClick && setDeleteOnClick(false, true);
 });
 
 collapseSavedColorsTools.addEventListener("click", function () {
@@ -556,12 +596,14 @@ collapseSavedColorsTools.addEventListener("click", function () {
 });
 
 deleteOnClick.addEventListener("click", function () {
-  setDeleteOnClick(!deleteColorOnClick, true);
+  setDeleteOnClick(!deleteColorOnClick);
+  renderColors();
 });
+
 deleteAll.addEventListener("click", deleteAllColors);
 
 colorPalette.addEventListener("input", function () {
-  applyCurrentSelectedColor(colorPalette.value);
+  setCurrentSelectedColor(colorPalette.value);
   displayMessageAndColor(
     "Selected",
     colorPalette.value,
@@ -570,7 +612,10 @@ colorPalette.addEventListener("input", function () {
 });
 
 colorPalette.addEventListener("click", function () {
-  deleteOnClick && setDeleteOnClick(false, true);
+  if (deleteOnClick) {
+    setDeleteOnClick(false);
+    renderColors();
+  }
 });
 
 autoSaveEyeDropper.addEventListener("change", function () {
