@@ -12,7 +12,7 @@
     />
   </head>
 
-  <body>
+  <body class="hide-animations-transitions">
     <div class="popup">
       <div class="colors-tools">
         <button id="eye-dropper-button">
@@ -103,7 +103,7 @@
               ><i class="bx bxl-github"></i
             ></a>
           </div>
-          <h4>Version <span>1.1.4</span></h4>
+          <h4>Version <span>1.2.0</span></h4>
         </div>
       </div>
 
@@ -139,14 +139,16 @@
       <div class="saved-colors-panel">
         <div class="collapse-saved-colors-tools">
           <i
-            class="bx bx-chevrons-up"
+            class="bx bxs-chevrons-left"
             id="collapse-saved-colors-tools-icon"
           ></i>
         </div>
+
         <div class="saved-colors-tools">
-          <i id="delete-on-click" class="bx bx-trash"></i>
-          <i id="delete-all" class="bx bx-trash"><spa>All</spa></i>
           <span class="saved-colors-count"></span>
+          <i id="move-color" class="bx bx-move"></i>
+          <i id="delete-on-click" class="bx bx-trash"></i>
+          <i id="delete-all" class="bx bx-bomb"></i>
         </div>
         <ul class="saved-colors"></ul>
       </div>

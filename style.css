@@ -15,11 +15,22 @@
   --second-color: #ededf7;
   --highlight-color: #1587ff;
   --text-color: #24282a;
-  --selectedColor-color: #000000;
+
+  --selected-color: #000000;
+  --tool-icon-color: #000000;
+  --move-tool-color: rgb(12, 16, 233);
+  --delete-onclick-color: rgb(231, 11, 11);
+  --delete-all-color: rgb(181, 7, 7);
 
   --rect-height: 53px;
   --rect-width: 53px;
   --rect-margin: 5px;
+}
+
+body.hide-animations-transitions * {
+  animation-duration: 0s !important;
+  transition: background-color 0s, opacity 0s, color 0s, width 0s, height 0s,
+    padding 0s, margin 0s !important;
 }
 
 .popup {
@@ -150,7 +161,7 @@
 
 .color-codes {
   position: absolute;
-  margin-right: 20rem;
+  margin-right: 22rem;
   display: grid;
 }
 
@@ -181,7 +192,7 @@
   display: grid;
   justify-items: center;
   margin-top: 48px;
-  margin-left: 20rem;
+  margin-left: 330px;
   color: var(--text-color);
   opacity: 100;
   transition: 0.5s ease;
@@ -222,7 +233,6 @@
   cursor: pointer;
   border-radius: 5px;
   padding: 5px 10px;
-  margin-left: 25px;
   margin-right: 5px;
   background: var(--highlight-color);
   box-shadow: 0 0 0.3rem var(--highlight-color);
@@ -249,7 +259,7 @@
   width: 100px;
   border-radius: 15%;
   border: 1px solid var(--text-color);
-  box-shadow: 0 0 10px var(--selectedColor-color);
+  box-shadow: 0 0 10px var(--selected-color);
   transition: 0.3s ease;
 }
 
@@ -269,40 +279,91 @@
   display: none;
 }
 
-.saved-colors-panel .collapse-saved-colors-tools {
-  float: right;
+.collapse-saved-colors-tools {
+  position: flex;
   width: 25px;
+  height: 25px;
+  margin-left: 10px;
+  margin-bottom: -10px;
   cursor: pointer;
   text-align: center;
   font-size: 1.5rem;
-  color: var(--highlight-color);
+  color: var(--text-color);
 }
 
-.saved-colors-panel .saved-colors-tools {
+.saved-colors-tools {
   display: flex;
-  gap: 30px;
-  margin-bottom: -29px;
+  width: 360px;
+  gap: 25px;
+  justify-content: right;
+  margin-left: 147px;
+  margin-top: -28px;
+  margin-bottom: -22px;
+  animation: collapseShow 0.4s ease-in-out forwards;
 }
 
-.saved-colors-panel .saved-colors-tools.hide {
-  display: none;
+.saved-colors-tools.hide {
+  animation: collapseHide 0.4s ease-in-out forwards;
 }
 
-.saved-colors-panel #delete-on-click,
-#delete-all {
-  cursor: pointer;
-  color: red;
-  font-size: 1.5rem;
-  justify-self: left;
-  margin-top: 3px;
-  margin-left: 15px;
+@keyframes collapseShow {
+  0% {
+    opacity: 100%;
+    transform: translateX(0px);
+  }
+
+  50% {
+    opacity: 20%;
+  }
+
+  100% {
+    opacity: 0%;
+    transform: translateX(-600px);
+  }
 }
 
-.saved-colors-panel .saved-colors-tools .saved-colors-count {
-  position: fixed;
-  left: 220px;
+@keyframes collapseHide {
+  0% {
+    opacity: 0%;
+    transform: translateX(-600px);
+  }
+
+  50% {
+    opacity: 20%;
+  }
+
+  100% {
+    opacity: 100%;
+    transform: translateX(0px);
+  }
+}
+
+.saved-colors-tools .saved-colors-count {
+  margin-right: 52px;
   color: var(--text-color);
   font-size: 1.2rem;
+}
+
+.saved-colors-panel #move-color,
+#delete-on-click,
+#delete-all {
+  width: 25px;
+  height: 25px;
+  font-size: 1.5rem;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+.saved-colors-panel #move-color {
+  color: var(--move-tool-color);
+}
+
+.saved-colors-panel #delete-on-click {
+  color: var(--delete-onclick-color);
+}
+
+.saved-colors-panel #delete-all {
+  color: var(--delete-all-color);
 }
 
 .saved-colors {
@@ -334,20 +395,23 @@
   border: 1px solid var(--highlight-color);
 }
 
-.saved-colors .color .rect-delete {
-  display: block;
-  height: var(--rect-height);
-  width: var(--rect-width);
-  margin: var(--rect-margin);
-  border-radius: 15%;
-  border: 1px solid var(--text-color);
-  transition: 0.3s ease;
+.saved-colors .color .rect.draggable {
+  border-color: var(--move-tool-color);
   animation: 1.5s infinite normal shake;
 }
 
-.saved-colors .color .rect-delete:hover {
-  border-radius: 5%;
-  border-color: red;
+.saved-colors .color .rect.draggable:hover {
+  border-color: var(--highlight-color);
+  animation-duration: 0.3s;
+}
+
+.saved-colors .color .rect.deletable {
+  border-color: var(--delete-onclick-color);
+  animation: 1.5s infinite normal shake;
+}
+
+.saved-colors .color .rect.deletable:hover {
+  border-color: var(--highlight-color);
   animation-duration: 0.3s;
 }
 
@@ -371,7 +435,7 @@
 
 .saved-colors .color i {
   display: block;
-  color: red;
+  color: var(--tool-icon-color);
   text-shadow: 1px 1px 3px black, 0 0 25px black, 0 0 5px black;
   font-size: calc(var(--rect-height) * 0.5);
   text-align: center;
