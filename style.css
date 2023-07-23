@@ -339,7 +339,7 @@ body.hide-animations-transitions * {
 }
 
 .saved-colors-tools .saved-colors-count {
-  margin-right: 52px;
+  margin-right: 54px;
   color: var(--text-color);
   font-size: 1.2rem;
 }

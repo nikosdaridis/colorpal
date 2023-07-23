@@ -416,6 +416,11 @@ function displayColorCodeString(color, colorFormat) {
 function savedColorClicked(colorClicked) {
   setCurrentSelectedColor(colorClicked);
 
+  if (movingColor) {
+    displayMessageAndColor("Drag to move Colors", null, null);
+    return;
+  }
+
   if (deletingColor) {
     deleteColor(colorClicked);
     return;
