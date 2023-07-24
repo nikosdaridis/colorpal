@@ -19,7 +19,8 @@
 - Color palette
 - Save favorite colors
 - Auto copy color code
-- Multiple color formats: RGB, HEX, HSL, HSV
+- RGB, HEX, HSL, HSV color formats
+- Move color position
 - Delete selected color or all colors
 - Light and Dark mode
 

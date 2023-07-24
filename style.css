@@ -402,7 +402,15 @@ body.hide-animations-transitions * {
 
 .saved-colors .color .rect.draggable:hover {
   border-color: var(--highlight-color);
-  animation-duration: 0.3s;
+  animation-duration: 0.2s;
+}
+
+.saved-colors .color .rect.dragging,
+.closest {
+  border-radius: 5% !important;
+  border-color: var(--text-color) !important;
+  animation: 0.2s infinite normal shake !important;
+  transition: none !important;
 }
 
 .saved-colors .color .rect.deletable {
@@ -412,7 +420,7 @@ body.hide-animations-transitions * {
 
 .saved-colors .color .rect.deletable:hover {
   border-color: var(--highlight-color);
-  animation-duration: 0.3s;
+  animation-duration: 0.2s;
 }
 
 @keyframes shake {
