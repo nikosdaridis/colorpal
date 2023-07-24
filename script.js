@@ -253,43 +253,40 @@ function renderColors() {
 
 function addColorsListeners() {
   // click listener
-  document.querySelectorAll(".color").forEach((li) => {
+  document.querySelectorAll(".color .rect").forEach((li) => {
     li.addEventListener("click", (elem) =>
-      savedColorClicked(elem.currentTarget.lastElementChild.dataset.color)
+      savedColorClicked(elem.currentTarget.dataset.color)
     );
-  });
 
-  // moving and deleting listeners
-  if (movingColor || deletingColor) {
-    document.querySelectorAll(".color").forEach((li) => {
-      // mouse enter listener
-      li.addEventListener("mouseenter", (elem) => {
-        // moving or deleting icon
-        root.style.setProperty(
-          "--tool-icon-color",
-          `${
-            movingColor
-              ? "rgb(12, 16, 233)"
-              : deletingColor
-              ? "rgb(231, 11, 11)"
-              : ""
-          }`
-        );
-        elem.target.lastElementChild.lastElementChild.setAttribute(
-          "class",
-          `${
-            movingColor ? "bx bx-move" : deletingColor ? "bx bx-trash-alt" : ""
-          }`
-        );
-      });
+    // moving and deleting listeners
+    if (!movingColor && !deletingColor) return;
 
-      // mouse leave listener
-      li.addEventListener("mouseleave", (elem) => {
-        // remove icon
-        elem.target.lastElementChild.lastElementChild.setAttribute("class", "");
-      });
+    // mouse enter listener
+    li.addEventListener("mouseenter", (elem) => {
+      // moving or deleting icon
+      elem.target.lastElementChild.setAttribute(
+        "class",
+        `${movingColor ? "bx bx-move" : deletingColor ? "bx bx-trash-alt" : ""}`
+      );
+
+      root.style.setProperty(
+        "--tool-icon-color",
+        `${
+          movingColor
+            ? "rgb(12, 16, 233)"
+            : deletingColor
+            ? "rgb(231, 11, 11)"
+            : ""
+        }`
+      );
     });
-  }
+
+    // mouse leave listener
+    li.addEventListener("mouseleave", (elem) => {
+      // remove icon
+      elem.target.lastElementChild.setAttribute("class", "");
+    });
+  });
 
   // moving listeners
   if (!movingColor) return;
@@ -452,7 +449,7 @@ function savedColorClicked(colorClicked) {
   setCurrentSelectedColor(colorClicked);
 
   if (movingColor) {
-    displayMessageAndColor("Drag to move colors", null, null);
+    displayMessageAndColor("Drag to move color", null, null);
     return;
   }
 

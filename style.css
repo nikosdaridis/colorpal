@@ -255,6 +255,7 @@ body.hide-animations-transitions * {
 }
 
 .selected-color .rect {
+  cursor: pointer;
   height: 100px;
   width: 100px;
   border-radius: 15%;
@@ -375,11 +376,8 @@ body.hide-animations-transitions * {
   list-style-type: none;
 }
 
-.saved-colors .color {
-  cursor: pointer;
-}
-
 .saved-colors .color .rect {
+  cursor: pointer;
   display: block;
   height: var(--rect-height);
   width: var(--rect-width);
