@@ -294,12 +294,11 @@ body.hide-animations-transitions * {
 
 .saved-colors-tools {
   display: flex;
-  width: 360px;
+  width: 350px;
   gap: 25px;
-  justify-content: right;
-  margin-left: 147px;
-  margin-top: -28px;
-  margin-bottom: -22px;
+  margin-left: 65px;
+  margin-top: -26px;
+  margin-bottom: -25px;
   animation: collapseShow 0.4s ease-in-out forwards;
 }
 
@@ -313,7 +312,7 @@ body.hide-animations-transitions * {
     transform: translateX(0px);
   }
 
-  50% {
+  40% {
     opacity: 20%;
   }
 
@@ -329,7 +328,7 @@ body.hide-animations-transitions * {
     transform: translateX(-600px);
   }
 
-  50% {
+  60% {
     opacity: 20%;
   }
 
