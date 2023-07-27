@@ -3,7 +3,7 @@
     "message": "Color Picker Tool - ColorPal"
   },
   "description": {
-    "message": "Color picker tool to extract any pixel from the screen, pick any color from a palette and save your favorite colors."
+    "message": "Grab colors from web pages, color picker, eye dropper. Compared to color pick, eyedropper, geco, colorzilla this is better, free."
   },
   "defaultTitle": {
     "message": "Click to activate ColorPal"
