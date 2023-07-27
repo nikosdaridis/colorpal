@@ -308,22 +308,6 @@ body.hide-animations-transitions * {
 
 @keyframes collapseShow {
   0% {
-    opacity: 100%;
-    transform: translateX(0px);
-  }
-
-  40% {
-    opacity: 20%;
-  }
-
-  100% {
-    opacity: 0%;
-    transform: translateX(-600px);
-  }
-}
-
-@keyframes collapseHide {
-  0% {
     opacity: 0%;
     transform: translateX(-600px);
   }
@@ -335,6 +319,22 @@ body.hide-animations-transitions * {
   100% {
     opacity: 100%;
     transform: translateX(0px);
+  }
+}
+
+@keyframes collapseHide {
+  0% {
+    opacity: 100%;
+    transform: translateX(0px);
+  }
+
+  40% {
+    opacity: 20%;
+  }
+
+  100% {
+    opacity: 0%;
+    transform: translateX(-600px);
   }
 }
 

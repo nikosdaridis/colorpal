@@ -14,8 +14,8 @@ const savedColors = document.querySelector(".saved-colors");
 const collapseSavedColorsTools = document.querySelector(
   ".collapse-saved-colors-tools"
 );
-const collapseSavedColorsToolsIcon = document.querySelector(
-  "#collapse-saved-colors-tools-icon"
+const collapseColorToolsIcon = document.querySelector(
+  "#collapse-color-tools-icon"
 );
 const savedColorsTools = document.querySelector(".saved-colors-tools");
 const savedColorsCount = document.querySelector(".saved-colors-count");
@@ -46,7 +46,9 @@ const displayMessagesOption = document.querySelector(
   "#display-messages-option"
 );
 const savedColorsArray = JSON.parse(
-  localStorage.getItem("savedColorsArray") ?? "[]"
+  localStorage.getItem("colorpal-saved-colors-array") ??
+    localStorage.getItem("savedColorsArray") ?? // old localStorage name
+    "[]"
 );
 var messageTimeout, hideAnimTranTimeout;
 var rectSize;
@@ -58,56 +60,60 @@ setPage("colors");
 
 function setOptions() {
   // set default values if null
-  setLightDarkMode(localStorage.getItem("lightDarkMode"));
+  setLightDarkMode(localStorage.getItem("colorpal-light-dark-mode"));
 
-  localStorage.getItem("currSelectedColor") === null
-    ? setCurrentSelectedColor("#000000")
-    : setCurrentSelectedColor(localStorage.getItem("currSelectedColor"));
+  localStorage.getItem("colorpal-current-selected-color") ??
+    localStorage.setItem("colorpal-current-selected-color", "#000000");
+  setCurrentSelectedColor(
+    localStorage.getItem("colorpal-current-selected-color")
+  );
 
-  localStorage.getItem("autoSaveEyeDropper") ||
-    localStorage.setItem("autoSaveEyeDropper", "true");
+  localStorage.getItem("colorpal-auto-save-eye-dropper") ??
+    localStorage.setItem("colorpal-auto-save-eye-dropper", "true");
 
-  localStorage.getItem("autoCopyColorCode") ||
-    localStorage.setItem("autoCopyColorCode", "true");
+  localStorage.getItem("colorpal-auto-copy-color-code") ??
+    localStorage.setItem("colorpal-auto-copy-color-code", "true");
 
-  localStorage.getItem("colorCodeFormat") ||
-    localStorage.setItem("colorCodeFormat", "HEX");
-  colorCodeFormat.value = localStorage.getItem("colorCodeFormat");
+  localStorage.getItem("colorpal-color-code-format") ??
+    localStorage.setItem("colorpal-color-code-format", "HEX");
+  colorCodeFormat.value = localStorage.getItem("colorpal-color-code-format");
 
-  localStorage.getItem("colorsPerLine") ||
-    localStorage.setItem("colorsPerLine", "8");
-  colorsPerLine.value = localStorage.getItem("colorsPerLine");
-  setColorsPerLine(parseInt(localStorage.getItem("colorsPerLine")));
+  localStorage.getItem("colorpal-colors-per-line") ??
+    localStorage.setItem("colorpal-colors-per-line", "8");
+  colorsPerLine.value = localStorage.getItem("colorpal-colors-per-line");
+  setColorsPerLine(parseInt(localStorage.getItem("colorpal-colors-per-line")));
 
-  localStorage.getItem("displayMessagesOption") ||
-    localStorage.setItem("displayMessagesOption", "true");
+  localStorage.getItem("colorpal-display-messages") ??
+    localStorage.setItem("colorpal-display-messages", "true");
 
-  localStorage.getItem("collapseSavedColorsTools") ||
-    localStorage.setItem("collapseSavedColorsTools", "false");
-  setCollapseSavedColorsTools(localStorage.getItem("collapseSavedColorsTools"));
+  localStorage.getItem("colorpal-collapsed-color-tools") ??
+    localStorage.setItem("colorpal-collapsed-color-tools", "false");
+  setCollapsedColorTools(
+    localStorage.getItem("colorpal-collapsed-color-tools")
+  );
 
   // set visual check boxes
-  localStorage.getItem("autoSaveEyeDropper") === "true"
+  localStorage.getItem("colorpal-auto-save-eye-dropper") === "true"
     ? (autoSaveEyeDropper.checked = true)
     : (autoSaveEyeDropper.checked = false);
-  localStorage.getItem("autoCopyColorCode") === "true"
+  localStorage.getItem("colorpal-auto-copy-color-code") === "true"
     ? (autoCopyColorCode.checked = true)
     : (autoCopyColorCode.checked = false);
-  localStorage.getItem("displayMessagesOption") === "true"
+  localStorage.getItem("colorpal-display-messages") === "true"
     ? (displayMessagesOption.checked = true)
     : (displayMessagesOption.checked = false);
 }
 
 function setLightDarkMode(mode) {
   if (mode === "dark") {
-    localStorage.setItem("lightDarkMode", "dark");
+    localStorage.setItem("colorpal-light-dark-mode", "dark");
     root.style.setProperty("--first-color", "#24282a");
     root.style.setProperty("--second-color", "#2b353e");
     root.style.setProperty("--text-color", "#fafcff");
     lightModeIcon.setAttribute("class", "bx bxs-sun");
   } else {
     // default set light
-    localStorage.setItem("lightDarkMode", "light");
+    localStorage.setItem("colorpal-light-dark-mode", "light");
     root.style.setProperty("--first-color", "#fafcff");
     root.style.setProperty("--second-color", "#e7e7f4");
     root.style.setProperty("--text-color", "#24282a");
@@ -116,16 +122,16 @@ function setLightDarkMode(mode) {
 }
 
 function setCurrentSelectedColor(currentColor) {
-  localStorage.setItem("currSelectedColor", currentColor);
+  localStorage.setItem("colorpal-current-selected-color", currentColor);
   savedColorsArray.includes(currentColor)
     ? saveColorButton.classList.add("hide")
     : saveColorButton.classList.remove("hide");
 
-  colorPalette.value = localStorage.getItem("currSelectedColor");
+  colorPalette.value = localStorage.getItem("colorpal-current-selected-color");
   selectedColor.style.background = currentColor;
   root.style.setProperty(
     "--selected-color",
-    localStorage.getItem("currSelectedColor")
+    localStorage.getItem("colorpal-current-selected-color")
   );
 
   selectedColorRGB.textContent = hexToRgb(currentColor, true);
@@ -169,14 +175,14 @@ function setColorsPerLine(colorsPerLine) {
   );
 }
 
-function setCollapseSavedColorsTools(setCollapse) {
-  localStorage.setItem("collapseSavedColorsTools", setCollapse);
-  if (setCollapse === "true") {
+function setCollapsedColorTools(setCollapsed) {
+  localStorage.setItem("colorpal-collapsed-color-tools", setCollapsed);
+  if (setCollapsed === "true") {
     savedColorsTools.classList.add("hide");
-    collapseSavedColorsToolsIcon.setAttribute("class", "bx bxs-chevrons-left");
+    collapseColorToolsIcon.setAttribute("class", "bx bxs-chevrons-right");
   } else {
     savedColorsTools.classList.remove("hide");
-    collapseSavedColorsToolsIcon.setAttribute("class", "bx bxs-chevrons-right");
+    collapseColorToolsIcon.setAttribute("class", "bx bxs-chevrons-left");
   }
 
   movingColor && setMoveColor(false);
@@ -234,12 +240,8 @@ function renderColors() {
     .map(
       (color) => `
     <li class="color">
-        <span class="${
-          movingColor
-            ? "rect draggable"
-            : deletingColor
-            ? "rect deletable"
-            : "rect"
+        <span class="rect${
+          movingColor ? " draggable" : deletingColor ? " deletable" : ""
         }" data-color="${color}" draggable="${String(
         movingColor
       )}" style="background: ${color};"> <i class=""></i>
@@ -369,10 +371,13 @@ function SwapColors(draggable, draggingColor, closestColorElement) {
   savedColorsArray[replacingIndex] = draggingColor;
   savedColorsArray[draggingIndex] = closestColorElement.dataset.color;
 
-  localStorage.setItem("savedColorsArray", JSON.stringify(savedColorsArray));
+  localStorage.setItem(
+    "colorpal-saved-colors-array",
+    JSON.stringify(savedColorsArray)
+  );
 
   displayMessageAndColor(
-    `Swapped Color ${draggingIndex + 1} with ${replacingIndex + 1}`,
+    `Swapped color ${draggingIndex + 1} with ${replacingIndex + 1}`,
     null,
     null
   );
@@ -412,7 +417,7 @@ function findClosestColor(draggables) {
 }
 
 function displayMessageAndColor(text, color, colorFormat) {
-  if (localStorage.getItem("displayMessagesOption") === "false") return;
+  if (localStorage.getItem("colorpal-display-messages") === "false") return;
 
   displayMessages.classList.remove("hide");
   displayMessageText.textContent = text;
@@ -458,32 +463,38 @@ function savedColorClicked(colorClicked) {
     return;
   }
 
-  localStorage.getItem("autoCopyColorCode") === "true" &&
-    copyToClipboard(colorClicked, localStorage.getItem("colorCodeFormat"));
+  localStorage.getItem("colorpal-auto-copy-color-code") === "true" &&
+    copyToClipboard(
+      colorClicked,
+      localStorage.getItem("colorpal-color-code-format")
+    );
 
-  localStorage.getItem("autoCopyColorCode") === "true"
+  localStorage.getItem("colorpal-auto-copy-color-code") === "true"
     ? (text = "Copied")
     : (text = "Selected");
 
   displayMessageAndColor(
     text,
     colorClicked,
-    localStorage.getItem("colorCodeFormat")
+    localStorage.getItem("colorpal-color-code-format")
   );
 }
 
 function saveColor(color) {
   if (savedColorsArray.includes(color)) {
     displayMessageAndColor(
-      "Already Saved",
+      "Already saved",
       color,
-      localStorage.getItem("colorCodeFormat")
+      localStorage.getItem("colorpal-color-code-format")
     );
     return;
   }
 
   savedColorsArray.push(color);
-  localStorage.setItem("savedColorsArray", JSON.stringify(savedColorsArray));
+  localStorage.setItem(
+    "colorpal-saved-colors-array",
+    JSON.stringify(savedColorsArray)
+  );
 
   savedColorsCount.textContent =
     savedColorsArray.length === 1
@@ -493,14 +504,18 @@ function saveColor(color) {
   renderColors();
   saveColorButton.classList.add("hide");
 
-  localStorage.getItem("autoCopyColorCode") === "true"
+  localStorage.getItem("colorpal-auto-copy-color-code") === "true"
     ? (text = "Saved and Copied")
     : (text = "Saved");
 
-  displayMessageAndColor(text, color, localStorage.getItem("colorCodeFormat"));
+  displayMessageAndColor(
+    text,
+    color,
+    localStorage.getItem("colorpal-color-code-format")
+  );
 
-  localStorage.getItem("autoCopyColorCode") === "true" &&
-    copyToClipboard(color, localStorage.getItem("colorCodeFormat"));
+  localStorage.getItem("colorpal-auto-copy-color-code") === "true" &&
+    copyToClipboard(color, localStorage.getItem("colorpal-color-code-format"));
 }
 
 function copyToClipboard(color, colorFormat) {
@@ -536,15 +551,18 @@ function activateEyeDropper() {
       const { sRGBHex } = await eyeDropper.open(); // hex color
       setCurrentSelectedColor(sRGBHex);
 
-      if (localStorage.getItem("autoSaveEyeDropper") === "true") {
+      if (localStorage.getItem("colorpal-auto-save-eye-dropper") === "true") {
         saveColor(sRGBHex);
-        localStorage.getItem("autoCopyColorCode") === "true" &&
-          copyToClipboard(sRGBHex, localStorage.getItem("colorCodeFormat"));
+        localStorage.getItem("colorpal-auto-copy-color-code") === "true" &&
+          copyToClipboard(
+            sRGBHex,
+            localStorage.getItem("colorpal-color-code-format")
+          );
       } else
         displayMessageAndColor(
           "Selected",
           sRGBHex,
-          localStorage.getItem("colorCodeFormat")
+          localStorage.getItem("colorpal-color-code-format")
         );
     } catch {
       displayMessageAndColor("Closed Eye Dropper", null, null);
@@ -564,7 +582,10 @@ function deleteColor(color) {
   });
 
   savedColorsArray.splice(deleteColorIndex, 1);
-  localStorage.setItem("savedColorsArray", JSON.stringify(savedColorsArray));
+  localStorage.setItem(
+    "colorpal-saved-colors-array",
+    JSON.stringify(savedColorsArray)
+  );
 
   savedColorsCount.textContent =
     savedColorsArray.length === 1
@@ -577,7 +598,7 @@ function deleteColor(color) {
   displayMessageAndColor(
     "Deleted",
     color,
-    localStorage.getItem("colorCodeFormat")
+    localStorage.getItem("colorpal-color-code-format")
   );
 
   if (!savedColorsArray.length) {
@@ -591,7 +612,7 @@ function deleteColor(color) {
 function deleteAllColors() {
   if (confirm("Delete All Your Colors?")) {
     savedColorsArray.length = 0;
-    localStorage.setItem("savedColorsArray", "[]");
+    localStorage.setItem("colorpal-saved-colors-array", "[]");
     displayMessageAndColor("Deleted All", null, null);
     setCurrentSelectedColor("#000000");
     movingColor && setMoveColor(false);
@@ -717,49 +738,61 @@ colorsButton.addEventListener("click", function () {
 
 lightDarkButton.addEventListener("click", function () {
   // toggle mode
-  localStorage.getItem("lightDarkMode") === "light"
+  localStorage.getItem("colorpal-light-dark-mode") === "light"
     ? setLightDarkMode("dark")
     : setLightDarkMode("light");
 });
 
 copyRGBButton.addEventListener("click", function () {
-  copyToClipboard(localStorage.getItem("currSelectedColor"), "RGB");
+  copyToClipboard(
+    localStorage.getItem("colorpal-current-selected-color"),
+    "RGB"
+  );
   displayMessageAndColor(
     "Copied",
-    localStorage.getItem("currSelectedColor"),
+    localStorage.getItem("colorpal-current-selected-color"),
     "RGB"
   );
 });
 
 copyHexButton.addEventListener("click", function () {
-  copyToClipboard(localStorage.getItem("currSelectedColor"), "HEX");
+  copyToClipboard(
+    localStorage.getItem("colorpal-current-selected-color"),
+    "HEX"
+  );
   displayMessageAndColor(
     "Copied",
-    localStorage.getItem("currSelectedColor"),
+    localStorage.getItem("colorpal-current-selected-color"),
     "HEX"
   );
 });
 
 copyHslButton.addEventListener("click", function () {
-  copyToClipboard(localStorage.getItem("currSelectedColor"), "HSL");
+  copyToClipboard(
+    localStorage.getItem("colorpal-current-selected-color"),
+    "HSL"
+  );
   displayMessageAndColor(
     "Copied",
-    localStorage.getItem("currSelectedColor"),
+    localStorage.getItem("colorpal-current-selected-color"),
     "HSL"
   );
 });
 
 copyHsvButton.addEventListener("click", function () {
-  copyToClipboard(localStorage.getItem("currSelectedColor"), "HSV");
+  copyToClipboard(
+    localStorage.getItem("colorpal-current-selected-color"),
+    "HSV"
+  );
   displayMessageAndColor(
     "Copied",
-    localStorage.getItem("currSelectedColor"),
+    localStorage.getItem("colorpal-current-selected-color"),
     "HSV"
   );
 });
 
 saveColorButton.addEventListener("click", function () {
-  saveColor(localStorage.getItem("currSelectedColor"));
+  saveColor(localStorage.getItem("colorpal-current-selected-color"));
 });
 
 selectedColor.addEventListener("click", function () {
@@ -767,9 +800,9 @@ selectedColor.addEventListener("click", function () {
 });
 
 collapseSavedColorsTools.addEventListener("click", function () {
-  localStorage.getItem("collapseSavedColorsTools") === "true"
-    ? setCollapseSavedColorsTools("false")
-    : setCollapseSavedColorsTools("true");
+  localStorage.getItem("colorpal-collapsed-color-tools") === "true"
+    ? setCollapsedColorTools("false")
+    : setCollapsedColorTools("true");
 });
 
 moveColor.addEventListener("click", function () {
@@ -791,7 +824,7 @@ colorPalette.addEventListener("input", function () {
   displayMessageAndColor(
     "Selected",
     colorPalette.value,
-    localStorage.getItem("colorCodeFormat")
+    localStorage.getItem("colorpal-color-code-format")
   );
 });
 
@@ -805,27 +838,27 @@ colorPalette.addEventListener("click", function () {
 
 autoSaveEyeDropper.addEventListener("change", function () {
   this.checked
-    ? localStorage.setItem("autoSaveEyeDropper", "true")
-    : localStorage.setItem("autoSaveEyeDropper", "false");
+    ? localStorage.setItem("colorpal-auto-save-eye-dropper", "true")
+    : localStorage.setItem("colorpal-auto-save-eye-dropper", "false");
 });
 
 autoCopyColorCode.addEventListener("change", function () {
   this.checked
-    ? localStorage.setItem("autoCopyColorCode", "true")
-    : localStorage.setItem("autoCopyColorCode", "false");
+    ? localStorage.setItem("colorpal-auto-copy-color-code", "true")
+    : localStorage.setItem("colorpal-auto-copy-color-code", "false");
 });
 
 colorCodeFormat.addEventListener("change", function () {
-  localStorage.setItem("colorCodeFormat", colorCodeFormat.value);
+  localStorage.setItem("colorpal-color-code-format", colorCodeFormat.value);
 });
 
 colorsPerLine.addEventListener("change", function () {
-  localStorage.setItem("colorsPerLine", colorsPerLine.value);
+  localStorage.setItem("colorpal-colors-per-line", colorsPerLine.value);
   setColorsPerLine(parseInt(colorsPerLine.value));
 });
 
 displayMessagesOption.addEventListener("change", function () {
   this.checked
-    ? localStorage.setItem("displayMessagesOption", "true")
-    : localStorage.setItem("displayMessagesOption", "false");
+    ? localStorage.setItem("colorpal-display-messages", "true")
+    : localStorage.setItem("colorpal-display-messages", "false");
 });
