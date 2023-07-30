@@ -22,9 +22,8 @@
   --delete-onclick-color: rgb(231, 11, 11);
   --delete-all-color: rgb(181, 7, 7);
 
-  --rect-height: 53px;
-  --rect-width: 53px;
-  --rect-margin: 5px;
+  --rect-size: 35.6px;
+  --rect-margin: 3.36px;
 }
 
 body.hide-animations-transitions * {
@@ -36,7 +35,7 @@ body.hide-animations-transitions * {
 .popup {
   display: grid;
   justify-items: center;
-  width: 520px;
+  width: 350px;
   background: var(--first-color);
 }
 
@@ -52,35 +51,34 @@ body.hide-animations-transitions * {
   display: none;
 }
 
-.colors-tools button,
-.color-palette-button i,
-.settings-tools button {
+.colors-tools label,
+.settings-tools label {
   outline: none;
   border: none;
   color: #fafcff;
-  font-size: 2rem;
+  font-size: 1.5rem;
   cursor: pointer;
   border-radius: 5px;
-  padding: 0px 10px;
+  padding: 5px 10px;
   margin-right: 2rem;
   background: var(--highlight-color);
   box-shadow: 0 0 0.3rem var(--highlight-color);
-  transition: 0.5s ease;
+  transition: 0.3s ease;
 }
 
-.color-palette-button i {
-  padding: 10px 10px;
-}
-
-.colors-tools button:hover,
-.color-palette-button i:hover,
-.settings-tools button:hover {
+.colors-tools label:hover,
+.settings-tools label:hover {
   box-shadow: none;
+}
+
+/* Counter hidden color-palette margin */
+#eye-dropper-button {
+  margin-left: 65px;
 }
 
 #settings-button,
 #light-dark-button {
-  margin-right: 0rem;
+  margin-right: 0;
 }
 
 #color-palette {
@@ -90,16 +88,16 @@ body.hide-animations-transitions * {
   padding: 0;
   border: 0;
   margin-top: -16px;
-  margin-left: 5px;
+  margin-left: 65px;
 }
 
 .settings-panel {
-  margin-top: 2rem;
+  margin-top: 1rem;
   margin-bottom: 1rem;
 }
 
 .settings-panel label {
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: var(--text-color);
 }
 
@@ -111,7 +109,7 @@ body.hide-animations-transitions * {
   display: grid;
   grid-template: "a a" "b b";
   align-items: center;
-  gap: 2rem;
+  gap: 1.5rem;
   background-color: var(--second-color);
   box-shadow: 0 0 0.3rem var(--second-color);
   border-color: var(--second-color);
@@ -121,8 +119,8 @@ body.hide-animations-transitions * {
   display: grid;
   justify-items: center;
   text-align: center;
-  margin-top: 2rem;
-  gap: 0.2rem;
+  margin-top: 1rem;
+  gap: 0.1rem;
 }
 
 .settings-panel .info h3 {
@@ -131,7 +129,7 @@ body.hide-animations-transitions * {
 }
 
 .settings-panel .info h4 {
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   color: var(--text-color);
 }
 
@@ -146,7 +144,7 @@ body.hide-animations-transitions * {
 }
 
 .settings-panel .info i {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   color: var(--highlight-color);
 }
 
@@ -161,12 +159,14 @@ body.hide-animations-transitions * {
 
 .color-codes {
   position: absolute;
-  margin-right: 22rem;
+  margin-top: 11px;
+  margin-right: 240px;
   display: grid;
+  gap: 0.8rem;
 }
 
 .color-codes h2 {
-  font-size: 0.8rem;
+  font-size: 0.6rem;
   color: #fafcff;
 }
 
@@ -176,8 +176,7 @@ body.hide-animations-transitions * {
   color: #fafcff;
   cursor: pointer;
   border-radius: 5px;
-  padding: 0px 5px;
-  margin: 8px;
+  padding: 2px 2px;
   background: var(--highlight-color);
   box-shadow: 0 0 0.3rem var(--highlight-color);
   transition: 0.3s ease;
@@ -192,7 +191,7 @@ body.hide-animations-transitions * {
   display: grid;
   justify-items: center;
   margin-top: 48px;
-  margin-left: 330px;
+  margin-left: 225px;
   color: var(--text-color);
   opacity: 100;
   transition: 0.5s ease;
@@ -204,53 +203,22 @@ body.hide-animations-transitions * {
 }
 
 #display-message-text {
-  font-size: 0.8rem;
+  font-size: 0.65rem;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
 
 #display-message-color-code {
-  font-size: 0.8rem;
+  font-size: 0.6rem;
 }
 
-.save-selected-color {
-  display: grid;
-  grid-template: "a a" "b b";
-  align-items: center;
-}
-
-.save-selected-color.hide {
+.selected-color-rect.hide {
   display: none;
-}
-
-.save-color-button {
-  outline: none;
-  border: none;
-  justify-self: center;
-  color: #fafcff;
-  font-size: 1.5rem;
-  cursor: pointer;
-  border-radius: 5px;
-  padding: 5px 10px;
-  margin-right: 5px;
-  background: var(--highlight-color);
-  box-shadow: 0 0 0.3rem var(--highlight-color);
-  transition: 0.5s ease;
-}
-
-.save-color-button.hide {
-  display: none;
-}
-
-.save-color-button:hover {
-  box-shadow: none;
 }
 
 .selected-color {
   display: flex;
-  justify-self: center;
-  gap: 1rem;
   margin: 1rem;
 }
 
@@ -268,6 +236,16 @@ body.hide-animations-transitions * {
   transform: scale(1.25);
   border-radius: 5%;
   box-shadow: none;
+}
+
+.selected-color .rect i {
+  display: block;
+  color: #fafcff;
+  text-shadow: 0px 0px 3px var(--highlight-color),
+    0 0 3px var(--highlight-color), 0 0 3px var(--highlight-color);
+  font-size: 50px;
+  text-align: center;
+  margin-top: 22px;
 }
 
 .saved-colors-panel {
@@ -294,9 +272,8 @@ body.hide-animations-transitions * {
 
 .saved-colors-tools {
   display: flex;
-  width: 350px;
   gap: 25px;
-  margin-left: 65px;
+  margin-left: 60px;
   margin-top: -26px;
   margin-bottom: -25px;
   animation: collapseShow 0.4s ease-in-out forwards;
@@ -309,10 +286,10 @@ body.hide-animations-transitions * {
 @keyframes collapseShow {
   0% {
     opacity: 0%;
-    transform: translateX(-600px);
+    transform: translateX(-500px);
   }
 
-  60% {
+  40% {
     opacity: 20%;
   }
 
@@ -328,28 +305,28 @@ body.hide-animations-transitions * {
     transform: translateX(0px);
   }
 
-  40% {
+  60% {
     opacity: 20%;
   }
 
   100% {
     opacity: 0%;
-    transform: translateX(-600px);
+    transform: translateX(-500px);
   }
 }
 
 .saved-colors-tools .saved-colors-count {
-  margin-right: 54px;
   color: var(--text-color);
-  font-size: 1.2rem;
+  font-size: 1rem;
+  margin-top: 4px;
 }
 
 .saved-colors-panel #move-color,
 #delete-on-click,
 #delete-all {
-  width: 25px;
-  height: 25px;
   font-size: 1.5rem;
+  text-shadow: 0px 0px 3px var(--first-color), 0 0 3px var(--first-color),
+    0 0 3px var(--first-color);
   margin-top: 5px;
   cursor: pointer;
 }
@@ -369,17 +346,17 @@ body.hide-animations-transitions * {
 .saved-colors {
   display: grid;
   justify-self: center;
-  padding: 0.5rem;
-  margin-top: 20px;
-  grid-template-columns: repeat(10, 1fr);
+  padding: 0.3rem;
+  margin-top: 23px;
+  grid-template-columns: repeat(8, 1fr);
   list-style-type: none;
 }
 
 .saved-colors .color .rect {
   cursor: pointer;
   display: block;
-  height: var(--rect-height);
-  width: var(--rect-width);
+  height: var(--rect-size);
+  width: var(--rect-size);
   margin: var(--rect-margin);
   border-radius: 15%;
   border: 1px solid var(--text-color);
@@ -441,8 +418,8 @@ body.hide-animations-transitions * {
 .saved-colors .color i {
   display: block;
   color: var(--tool-icon-color);
-  text-shadow: 1px 1px 3px black, 0 0 25px black, 0 0 5px black;
-  font-size: calc(var(--rect-height) * 0.5);
+  text-shadow: 0px 0px 3px black, 0 0 3px black, 0 0 3px black;
+  font-size: calc(var(--rect-size) * 0.5);
   text-align: center;
   margin-top: calc(var(--rect-margin) * 2.5);
 }

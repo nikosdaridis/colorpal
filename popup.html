@@ -15,21 +15,19 @@
   <body class="hide-animations-transitions">
     <div class="popup">
       <div class="colors-tools">
-        <button id="eye-dropper-button">
+        <label id="eye-dropper-button">
           <i class="bx bxs-eyedropper"></i>
-        </button>
-        <div class="color-palette-button">
-          <label for="color-palette"><i class="bx bx-palette"></i></label>
-        </div>
-        <button id="settings-button"><i class="bx bx-cog"></i></button>
+        </label>
+        <label for="color-palette"><i class="bx bx-palette"></i></label>
+        <label id="settings-button"><i class="bx bx-cog"></i></label>
         <input type="color" id="color-palette" />
       </div>
 
       <div class="settings-tools">
-        <button id="colors-button"><i class="bx bxs-color"></i></button>
-        <button id="light-dark-button">
+        <label id="colors-button"><i class="bx bxs-color"></i></label>
+        <label id="light-dark-button">
           <i class="bx bxs-moon" id="light-mode-icon"></i>
-        </button>
+        </label>
       </div>
 
       <div class="settings-panel">
@@ -103,7 +101,7 @@
               ><i class="bx bxl-github"></i
             ></a>
           </div>
-          <h4>Version <span>1.2.1</span></h4>
+          <h4>Version <span>1.2.2</span></h4>
         </div>
       </div>
 
@@ -129,10 +127,9 @@
         </div>
       </div>
 
-      <div class="save-selected-color">
-        <div class="save-color-button"><i class="bx bx-save"></i></div>
+      <div class="selected-color-rect">
         <div class="selected-color">
-          <span class="rect"></span>
+          <span class="rect"><i class=""></i></span>
         </div>
       </div>
 
@@ -142,10 +139,10 @@
         </div>
 
         <div class="saved-colors-tools">
+          <span class="saved-colors-count"></span>
           <i id="move-color" class="bx bx-move"></i>
           <i id="delete-on-click" class="bx bx-trash"></i>
           <i id="delete-all" class="bx bx-bomb"></i>
-          <span class="saved-colors-count"></span>
         </div>
         <ul class="saved-colors"></ul>
       </div>

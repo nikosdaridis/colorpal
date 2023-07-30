@@ -25,10 +25,9 @@ const deleteAll = document.querySelector("#delete-all");
 const lightModeIcon = document.querySelector("#light-mode-icon");
 const settingsPanel = document.querySelector(".settings-panel");
 const codesMessages = document.querySelector(".codes-messages");
-const saveSelectedColor = document.querySelector(".save-selected-color");
+const selectedColorRect = document.querySelector(".selected-color-rect");
 const savedColorsPanel = document.querySelector(".saved-colors-panel");
 const selectedColor = document.querySelector(".selected-color .rect");
-const saveColorButton = document.querySelector(".save-color-button");
 const displayMessages = document.querySelector(".display-messages");
 const displayMessageText = document.querySelector("#display-message-text");
 const displayMessageColorCode = document.querySelector(
@@ -123,9 +122,11 @@ function setLightDarkMode(mode) {
 
 function setCurrentSelectedColor(currentColor) {
   localStorage.setItem("colorpal-current-selected-color", currentColor);
-  savedColorsArray.includes(currentColor)
-    ? saveColorButton.classList.add("hide")
-    : saveColorButton.classList.remove("hide");
+
+  selectedColor.lastElementChild.setAttribute(
+    "class",
+    `${savedColorsArray.includes(currentColor) ? "" : "bx bx-save"}`
+  );
 
   colorPalette.value = localStorage.getItem("colorpal-current-selected-color");
   selectedColor.style.background = currentColor;
@@ -149,29 +150,25 @@ function setColorsPerLine(colorsPerLine) {
 
   switch (colorsPerLine) {
     case 6:
-      root.style.setProperty("--rect-height", "71px");
-      root.style.setProperty("--rect-width", "71px");
-      root.style.setProperty("--rect-margin", "6.5px");
+      root.style.setProperty("--rect-size", "47px");
+      root.style.setProperty("--rect-margin", "4.9px");
       break;
     case 8:
-      root.style.setProperty("--rect-height", "53px");
-      root.style.setProperty("--rect-width", "53px");
-      root.style.setProperty("--rect-margin", "5px");
+      root.style.setProperty("--rect-size", "35px");
+      root.style.setProperty("--rect-margin", "3.8px");
       break;
     case 10:
-      root.style.setProperty("--rect-height", "42px");
-      root.style.setProperty("--rect-width", "42px");
-      root.style.setProperty("--rect-margin", "4.2px");
+      root.style.setProperty("--rect-size", "28px");
+      root.style.setProperty("--rect-margin", "3px");
       break;
     case 12:
-      root.style.setProperty("--rect-height", "35px");
-      root.style.setProperty("--rect-width", "35px");
-      root.style.setProperty("--rect-margin", "3.5px");
+      root.style.setProperty("--rect-size", "23px");
+      root.style.setProperty("--rect-margin", "2.4px");
       break;
   }
 
   rectSize = Number(
-    getComputedStyle(root).getPropertyValue("--rect-height").replace("px", "")
+    getComputedStyle(root).getPropertyValue("--rect-size").replace("px", "")
   );
 }
 
@@ -198,7 +195,7 @@ function setPage(page) {
       ? savedColorsPanel.classList.add("hide")
       : savedColorsPanel.classList.remove("hide");
 
-    saveSelectedColor.classList.remove("hide");
+    selectedColorRect.classList.remove("hide");
     codesMessages.classList.remove("hide");
     colorsTools.classList.remove("hide");
     settingsTools.classList.add("hide");
@@ -217,7 +214,7 @@ function setPage(page) {
   } else {
     // default set settings page
     savedColorsPanel.classList.add("hide");
-    saveSelectedColor.classList.add("hide");
+    selectedColorRect.classList.add("hide");
     codesMessages.classList.add("hide");
     colorsTools.classList.add("hide");
     settingsTools.classList.remove("hide");
@@ -377,7 +374,7 @@ function SwapColors(draggable, draggingColor, closestColorElement) {
   );
 
   displayMessageAndColor(
-    `Swapped color ${draggingIndex + 1} with ${replacingIndex + 1}`,
+    `Swapped ${draggingIndex + 1} with ${replacingIndex + 1}`,
     null,
     null
   );
@@ -502,7 +499,7 @@ function saveColor(color) {
       : `${savedColorsArray.length} Colors`;
 
   renderColors();
-  saveColorButton.classList.add("hide");
+  selectedColor.lastElementChild.setAttribute("class", "");
 
   localStorage.getItem("colorpal-auto-copy-color-code") === "true"
     ? (text = "Saved and Copied")
@@ -593,7 +590,8 @@ function deleteColor(color) {
       : `${savedColorsArray.length} Colors`;
 
   renderColors();
-  saveColorButton.classList.remove("hide");
+
+  selectedColor.lastElementChild.setAttribute("class", "bx bx-save");
 
   displayMessageAndColor(
     "Deleted",
@@ -791,12 +789,12 @@ copyHsvButton.addEventListener("click", function () {
   );
 });
 
-saveColorButton.addEventListener("click", function () {
-  saveColor(localStorage.getItem("colorpal-current-selected-color"));
-});
-
 selectedColor.addEventListener("click", function () {
-  colorPalette.click();
+  savedColorsArray.includes(
+    localStorage.getItem("colorpal-current-selected-color")
+  )
+    ? colorPalette.click()
+    : saveColor(localStorage.getItem("colorpal-current-selected-color"));
 });
 
 collapseSavedColorsTools.addEventListener("click", function () {
