@@ -22,8 +22,8 @@
   --delete-onclick-color: rgb(231, 11, 11);
   --delete-all-color: rgb(181, 7, 7);
 
-  --rect-size: 35.6px;
-  --rect-margin: 3.36px;
+  --rect-size: 40.5px;
+  --rect-margin: calc(var(--rect-size) * 0.1);
 }
 
 body.hide-animations-transitions * {

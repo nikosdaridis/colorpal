@@ -78,8 +78,7 @@ function setOptions() {
   colorCodeFormat.value = localStorage.getItem("colorpal-color-code-format");
 
   localStorage.getItem("colorpal-colors-per-line") ??
-    localStorage.setItem("colorpal-colors-per-line", "8");
-  colorsPerLine.value = localStorage.getItem("colorpal-colors-per-line");
+    localStorage.setItem("colorpal-colors-per-line", "7");
   setColorsPerLine(parseInt(localStorage.getItem("colorpal-colors-per-line")));
 
   localStorage.getItem("colorpal-display-messages") ??
@@ -142,30 +141,38 @@ function setCurrentSelectedColor(currentColor) {
   selectedColorHSV.textContent = rgbToHsv(rgbColor, true);
 }
 
-function setColorsPerLine(colorsPerLine) {
+function setColorsPerLine(clrPerLine) {
+  if (clrPerLine < 5 || clrPerLine > 10) {
+    clrPerLine = 7;
+    localStorage.setItem("colorpal-colors-per-line", "7");
+  }
+
+  console.log(colorsPerLine.value);
+  colorsPerLine.value = clrPerLine;
+
   savedColors.style.setProperty(
     "grid-template-columns",
-    `repeat(${String(colorsPerLine)}, 1fr)`
+    `repeat(${String(clrPerLine)}, 1fr)`
   );
 
-  switch (colorsPerLine) {
-    case 6:
-      root.style.setProperty("--rect-size", "47px");
-      root.style.setProperty("--rect-margin", "4.9px");
-      break;
-    case 8:
-      root.style.setProperty("--rect-size", "35px");
-      root.style.setProperty("--rect-margin", "3.8px");
-      break;
-    case 10:
-      root.style.setProperty("--rect-size", "28px");
-      root.style.setProperty("--rect-margin", "3px");
-      break;
-    case 12:
-      root.style.setProperty("--rect-size", "23px");
-      root.style.setProperty("--rect-margin", "2.4px");
-      break;
-  }
+  root.style.setProperty(
+    "--rect-size",
+    `${
+      clrPerLine === 5
+        ? "56.8px"
+        : clrPerLine === 6
+        ? "47.2px"
+        : clrPerLine === 7
+        ? "40.5px"
+        : clrPerLine === 8
+        ? "35.4px"
+        : clrPerLine === 9
+        ? "31.5px"
+        : clrPerLine === 10
+        ? "28.3px"
+        : "40.5px" // default 7
+    }`
+  );
 
   rectSize = Number(
     getComputedStyle(root).getPropertyValue("--rect-size").replace("px", "")
