@@ -45,10 +45,9 @@ const displayMessagesOption = document.querySelector(
   "#display-messages-option"
 );
 const savedColorsArray = JSON.parse(
-  localStorage.getItem("colorpal-saved-colors-array") ??
-    localStorage.getItem("savedColorsArray") ?? // old localStorage name
-    "[]"
+  localStorage.getItem("colorpal-saved-colors-array") ?? "[]"
 );
+const latestVersion = "1.2.2";
 var messageTimeout, hideAnimTranTimeout;
 var rectSize;
 var deletingColor = false,
@@ -56,6 +55,13 @@ var deletingColor = false,
 
 setOptions();
 setPage("colors");
+
+latestVersion !== localStorage.getItem("colorpal-version") && newVersion();
+
+function newVersion() {
+  localStorage.setItem("colorpal-version", latestVersion);
+  // Future Code
+}
 
 function setOptions() {
   // set default values if null
@@ -103,19 +109,19 @@ function setOptions() {
 }
 
 function setLightDarkMode(mode) {
-  if (mode === "dark") {
-    localStorage.setItem("colorpal-light-dark-mode", "dark");
-    root.style.setProperty("--first-color", "#24282a");
-    root.style.setProperty("--second-color", "#2b353e");
-    root.style.setProperty("--text-color", "#fafcff");
-    lightModeIcon.setAttribute("class", "bx bxs-sun");
-  } else {
-    // default set light
+  if (mode === "light") {
     localStorage.setItem("colorpal-light-dark-mode", "light");
     root.style.setProperty("--first-color", "#fafcff");
     root.style.setProperty("--second-color", "#e7e7f4");
     root.style.setProperty("--text-color", "#24282a");
     lightModeIcon.setAttribute("class", "bx bxs-moon");
+  } else {
+    // default set dark
+    localStorage.setItem("colorpal-light-dark-mode", "dark");
+    root.style.setProperty("--first-color", "#24282a");
+    root.style.setProperty("--second-color", "#2b353e");
+    root.style.setProperty("--text-color", "#fafcff");
+    lightModeIcon.setAttribute("class", "bx bxs-sun");
   }
 }
 
@@ -147,7 +153,6 @@ function setColorsPerLine(clrPerLine) {
     localStorage.setItem("colorpal-colors-per-line", "7");
   }
 
-  console.log(colorsPerLine.value);
   colorsPerLine.value = clrPerLine;
 
   savedColors.style.setProperty(
@@ -158,19 +163,13 @@ function setColorsPerLine(clrPerLine) {
   root.style.setProperty(
     "--rect-size",
     `${
-      clrPerLine === 5
-        ? "56.8px"
-        : clrPerLine === 6
-        ? "47.2px"
-        : clrPerLine === 7
-        ? "40.5px"
-        : clrPerLine === 8
-        ? "35.4px"
-        : clrPerLine === 9
-        ? "31.5px"
-        : clrPerLine === 10
-        ? "28.3px"
-        : "40.5px" // default 7
+      (clrPerLine === 5 && "56.8px") ||
+      (clrPerLine === 6 && "47.2px") ||
+      (clrPerLine === 7 && "40.5px") ||
+      (clrPerLine === 8 && "35.4px") ||
+      (clrPerLine === 9 && "31.5px") ||
+      (clrPerLine === 10 && "28.3px") ||
+      "40.5px" // default 7
     }`
   );
 
@@ -215,7 +214,7 @@ function setPage(page) {
 
     // remove hide animations and transitions
     clearTimeout(hideAnimTranTimeout);
-    hideAnimTranTimeout = setTimeout(() => (document.body.className = ""), 500);
+    hideAnimTranTimeout = setTimeout(() => (document.body.className = ""), 400);
 
     renderColors();
   } else {
@@ -277,13 +276,10 @@ function addColorsListeners() {
 
       root.style.setProperty(
         "--tool-icon-color",
-        `${
-          movingColor
-            ? "rgb(12, 16, 233)"
-            : deletingColor
-            ? "rgb(231, 11, 11)"
-            : ""
-        }`
+        getComputedStyle(root).getPropertyValue(
+          (movingColor && "--move-tool-color") ||
+            (deletingColor && "--delete-tool-color")
+        )
       );
     });
 
@@ -576,7 +572,7 @@ function activateEyeDropper() {
 
     document.body.className = "hide-animations-transitions";
     // remove hide animations and transitions
-    setTimeout(() => (document.body.className = ""), 500);
+    setTimeout(() => (document.body.className = ""), 400);
   }, 10);
 }
 
@@ -632,7 +628,9 @@ function setMoveColor(setMove) {
   moveColor.setAttribute("class", movingColor ? "bx bx-check" : "bx bx-move");
   moveColor.style.setProperty(
     "color",
-    movingColor ? "green" : "rgb(12, 16, 233)"
+    getComputedStyle(root).getPropertyValue(
+      movingColor ? "--check-tool-color" : "--move-tool-color"
+    )
   );
 }
 
@@ -645,7 +643,9 @@ function setDeleteColor(setDelete) {
   );
   deleteOnClick.style.setProperty(
     "color",
-    deletingColor ? "green" : "rgb(231, 11, 11)"
+    getComputedStyle(root).getPropertyValue(
+      deletingColor ? "--check-tool-color" : "--delete-tool-color"
+    )
   );
 }
 
@@ -733,6 +733,24 @@ function rgbToHsv(rbg, returnString) {
 }
 
 eyeDropperButton.addEventListener("click", activateEyeDropper);
+
+colorPalette.addEventListener("input", function () {
+  setCurrentSelectedColor(colorPalette.value);
+  displayMessageAndColor(
+    "Selected",
+    colorPalette.value,
+    localStorage.getItem("colorpal-color-code-format")
+  );
+});
+
+colorPalette.addEventListener("click", function () {
+  if (movingColor || deletingColor) {
+    setMoveColor(false);
+    setDeleteColor(false);
+    renderColors();
+  }
+});
+
 settingsButton.addEventListener("click", function () {
   setPage("settings");
 });
@@ -823,23 +841,6 @@ deleteOnClick.addEventListener("click", function () {
 });
 
 deleteAll.addEventListener("click", deleteAllColors);
-
-colorPalette.addEventListener("input", function () {
-  setCurrentSelectedColor(colorPalette.value);
-  displayMessageAndColor(
-    "Selected",
-    colorPalette.value,
-    localStorage.getItem("colorpal-color-code-format")
-  );
-});
-
-colorPalette.addEventListener("click", function () {
-  if (movingColor || deletingColor) {
-    setMoveColor(false);
-    setDeleteColor(false);
-    renderColors();
-  }
-});
 
 autoSaveEyeDropper.addEventListener("change", function () {
   this.checked

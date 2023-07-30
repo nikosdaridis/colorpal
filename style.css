@@ -11,16 +11,18 @@
 }
 
 :root {
-  --first-color: #fafcff;
-  --second-color: #ededf7;
+  --first-color: ##24282a;
+  --second-color: #2b353e;
+  --text-color: #fafcff;
   --highlight-color: #1587ff;
-  --text-color: #24282a;
+  --highlight-hover-color: #4f9ff5;
 
   --selected-color: #000000;
   --tool-icon-color: #000000;
-  --move-tool-color: rgb(12, 16, 233);
-  --delete-onclick-color: rgb(231, 11, 11);
-  --delete-all-color: rgb(181, 7, 7);
+  --move-tool-color: #0c10e9;
+  --delete-tool-color: #e70b0b;
+  --check-tool-color: #5bf55e;
+  --delete-all-color: #b50707;
 
   --rect-size: 40.5px;
   --rect-margin: calc(var(--rect-size) * 0.1);
@@ -62,13 +64,12 @@ body.hide-animations-transitions * {
   padding: 5px 10px;
   margin-right: 2rem;
   background: var(--highlight-color);
-  box-shadow: 0 0 0.3rem var(--highlight-color);
-  transition: 0.3s ease;
+  transition: 0.2s ease;
 }
 
 .colors-tools label:hover,
 .settings-tools label:hover {
-  box-shadow: none;
+  background: var(--highlight-hover-color);
 }
 
 /* Counter hidden color-palette margin */
@@ -108,10 +109,11 @@ body.hide-animations-transitions * {
 .options {
   display: grid;
   grid-template: "a a" "b b";
-  align-items: center;
+  justify-content: center;
   gap: 1.5rem;
+  margin: 0rem 2rem 0 2rem;
   background-color: var(--second-color);
-  box-shadow: 0 0 0.3rem var(--second-color);
+  box-shadow: 0 0 0.5rem var(--second-color);
   border-color: var(--second-color);
 }
 
@@ -119,33 +121,56 @@ body.hide-animations-transitions * {
   display: grid;
   justify-items: center;
   text-align: center;
-  margin-top: 1rem;
-  gap: 0.1rem;
+  margin: 2rem 0.2rem 0 0.2rem;
+  gap: 0.2rem;
 }
 
 .settings-panel .info h3 {
-  font-size: 0.8rem;
-  color: var(--text-color);
-}
-
-.settings-panel .info h4 {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--text-color);
 }
 
 .settings-panel .info span {
+  font-size: 0.75rem;
   color: var(--highlight-color);
 }
 
-.settings-panel .link {
+.settings-panel .info .review a {
+  display: inline-block;
+  white-space: nowrap;
+  outline: none;
+  border: none;
+  color: #fafcff;
+  font-size: 0.7rem;
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 6px 5px;
+  text-align: center;
+  text-decoration: none;
+  background: #f86795;
+  transition: 0.2s ease;
+}
+
+.settings-panel .info .review a:hover {
+  background: #f785a9;
+}
+
+.settings-panel .review,
+.message,
+.github {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
 .settings-panel .info i {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
+  margin-top: 5px;
   color: var(--highlight-color);
+}
+
+.settings-panel .info i:hover {
+  color: var(--highlight-hover-color);
 }
 
 .codes-messages {
@@ -178,12 +203,11 @@ body.hide-animations-transitions * {
   border-radius: 5px;
   padding: 2px 2px;
   background: var(--highlight-color);
-  box-shadow: 0 0 0.3rem var(--highlight-color);
   transition: 0.3s ease;
 }
 
 .color-codes button:hover {
-  box-shadow: none;
+  background: var(--highlight-hover-color);
 }
 
 .display-messages {
@@ -202,15 +226,12 @@ body.hide-animations-transitions * {
   pointer-events: none;
 }
 
-#display-message-text {
-  font-size: 0.65rem;
+#display-message-text,
+#display-message-color-code {
+  font-size: 0.6rem;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-}
-
-#display-message-color-code {
-  font-size: 0.6rem;
 }
 
 .selected-color-rect.hide {
@@ -324,11 +345,19 @@ body.hide-animations-transitions * {
 .saved-colors-panel #move-color,
 #delete-on-click,
 #delete-all {
-  font-size: 1.5rem;
-  text-shadow: 0px 0px 3px var(--first-color), 0 0 3px var(--first-color),
-    0 0 3px var(--first-color);
-  margin-top: 5px;
+  font-size: 1.4rem;
   cursor: pointer;
+  border-radius: 5px;
+  padding: 2px;
+  margin-top: 4px;
+  background: var(--highlight-color);
+  transition: 0.2s ease;
+}
+
+.saved-colors-panel #move-color:hover,
+#delete-on-click:hover,
+#delete-all:hover {
+  background: var(--highlight-hover-color);
 }
 
 .saved-colors-panel #move-color {
@@ -336,7 +365,7 @@ body.hide-animations-transitions * {
 }
 
 .saved-colors-panel #delete-on-click {
-  color: var(--delete-onclick-color);
+  color: var(--delete-tool-color);
 }
 
 .saved-colors-panel #delete-all {
@@ -388,7 +417,7 @@ body.hide-animations-transitions * {
 }
 
 .saved-colors .color .rect.deletable {
-  border-color: var(--delete-onclick-color);
+  border-color: var(--delete-tool-color);
   animation: 1.5s infinite normal shake;
 }
 
