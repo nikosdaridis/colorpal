@@ -106,11 +106,11 @@ body.hide-animations-transitions * {
   display: none;
 }
 
-.options {
+.settings-panel .options {
   display: grid;
   grid-template: "a a" "b b";
   justify-content: center;
-  gap: 1.5rem;
+  gap: 1rem;
   margin: 0rem 2rem 0 2rem;
   background-color: var(--second-color);
   box-shadow: 0 0 0.5rem var(--second-color);
@@ -142,6 +142,7 @@ body.hide-animations-transitions * {
   border: none;
   color: #fafcff;
   font-size: 0.7rem;
+  font-weight: 600;
   cursor: pointer;
   border-radius: 5px;
   padding: 6px 5px;
@@ -228,7 +229,7 @@ body.hide-animations-transitions * {
 
 #display-message-text,
 #display-message-color-code {
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
