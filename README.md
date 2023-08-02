@@ -28,6 +28,6 @@
 
 ### Preview
 
-<img width="500" alt="" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot1.jpg>
-<img width="500" alt="" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot2.jpg>
-<img width="500" alt="" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot3.jpg>
+<img width="300" alt="" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot1.jpg>
+<img width="300" alt="" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot2.jpg>
+<img width="300" alt="" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot3.jpg>
