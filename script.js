@@ -47,9 +47,8 @@ const displayMessagesOption = document.querySelector(
 const savedColorsArray = JSON.parse(
   localStorage.getItem("colorpal-saved-colors-array") ?? "[]"
 );
-const latestVersion = "1.2.2";
+const latestVersion = "1.2.3";
 var messageTimeout, hideAnimTranTimeout;
-var rectSize;
 var deletingColor = false,
   movingColor = false;
 
@@ -168,13 +167,8 @@ function setColorsPerLine(clrPerLine) {
       (clrPerLine === 7 && "40.5px") ||
       (clrPerLine === 8 && "35.4px") ||
       (clrPerLine === 9 && "31.5px") ||
-      (clrPerLine === 10 && "28.3px") ||
-      "40.5px" // default 7
+      (clrPerLine === 10 && "28.3px")
     }`
-  );
-
-  rectSize = Number(
-    getComputedStyle(root).getPropertyValue("--rect-size").replace("px", "")
   );
 }
 
@@ -271,14 +265,15 @@ function addColorsListeners() {
       // moving or deleting icon
       elem.target.lastElementChild.setAttribute(
         "class",
-        `${movingColor ? "bx bx-move" : deletingColor ? "bx bx-trash-alt" : ""}`
+        `bx bx-${(movingColor && "move") || (deletingColor && "trash-alt")}`
       );
 
       root.style.setProperty(
         "--tool-icon-color",
         getComputedStyle(root).getPropertyValue(
-          (movingColor && "--move-tool-color") ||
-            (deletingColor && "--delete-tool-color")
+          `--${
+            (movingColor && "move") || (deletingColor && "delete")
+          }-tool-color`
         )
       );
     });
@@ -294,8 +289,7 @@ function addColorsListeners() {
   if (!movingColor) return;
 
   let draggables = document.querySelectorAll(".draggable");
-  let draggingColor;
-  let closestColorElement;
+  let draggingColorElement, closestColorElement;
   let mouseOverColor = true;
 
   draggables.forEach((draggable) => {
@@ -313,31 +307,30 @@ function addColorsListeners() {
     // dragging listener
     draggable.addEventListener("dragover", (elem) => {
       elem.preventDefault(); // prevent dragging blocked icon
-      closestColorElement = findClosestColor(draggables);
+      closestColorElement = elem.target;
+      closestColorElement.classList.add("closest");
     });
 
     // drag start listener
     draggable.addEventListener("dragstart", () => {
       draggable.classList.add("dragging");
-      draggingColor = draggable.dataset.color;
+      draggingColorElement = draggable;
     });
 
     // drag end listener
     draggable.addEventListener("dragend", () => {
       if (
-        !closestColorElement ||
         !mouseOverColor ||
-        draggingColor === closestColorElement.dataset.color
+        !closestColorElement.dataset.color ||
+        draggingColorElement.dataset.color === closestColorElement.dataset.color
       ) {
         displayMessageAndColor(
           `${
-            !closestColorElement
-              ? "Didn't find the closest color"
-              : !mouseOverColor
-              ? "Drag over a color"
-              : draggingColor === closestColorElement.dataset.color
-              ? "Drag over another color"
-              : ""
+            (!mouseOverColor && "Drag over a color") ||
+            ((!closestColorElement.dataset.color ||
+              draggingColorElement.dataset.color ===
+                closestColorElement.dataset.color) &&
+              "Drag over another color")
           }`,
           null,
           null
@@ -347,29 +340,27 @@ function addColorsListeners() {
         return;
       }
 
-      SwapColors(draggable, draggingColor, closestColorElement);
+      swapColors(draggingColorElement, closestColorElement);
+      draggable.classList.remove("dragging");
     });
   });
 }
 
-function SwapColors(draggable, draggingColor, closestColorElement) {
-  let replacingIndex = -1,
-    draggingIndex = -1;
-  let index = 0;
+function swapColors(draggingColorElement, closestColorElement) {
+  let draggingIndex = savedColorsArray.findIndex(
+    (color) => color === draggingColorElement.dataset.color
+  );
+  let closestIndex = savedColorsArray.findIndex(
+    (color) => color === closestColorElement.dataset.color
+  );
 
-  savedColorsArray.forEach((color) => {
-    if (color === closestColorElement.dataset.color) replacingIndex = index;
-    if (color === draggingColor) draggingIndex = index;
-    index++;
-  });
-
-  if (replacingIndex === -1 || draggingIndex === -1) {
+  if (draggingIndex === -1 || closestIndex === -1) {
     displayMessageAndColor("Something went wrong", null, null);
     return;
   }
 
-  savedColorsArray[replacingIndex] = draggingColor;
   savedColorsArray[draggingIndex] = closestColorElement.dataset.color;
+  savedColorsArray[closestIndex] = draggingColorElement.dataset.color;
 
   localStorage.setItem(
     "colorpal-saved-colors-array",
@@ -377,43 +368,12 @@ function SwapColors(draggable, draggingColor, closestColorElement) {
   );
 
   displayMessageAndColor(
-    `Swapped ${draggingIndex + 1} with ${replacingIndex + 1}`,
+    `Swapped ${draggingIndex + 1} with ${closestIndex + 1}`,
     null,
     null
   );
 
-  draggable.classList.remove("dragging");
   renderColors();
-}
-
-function findClosestColor(draggables) {
-  let closestColorElement = document.querySelector(".dragging");
-  let closestDistance = Number.MAX_VALUE;
-  let distance;
-
-  draggables.forEach((draggable) => {
-    distance = getDistance(
-      draggable.getBoundingClientRect().x + rectSize / 2,
-      draggable.getBoundingClientRect().y + rectSize / 2,
-      window.event.x,
-      window.event.y
-    );
-
-    if (distance < closestDistance) {
-      closestDistance = distance;
-      closestColorElement = draggable;
-    }
-
-    draggable.classList.remove("closest");
-  });
-
-  closestColorElement.classList.add("closest");
-
-  function getDistance(x1, y1, x2, y2) {
-    return Math.hypot(x2 - x1, y2 - y1);
-  }
-
-  return closestColorElement;
 }
 
 function displayMessageAndColor(text, color, colorFormat) {
