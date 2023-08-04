@@ -116,26 +116,40 @@ body.hide-animations-transitions * {
   border-color: var(--second-color);
 }
 
-.settings-panel .info {
-  display: grid;
-  justify-items: center;
-  text-align: center;
+.info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin: 2rem 0.2rem 0 0.2rem;
-  gap: 0.2rem;
+  gap: 0.5rem;
 }
 
-.settings-panel .info h3 {
+.info span {
   font-size: 0.75rem;
-  color: var(--text-color);
-}
-
-.settings-panel .info span {
-  font-size: 0.75rem;
+  align-self: center;
   color: var(--highlight-color);
 }
 
-.settings-panel .info .review a {
-  display: inline-block;
+.info i {
+  font-size: 1.6rem;
+  margin-top: 5px;
+  color: var(--highlight-color);
+}
+
+.info i:hover {
+  color: var(--highlight-hover-color);
+}
+
+.info .feedback a {
+  background: #ee5173;
+}
+
+.info .feedback a:hover {
+  background: #f06f8b;
+}
+
+.info .review a,
+.feedback a {
   white-space: nowrap;
   outline: none;
   border: none;
@@ -147,30 +161,17 @@ body.hide-animations-transitions * {
   padding: 6px 5px;
   text-align: center;
   text-decoration: none;
-  background: #f86795;
+  background: #24da70;
   transition: 0.2s ease;
 }
 
-.settings-panel .info .review a:hover {
-  background: #f785a9;
+.info .review a:hover {
+  background: #4be48a;
 }
 
-.settings-panel .review,
-.message,
-.github {
+.info .github {
   display: flex;
-  align-items: center;
   gap: 0.5rem;
-}
-
-.settings-panel .info i {
-  font-size: 1.6rem;
-  margin-top: 5px;
-  color: var(--highlight-color);
-}
-
-.settings-panel .info i:hover {
-  color: var(--highlight-hover-color);
 }
 
 .codes-messages {
