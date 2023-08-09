@@ -11,8 +11,8 @@
 }
 
 :root {
-  --first-color: ##24282a;
-  --second-color: #2b353e;
+  --primary-color: ##24282a;
+  --secondary-color: #2b353e;
   --text-color: #fafcff;
   --highlight-color: #1587ff;
   --highlight-hover-color: #4f9ff5;
@@ -38,7 +38,7 @@ body.hide-animations-transitions * {
   display: grid;
   justify-items: center;
   width: 350px;
-  background: var(--first-color);
+  background: var(--primary-color);
 }
 
 .colors-tools,
@@ -73,7 +73,7 @@ body.hide-animations-transitions * {
 }
 
 #settings-button,
-#light-dark-button {
+#theme-button {
   margin-right: 0;
 }
 
@@ -110,10 +110,11 @@ body.hide-animations-transitions * {
   grid-template: "a a" "b b";
   justify-content: center;
   gap: 1rem;
+  padding: 5px;
   margin: 0rem 2rem 0 2rem;
-  background-color: var(--second-color);
-  box-shadow: 0 0 0.5rem var(--second-color);
-  border-color: var(--second-color);
+  background-color: var(--secondary-color);
+  box-shadow: 0 0 0.5rem var(--secondary-color);
+  border-color: var(--secondary-color);
 }
 
 .info {
@@ -131,7 +132,7 @@ body.hide-animations-transitions * {
 }
 
 .info i {
-  font-size: 1.6rem;
+  font-size: 2rem;
   margin-top: 5px;
   color: var(--highlight-color);
 }
@@ -272,8 +273,8 @@ body.hide-animations-transitions * {
 
 .saved-colors-panel {
   margin-top: 1rem;
-  background-color: var(--second-color);
-  box-shadow: 0 0 0.3rem var(--second-color);
+  background-color: var(--secondary-color);
+  box-shadow: 0 0 0.3rem var(--secondary-color);
 }
 
 .saved-colors-panel.hide {
