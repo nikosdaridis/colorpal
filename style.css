@@ -131,16 +131,6 @@ body.hide-animations-transitions * {
   color: var(--highlight-color);
 }
 
-.info i {
-  font-size: 2rem;
-  margin-top: 5px;
-  color: var(--highlight-color);
-}
-
-.info i:hover {
-  color: var(--highlight-hover-color);
-}
-
 .info .feedback a {
   background: #ee5173;
 }
@@ -173,6 +163,22 @@ body.hide-animations-transitions * {
 .info .github {
   display: flex;
   gap: 0.5rem;
+}
+
+.info .github i,
+.info .help i {
+  font-size: 2.2rem;
+  margin-top: 5px;
+  color: var(--highlight-color);
+}
+
+.info .help i {
+  font-size: 1.4rem;
+}
+
+.info .github i:hover,
+.help i:hover {
+  color: var(--highlight-hover-color);
 }
 
 .codes-messages {
