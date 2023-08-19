@@ -11,27 +11,35 @@
 }
 
 :root {
-  --primary-color: ##24282a;
+  --primary-color: #24282a;
   --secondary-color: #2b353e;
   --text-color: #fafcff;
   --highlight-color: #1587ff;
   --highlight-hover-color: #4f9ff5;
 
   --selected-color: #000000;
-  --tool-icon-color: #000000;
-  --move-tool-color: #0c10e9;
+  --move-tool-color: #0795ed;
   --delete-tool-color: #e70b0b;
   --check-tool-color: #5bf55e;
   --delete-all-color: #b50707;
+
+  --theme-filter: invert(89%) sepia(7%) saturate(1464%) hue-rotate(196deg)
+    brightness(103%) contrast(121%);
+  --tool-icon-filter: invert(44%) sepia(28%) saturate(4405%) hue-rotate(178deg)
+    brightness(98%) contrast(95%) drop-shadow(0 0 2px black);
+  --highlight-hover-filter: invert(53%) sepia(93%) saturate(1514%)
+    hue-rotate(188deg) brightness(101%) contrast(92%);
 
   --rect-size: 40.5px;
   --rect-margin: calc(var(--rect-size) * 0.1);
 }
 
-body.hide-animations-transitions * {
+body.hide-animations * {
   animation-duration: 0s !important;
-  transition: background-color 0s, opacity 0s, color 0s, width 0s, height 0s,
-    padding 0s, margin 0s !important;
+}
+
+img[src=""] {
+  display: none;
 }
 
 .popup {
@@ -57,14 +65,28 @@ body.hide-animations-transitions * {
 .settings-tools label {
   outline: none;
   border: none;
-  color: #fafcff;
-  font-size: 1.5rem;
   cursor: pointer;
   border-radius: 5px;
-  padding: 5px 10px;
+  padding: 7px 7px;
   margin-right: 2rem;
   background: var(--highlight-color);
   transition: 0.2s ease;
+}
+
+.colors-tools img,
+.settings-tools img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  filter: invert(89%) sepia(7%) saturate(1464%) hue-rotate(196deg)
+    brightness(103%) contrast(121%);
+  height: 30px;
+  width: 30px;
+}
+
+.settings-tools #theme-button img {
+  filter: var(--theme-filter) !important;
 }
 
 .colors-tools label:hover,
@@ -121,8 +143,8 @@ body.hide-animations-transitions * {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 2rem 0.2rem 0 0.2rem;
-  gap: 0.5rem;
+  margin-top: 2rem;
+  gap: 0.7rem;
 }
 
 .info span {
@@ -149,8 +171,7 @@ body.hide-animations-transitions * {
   font-weight: 600;
   cursor: pointer;
   border-radius: 5px;
-  padding: 6px 5px;
-  text-align: center;
+  padding: 7px 5px;
   text-decoration: none;
   background: #24da70;
   transition: 0.2s ease;
@@ -165,20 +186,23 @@ body.hide-animations-transitions * {
   gap: 0.5rem;
 }
 
-.info .github i,
-.info .help i {
-  font-size: 2.2rem;
+.info .github img,
+.info .help img {
   margin-top: 5px;
-  color: var(--highlight-color);
+  height: 30px;
+  width: 30px;
+  filter: invert(38%) sepia(96%) saturate(2667%) hue-rotate(198deg)
+    brightness(105%) contrast(101%);
 }
 
-.info .help i {
-  font-size: 1.4rem;
+.info .help img {
+  height: 20px;
+  width: 20px;
 }
 
-.info .github i:hover,
-.help i:hover {
-  color: var(--highlight-hover-color);
+.info .github img:hover,
+.info .help img:hover {
+  filter: var(--highlight-hover-filter);
 }
 
 .codes-messages {
@@ -252,6 +276,7 @@ body.hide-animations-transitions * {
 }
 
 .selected-color .rect {
+  display: flex;
   cursor: pointer;
   height: 100px;
   width: 100px;
@@ -267,14 +292,12 @@ body.hide-animations-transitions * {
   box-shadow: none;
 }
 
-.selected-color .rect i {
-  display: block;
-  color: #fafcff;
-  text-shadow: 0px 0px 3px var(--highlight-color),
-    0 0 3px var(--highlight-color), 0 0 3px var(--highlight-color);
-  font-size: 50px;
-  text-align: center;
-  margin-top: 22px;
+.selected-color .rect img {
+  margin: auto;
+  height: 35px;
+  width: 35px;
+  filter: invert(100%) sepia(64%) saturate(1161%) hue-rotate(179deg)
+    brightness(99%) contrast(113%) drop-shadow(0 0 2px black);
 }
 
 .saved-colors-panel {
@@ -287,7 +310,7 @@ body.hide-animations-transitions * {
   display: none;
 }
 
-.collapse-saved-colors-tools {
+.collapse-saved-colors-tools img {
   position: flex;
   width: 25px;
   height: 25px;
@@ -295,13 +318,16 @@ body.hide-animations-transitions * {
   margin-bottom: -10px;
   cursor: pointer;
   text-align: center;
-  font-size: 1.5rem;
-  color: var(--text-color);
+  filter: var(--theme-filter);
+}
+
+.collapse-saved-colors-tools img:hover {
+  transform: scale(1.2);
 }
 
 .saved-colors-tools {
   display: flex;
-  gap: 25px;
+  gap: 30px;
   margin-left: 60px;
   margin-top: -26px;
   margin-bottom: -25px;
@@ -350,34 +376,33 @@ body.hide-animations-transitions * {
   margin-top: 4px;
 }
 
-.saved-colors-panel #move-color,
-#delete-on-click,
-#delete-all {
-  font-size: 1.4rem;
+.saved-colors-tools img {
+  display: block;
   cursor: pointer;
   border-radius: 5px;
-  padding: 2px;
   margin-top: 4px;
-  background: var(--highlight-color);
-  transition: 0.2s ease;
+  width: 50%;
+  height: 25px;
+  width: 25px;
 }
 
-.saved-colors-panel #move-color:hover,
-#delete-on-click:hover,
-#delete-all:hover {
-  background: var(--highlight-hover-color);
+.saved-colors-tools img:hover {
+  transform: scale(1.2);
 }
 
-.saved-colors-panel #move-color {
-  color: var(--move-tool-color);
+.saved-colors-tools #move-color {
+  filter: invert(44%) sepia(28%) saturate(4405%) hue-rotate(178deg)
+    brightness(98%) contrast(95%);
 }
 
-.saved-colors-panel #delete-on-click {
-  color: var(--delete-tool-color);
+.saved-colors-tools #delete-on-click {
+  filter: invert(11%) sepia(83%) saturate(5622%) hue-rotate(356deg)
+    brightness(105%) contrast(100%);
 }
 
-.saved-colors-panel #delete-all {
-  color: var(--delete-all-color);
+.saved-colors-tools #delete-all {
+  filter: invert(11%) sepia(53%) saturate(6817%) hue-rotate(358deg)
+    brightness(104%) contrast(98%);
 }
 
 .saved-colors {
@@ -412,7 +437,7 @@ body.hide-animations-transitions * {
 }
 
 .saved-colors .color .rect.draggable:hover {
-  border-color: var(--highlight-color);
+  border-color: var(--text-color);
   animation-duration: 0.2s;
 }
 
@@ -430,7 +455,7 @@ body.hide-animations-transitions * {
 }
 
 .saved-colors .color .rect.deletable:hover {
-  border-color: var(--highlight-color);
+  border-color: var(--text-color);
   animation-duration: 0.2s;
 }
 
@@ -452,11 +477,15 @@ body.hide-animations-transitions * {
   }
 }
 
-.saved-colors .color i {
+.saved-colors .color img {
   display: block;
-  color: var(--tool-icon-color);
-  text-shadow: 0px 0px 3px black, 0 0 3px black, 0 0 3px black;
-  font-size: calc(var(--rect-size) * 0.5);
-  text-align: center;
+  margin: auto;
+  height: calc(var(--rect-size) * 0.5);
+  width: calc(var(--rect-size) * 0.5);
   margin-top: calc(var(--rect-margin) * 2.5);
+  filter: var(--tool-icon-filter);
+}
+
+.saved-colors .color img[src=""] {
+  display: none;
 }

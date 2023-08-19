@@ -4,31 +4,29 @@
     <meta charset="utf-8" />
     <link rel="stylesheet" href="style.css" />
     <script src="script.js" defer></script>
-
-    <!-- Box Icons -->
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
   </head>
 
-  <body class="hide-animations-transitions">
+  <body class="hide-animations">
     <div class="popup">
       <div class="colors-tools">
         <label id="eye-dropper-button">
-          <i class="bx bxs-eyedropper"></i>
+          <img src="icons/eyedropper.svg" draggable="false" />
         </label>
-        <label id="color-palette-button" for="color-palette"
-          ><i class="bx bx-palette"></i
-        ></label>
+        <label id="color-palette-button" for="color-palette">
+          <img src="icons/palette.svg" draggable="false" />
+        </label>
         <input type="color" id="color-palette" />
-        <label id="settings-button"><i class="bx bx-cog"></i></label>
+        <label id="settings-button">
+          <img src="icons/settings.svg" draggable="false" />
+        </label>
       </div>
 
       <div class="settings-tools">
-        <label id="colors-button"><i class="bx bxs-color"></i></label>
+        <label id="colors-button">
+          <img src="icons/leftArrow.svg" draggable="false" />
+        </label>
         <label id="theme-button">
-          <i id="theme-icon" class="bx bxs-sun"></i>
+          <img id="theme-icon" src="icons/dark.svg" draggable="false" />
         </label>
       </div>
 
@@ -110,15 +108,15 @@
           </div>
 
           <div class="github">
-            <a href="https://github.com/nikosdaridis/colorpal" target="_blank"
-              ><i class="bx bxl-github"></i
-            ></a>
-            <span>v1.2.3</span>
+            <a href="https://github.com/nikosdaridis/colorpal" target="_blank">
+              <img src="icons/github.svg" draggable="false" />
+            </a>
+            <span>v1.2.4</span>
           </div>
           <div class="help">
-            <a href="https://daridis.com/colorpal/onboarding" target="_blank"
-              ><i class="bx bx-help-circle"></i
-            ></a>
+            <a href="https://daridis.com/colorpal/onboarding" target="_blank">
+              <img src="icons/help.svg" draggable="false" />
+            </a>
           </div>
         </div>
       </div>
@@ -147,20 +145,24 @@
 
       <div class="selected-color-rect">
         <div class="selected-color">
-          <span class="rect"><i class=""></i></span>
+          <span class="rect"> <img src="" draggable="false" /></span>
         </div>
       </div>
 
       <div class="saved-colors-panel">
         <div class="collapse-saved-colors-tools">
-          <i class="bx bxs-chevrons-left" id="collapse-color-tools-icon"></i>
+          <img
+            id="collapse-color-tools-icon"
+            src="icons/arrowsLeft.svg"
+            draggable="false"
+          />
         </div>
 
         <div class="saved-colors-tools">
           <span class="saved-colors-count"></span>
-          <i id="move-color" class="bx bx-move"></i>
-          <i id="delete-on-click" class="bx bx-trash"></i>
-          <i id="delete-all" class="bx bx-bomb"></i>
+          <img id="move-color" src="icons/move.svg" draggable="false" />
+          <img id="delete-on-click" src="icons/delete.svg" draggable="false" />
+          <img id="delete-all" src="icons/deleteAll.svg" draggable="false" />
         </div>
         <ul class="saved-colors"></ul>
       </div>

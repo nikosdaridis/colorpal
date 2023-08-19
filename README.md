@@ -26,7 +26,7 @@
 
 ---
 
-### Preview
+### Screenshots
 
 <img width="350" alt="" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot1.jpg>
 <img width="350" alt="" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot2.jpg>

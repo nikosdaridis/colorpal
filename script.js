@@ -47,7 +47,7 @@ const displayMessagesOption = document.querySelector(
 const savedColorsArray = JSON.parse(
   localStorage.getItem("colorpal-saved-colors-array") ?? "[]"
 );
-const latestVersion = "1.2.3";
+const latestVersion = "1.2.4";
 var messageTimeout, hideAnimTranTimeout;
 var deletingColor = false,
   movingColor = false;
@@ -70,19 +70,19 @@ function setOptions() {
   );
 
   localStorage.getItem("colorpal-auto-save-eye-dropper") ??
-    localStorage.setItem("colorpal-auto-save-eye-dropper", true);
+    localStorage.setItem("colorpal-auto-save-eye-dropper", "true");
 
   localStorage.getItem("colorpal-auto-copy-color-code") ??
-    localStorage.setItem("colorpal-auto-copy-color-code", true);
+    localStorage.setItem("colorpal-auto-copy-color-code", "true");
 
   localStorage.getItem("colorpal-color-code-format") ??
     localStorage.setItem("colorpal-color-code-format", "HEX");
   colorCodeFormat.value = localStorage.getItem("colorpal-color-code-format");
 
-  setColorsPerLine(localStorage.getItem("colorpal-colors-per-line") ?? 7);
+  setColorsPerLine(localStorage.getItem("colorpal-colors-per-line") ?? "6");
 
   localStorage.getItem("colorpal-display-messages") ??
-    localStorage.setItem("colorpal-display-messages", true);
+    localStorage.setItem("colorpal-display-messages", "true");
 
   setCollapsedColorTools(
     JSON.parse(localStorage.getItem("colorpal-collapsed-color-tools")) ?? false
@@ -109,17 +109,27 @@ function setTheme(theme) {
     "--primary-color",
     theme === "dark" ? "#24282a" : "#fafcff"
   );
+
   root.style.setProperty(
     "--secondary-color",
     theme === "dark" ? "#2b353e" : "#e7e7f4"
   );
+
   root.style.setProperty(
     "--text-color",
     theme === "dark" ? "#fafcff" : "#24282a"
   );
+
+  root.style.setProperty(
+    "--theme-filter",
+    theme === "dark"
+      ? "invert(89%) sepia(7%) saturate(1464%) hue-rotate(196deg) brightness(103%) contrast(121%)"
+      : "invert(11%) sepia(9%) saturate(660%) hue-rotate(155deg) brightness(95%) contrast(87%)"
+  );
+
   themeIcon.setAttribute(
-    "class",
-    theme === "dark" ? "bx bxs-sun" : "bx bxs-moon"
+    "src",
+    theme === "dark" ? "icons/light.svg" : "icons/dark.svg"
   );
 }
 
@@ -127,8 +137,8 @@ function setCurrentSelectedColor(currentColor) {
   localStorage.setItem("colorpal-current-selected-color", currentColor);
 
   selectedColor.lastElementChild.setAttribute(
-    "class",
-    `${savedColorsArray.includes(currentColor) ? "" : "bx bx-save"}`
+    "src",
+    `${savedColorsArray.includes(currentColor) ? "" : "icons/save.svg"}`
   );
 
   colorPalette.value = currentColor;
@@ -176,8 +186,8 @@ function setCollapsedColorTools(isCollapsed) {
     : savedColorsTools.classList.remove("hide");
 
   collapseColorToolsIcon.setAttribute(
-    "class",
-    isCollapsed ? "bx bxs-chevrons-right" : "bx bxs-chevrons-left"
+    "src",
+    isCollapsed ? "icons/arrowsRight.svg" : "icons/arrowsLeft.svg"
   );
 
   movingColor && setMoveColor(false);
@@ -186,7 +196,7 @@ function setCollapsedColorTools(isCollapsed) {
 }
 
 function setPage(page) {
-  document.body.className = "hide-animations-transitions";
+  document.body.className = "hide-animations";
 
   if (page === "colors") {
     settingsTools.classList.add("hide");
@@ -195,16 +205,12 @@ function setPage(page) {
     selectedColorRect.classList.remove("hide");
     codesMessages.classList.remove("hide");
 
-    savedColorsCount.textContent =
-      savedColorsArray.length === 1
-        ? "1 Color"
-        : `${savedColorsArray.length} Colors`;
-
     clearTimeout(hideAnimTranTimeout);
     hideAnimTranTimeout = setTimeout(function () {
       document.body.className = "";
     }, 400);
 
+    setColorsCount();
     renderColors();
   } else if (page === "settings") {
     colorsTools.classList.add("hide");
@@ -217,6 +223,13 @@ function setPage(page) {
     movingColor && setMoveColor(false);
     deletingColor && setDeleteColor(false);
   }
+}
+
+function setColorsCount() {
+  savedColorsCount.textContent =
+    savedColorsArray.length === 1
+      ? "1 Color"
+      : `${savedColorsArray.length} Colors`;
 }
 
 function renderColors() {
@@ -235,7 +248,7 @@ function renderColors() {
           movingColor ? " draggable" : deletingColor ? " deletable" : ""
         }" data-color="${color}" draggable="${String(
         movingColor
-      )}" style="background: ${color};"> <i class=""></i>
+      )}" style="background: ${color};"> <img src="" draggable=false />
       </span>
     </li>`
     )
@@ -256,23 +269,23 @@ function addColorListeners() {
     // mouse enter listener
     color.addEventListener("mouseenter", (elem) => {
       elem.target.lastElementChild.setAttribute(
-        "class",
-        `bx bx-${(movingColor && "move") || (deletingColor && "trash-alt")}`
+        "src",
+        `icons/${(movingColor && "move") || (deletingColor && "delete")}.svg`
       );
 
       root.style.setProperty(
-        "--tool-icon-color",
-        getComputedStyle(root).getPropertyValue(
-          `--${
-            (movingColor && "move") || (deletingColor && "delete")
-          }-tool-color`
-        )
+        "--tool-icon-filter",
+        movingColor
+          ? "invert(44%) sepia(28%) saturate(4405%) hue-rotate(178deg) brightness(98%) contrast(95%) drop-shadow(0 0 2px black)"
+          : deletingColor
+          ? "invert(29%) sepia(79%) saturate(7465%) hue-rotate(354deg) brightness(87%) contrast(103%) drop-shadow(0 0 2px black)"
+          : ""
       );
     });
 
     // mouse leave listener
     color.addEventListener("mouseleave", (elem) => {
-      elem.target.lastElementChild.setAttribute("class", "");
+      elem.target.lastElementChild.setAttribute("src", "");
     });
   });
 
@@ -306,12 +319,15 @@ function addColorListeners() {
     draggable.addEventListener("dragstart", function () {
       draggable.classList.add("dragging");
       draggingColorElement = draggable;
-      draggingColorElement.lastElementChild.setAttribute("class", "");
+      draggingColorElement.lastElementChild.setAttribute("src", "");
     });
 
     // drag end listener
     draggable.addEventListener("dragend", function () {
-      draggingColorElement.lastElementChild.setAttribute("class", "bx bx-move");
+      draggingColorElement.lastElementChild.setAttribute(
+        "src",
+        "icons/move.svg"
+      );
 
       if (
         !mouseOverColor ||
@@ -441,13 +457,10 @@ function saveColor(color) {
     JSON.stringify(savedColorsArray)
   );
 
-  savedColorsCount.textContent =
-    savedColorsArray.length === 1
-      ? "1 Color"
-      : `${savedColorsArray.length} Colors`;
-
+  setColorsCount();
   renderColors();
-  selectedColor.lastElementChild.setAttribute("class", "");
+
+  selectedColor.lastElementChild.setAttribute("src", "");
 
   let text = "";
   if (JSON.parse(localStorage.getItem("colorpal-auto-copy-color-code"))) {
@@ -508,7 +521,7 @@ function activateEyeDropper() {
     }
 
     document.body.style.display = "block";
-    document.body.className = "hide-animations-transitions";
+    document.body.className = "hide-animations";
 
     setTimeout(function () {
       document.body.className = "";
@@ -527,14 +540,10 @@ function deleteColor(color) {
     JSON.stringify(savedColorsArray)
   );
 
-  savedColorsCount.textContent =
-    savedColorsArray.length === 1
-      ? "1 Color"
-      : `${savedColorsArray.length} Colors`;
-
+  setColorsCount();
   renderColors();
 
-  selectedColor.lastElementChild.setAttribute("class", "bx bx-save");
+  selectedColor.lastElementChild.setAttribute("src", "icons/save.svg");
 
   displayMessage(
     "Deleted",
@@ -564,12 +573,16 @@ function resetEmptyColorsArray() {
 function setMoveColor(isMoving) {
   movingColor = isMoving;
 
-  moveColor.setAttribute("class", movingColor ? "bx bx-check" : "bx bx-move");
+  moveColor.setAttribute(
+    "src",
+    movingColor ? "icons/check.svg" : "icons/move.svg"
+  );
+
   moveColor.style.setProperty(
-    "color",
-    getComputedStyle(root).getPropertyValue(
-      movingColor ? "--check-tool-color" : "--move-tool-color"
-    )
+    "filter",
+    movingColor
+      ? "invert(85%) sepia(6%) saturate(6698%) hue-rotate(73deg) brightness(99%) contrast(100%)"
+      : "invert(44%) sepia(28%) saturate(4405%) hue-rotate(178deg) brightness(98%) contrast(95%)"
   );
 }
 
@@ -577,14 +590,15 @@ function setDeleteColor(isDeleting) {
   deletingColor = isDeleting;
 
   deleteOnClick.setAttribute(
-    "class",
-    deletingColor ? "bx bx-check" : "bx bx-trash"
+    "src",
+    deletingColor ? "icons/check.svg" : "icons/delete.svg"
   );
+
   deleteOnClick.style.setProperty(
-    "color",
-    getComputedStyle(root).getPropertyValue(
-      deletingColor ? "--check-tool-color" : "--delete-tool-color"
-    )
+    "filter",
+    deletingColor
+      ? "invert(85%) sepia(6%) saturate(6698%) hue-rotate(73deg) brightness(99%) contrast(100%)"
+      : "invert(11%) sepia(83%) saturate(5622%) hue-rotate(356deg) brightness(105%) contrast(100%)"
   );
 }
 
