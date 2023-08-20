@@ -39,7 +39,7 @@ body.hide-animations * {
 }
 
 img[src=""] {
-  display: none;
+  display: none !important;
 }
 
 .popup {
@@ -310,7 +310,7 @@ img[src=""] {
   display: none;
 }
 
-.collapse-saved-colors-tools img {
+#collapse-color-tools-icon {
   position: flex;
   width: 25px;
   height: 25px;
@@ -321,7 +321,7 @@ img[src=""] {
   filter: var(--theme-filter);
 }
 
-.collapse-saved-colors-tools img:hover {
+#collapse-color-tools-icon:hover {
   transform: scale(1.2);
 }
 
@@ -329,7 +329,7 @@ img[src=""] {
   display: flex;
   gap: 30px;
   margin-left: 60px;
-  margin-top: -26px;
+  margin-top: -22px;
   margin-bottom: -25px;
   animation: collapseShow 0.4s ease-in-out forwards;
 }
@@ -382,8 +382,8 @@ img[src=""] {
   border-radius: 5px;
   margin-top: 4px;
   width: 50%;
-  height: 25px;
-  width: 25px;
+  height: 23px;
+  width: 23px;
 }
 
 .saved-colors-tools img:hover {
@@ -487,5 +487,5 @@ img[src=""] {
 }
 
 .saved-colors .color img[src=""] {
-  display: none;
+  display: none !important;
 }

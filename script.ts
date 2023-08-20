@@ -1,54 +1,79 @@
-const root = document.querySelector(":root");
-const eyeDropperButton = document.querySelector("#eye-dropper-button");
-const colorPalette = document.querySelector("#color-palette");
-const settingsButton = document.querySelector("#settings-button");
-const copyRGBButton = document.querySelector("#copy-rgb-button");
-const copyHexButton = document.querySelector("#copy-hex-button");
-const copyHslButton = document.querySelector("#copy-hsl-button");
-const copyHsvButton = document.querySelector("#copy-hsv-button");
-const colorsTools = document.querySelector(".colors-tools");
-const settingsTools = document.querySelector(".settings-tools");
-const colorsButton = document.querySelector("#colors-button");
-const themeButton = document.querySelector("#theme-button");
-const savedColors = document.querySelector(".saved-colors");
-const collapseSavedColorsTools = document.querySelector(
-  ".collapse-saved-colors-tools"
-);
+const root = document.querySelector(":root") as HTMLElement;
+const eyeDropperButton = document.querySelector(
+  "#eye-dropper-button"
+) as HTMLElement;
+const colorPalette = document.querySelector(
+  "#color-palette"
+) as HTMLInputElement;
+const settingsButton = document.querySelector(
+  "#settings-button"
+) as HTMLElement;
+const copyRGBButton = document.querySelector("#copy-rgb-button") as HTMLElement;
+const copyHexButton = document.querySelector("#copy-hex-button") as HTMLElement;
+const copyHslButton = document.querySelector("#copy-hsl-button") as HTMLElement;
+const copyHsvButton = document.querySelector("#copy-hsv-button") as HTMLElement;
+const colorsTools = document.querySelector(".colors-tools") as HTMLElement;
+const settingsTools = document.querySelector(".settings-tools") as HTMLElement;
+const colorsButton = document.querySelector("#colors-button") as HTMLElement;
+const themeButton = document.querySelector("#theme-button") as HTMLElement;
+const savedColors = document.querySelector(".saved-colors") as HTMLElement;
 const collapseColorToolsIcon = document.querySelector(
   "#collapse-color-tools-icon"
-);
-const savedColorsTools = document.querySelector(".saved-colors-tools");
-const savedColorsCount = document.querySelector(".saved-colors-count");
-const moveColor = document.querySelector("#move-color");
-const deleteOnClick = document.querySelector("#delete-on-click");
-const deleteAll = document.querySelector("#delete-all");
-const themeIcon = document.querySelector("#theme-icon");
-const settingsPanel = document.querySelector(".settings-panel");
-const codesMessages = document.querySelector(".codes-messages");
-const selectedColorRect = document.querySelector(".selected-color-rect");
-const savedColorsPanel = document.querySelector(".saved-colors-panel");
-const selectedColor = document.querySelector(".selected-color .rect");
-const displayMessages = document.querySelector(".display-messages");
-const displayMessageText = document.querySelector("#display-message-text");
+) as HTMLElement;
+const savedColorsTools = document.querySelector(
+  ".saved-colors-tools"
+) as HTMLElement;
+const savedColorsCount = document.querySelector(
+  ".saved-colors-count"
+) as HTMLElement;
+const moveColor = document.querySelector("#move-color") as HTMLElement;
+const deleteOnClick = document.querySelector("#delete-on-click") as HTMLElement;
+const deleteAll = document.querySelector("#delete-all") as HTMLElement;
+const themeIcon = document.querySelector("#theme-icon") as HTMLElement;
+const settingsPanel = document.querySelector(".settings-panel") as HTMLElement;
+const codesMessages = document.querySelector(".codes-messages") as HTMLElement;
+const selectedColorRect = document.querySelector(
+  ".selected-color-rect"
+) as HTMLElement;
+const savedColorsPanel = document.querySelector(
+  ".saved-colors-panel"
+) as HTMLElement;
+const selectedColor = document.querySelector(
+  ".selected-color .rect"
+) as HTMLElement;
+const displayMessages = document.querySelector(
+  ".display-messages"
+) as HTMLElement;
+const displayMessageText = document.querySelector(
+  "#display-message-text"
+) as HTMLElement;
 const displayMessageColorCode = document.querySelector(
   "#display-message-color-code"
-);
-const selectedColorRGB = document.querySelector("#rgb");
-const selectedColorHex = document.querySelector("#hex");
-const selectedColorHSL = document.querySelector("#hsl");
-const selectedColorHSV = document.querySelector("#hsv");
-const autoSaveEyeDropper = document.querySelector("#auto-save-eye-dropper");
-const autoCopyColorCode = document.querySelector("#auto-copy-color-code");
-const colorCodeFormat = document.querySelector("#color-code-format");
-const colorsPerLine = document.querySelector("#colors-per-line");
+) as HTMLElement;
+const selectedColorRGB = document.querySelector("#rgb") as HTMLElement;
+const selectedColorHex = document.querySelector("#hex") as HTMLElement;
+const selectedColorHSL = document.querySelector("#hsl") as HTMLElement;
+const selectedColorHSV = document.querySelector("#hsv") as HTMLElement;
+const autoSaveEyeDropper = document.querySelector(
+  "#auto-save-eye-dropper"
+) as HTMLInputElement;
+const autoCopyColorCode = document.querySelector(
+  "#auto-copy-color-code"
+) as HTMLInputElement;
+const colorCodeFormat = document.querySelector(
+  "#color-code-format"
+) as HTMLInputElement;
+const colorsPerLine = document.querySelector(
+  "#colors-per-line"
+) as HTMLInputElement;
 const displayMessagesOption = document.querySelector(
   "#display-messages-option"
-);
+) as HTMLInputElement;
 const savedColorsArray = JSON.parse(
   localStorage.getItem("colorpal-saved-colors-array") ?? "[]"
 );
 const latestVersion = "1.2.4";
-var messageTimeout, hideAnimTranTimeout;
+var messageTimeout: number, hideAnimationsTimeout: number;
 var deletingColor = false,
   movingColor = false;
 
@@ -62,7 +87,7 @@ function newVersion() {
   // future code
 }
 
-function setOptions() {
+function setOptions(): void {
   setTheme(localStorage.getItem("colorpal-theme") ?? "dark");
 
   setCurrentSelectedColor(
@@ -77,7 +102,7 @@ function setOptions() {
 
   localStorage.getItem("colorpal-color-code-format") ??
     localStorage.setItem("colorpal-color-code-format", "HEX");
-  colorCodeFormat.value = localStorage.getItem("colorpal-color-code-format");
+  colorCodeFormat.value = localStorage.getItem("colorpal-color-code-format")!;
 
   setColorsPerLine(localStorage.getItem("colorpal-colors-per-line") ?? "6");
 
@@ -85,24 +110,26 @@ function setOptions() {
     localStorage.setItem("colorpal-display-messages", "true");
 
   setCollapsedColorTools(
-    JSON.parse(localStorage.getItem("colorpal-collapsed-color-tools")) ?? false
+    JSON.parse(
+      localStorage.getItem("colorpal-collapsed-color-tools") ?? "false"
+    )
   );
 
   // visual check boxes
   autoSaveEyeDropper.checked = JSON.parse(
-    localStorage.getItem("colorpal-auto-save-eye-dropper")
+    localStorage.getItem("colorpal-auto-save-eye-dropper")!
   );
 
   autoCopyColorCode.checked = JSON.parse(
-    localStorage.getItem("colorpal-auto-copy-color-code")
+    localStorage.getItem("colorpal-auto-copy-color-code")!
   );
 
   displayMessagesOption.checked = JSON.parse(
-    localStorage.getItem("colorpal-display-messages")
+    localStorage.getItem("colorpal-display-messages")!
   );
 }
 
-function setTheme(theme) {
+function setTheme(theme: string): void {
   localStorage.setItem("colorpal-theme", theme === "light" ? "light" : "dark");
 
   root.style.setProperty(
@@ -133,10 +160,12 @@ function setTheme(theme) {
   );
 }
 
-function setCurrentSelectedColor(currentColor) {
+function setCurrentSelectedColor(currentColor: string): void {
+  if (!currentColor) return;
+
   localStorage.setItem("colorpal-current-selected-color", currentColor);
 
-  selectedColor.lastElementChild.setAttribute(
+  selectedColor.lastElementChild?.setAttribute(
     "src",
     `${savedColorsArray.includes(currentColor) ? "" : "icons/save.svg"}`
   );
@@ -145,20 +174,27 @@ function setCurrentSelectedColor(currentColor) {
   selectedColor.style.background = currentColor;
   root.style.setProperty("--selected-color", currentColor);
 
-  selectedColorRGB.textContent = hexToRgb(currentColor, true);
+  selectedColorRGB.textContent = hexToRgb(currentColor, true) as string;
   selectedColorHex.textContent = currentColor;
-  let rgbColor = hexToRgb(currentColor, false);
-  selectedColorHSL.textContent = rgbToHsl(rgbColor, true);
-  selectedColorHSV.textContent = rgbToHsv(rgbColor, true);
+  let rgbColor = hexToRgb(currentColor, false) as {
+    r: number;
+    g: number;
+    b: number;
+  };
+  selectedColorHSL.textContent = rgbToHsl(rgbColor);
+  selectedColorHSV.textContent = rgbToHsv(rgbColor);
 }
 
-function setColorsPerLine(clrPerLine) {
+function setColorsPerLine(clrPerLine: string | number) {
   clrPerLine = Number(clrPerLine);
   if (clrPerLine < 5 || clrPerLine > 10) clrPerLine = 7;
 
-  localStorage.setItem("colorpal-colors-per-line", clrPerLine);
+  localStorage.setItem(
+    "colorpal-colors-per-line",
+    clrPerLine as unknown as string
+  );
 
-  colorsPerLine.value = clrPerLine;
+  colorsPerLine.value = clrPerLine as unknown as string;
 
   savedColors.style.setProperty(
     "grid-template-columns",
@@ -178,8 +214,8 @@ function setColorsPerLine(clrPerLine) {
   );
 }
 
-function setCollapsedColorTools(isCollapsed) {
-  localStorage.setItem("colorpal-collapsed-color-tools", isCollapsed);
+function setCollapsedColorTools(isCollapsed: string | boolean): void {
+  localStorage.setItem("colorpal-collapsed-color-tools", isCollapsed as string);
 
   isCollapsed
     ? savedColorsTools.classList.add("hide")
@@ -195,7 +231,7 @@ function setCollapsedColorTools(isCollapsed) {
   renderColors();
 }
 
-function setPage(page) {
+function setPage(page: string): void {
   document.body.className = "hide-animations";
 
   if (page === "colors") {
@@ -205,8 +241,8 @@ function setPage(page) {
     selectedColorRect.classList.remove("hide");
     codesMessages.classList.remove("hide");
 
-    clearTimeout(hideAnimTranTimeout);
-    hideAnimTranTimeout = setTimeout(function () {
+    clearTimeout(hideAnimationsTimeout);
+    hideAnimationsTimeout = setTimeout(function () {
       document.body.className = "";
     }, 400);
 
@@ -225,14 +261,16 @@ function setPage(page) {
   }
 }
 
-function setColorsCount() {
+function setColorsCount(): void {
+  if (!savedColorsArray.length) return;
+
   savedColorsCount.textContent =
     savedColorsArray.length === 1
       ? "1 Color"
       : `${savedColorsArray.length} Colors`;
 }
 
-function renderColors() {
+function renderColors(): void {
   if (!savedColorsArray.length) {
     savedColorsPanel.classList.add("hide");
     return;
@@ -242,7 +280,7 @@ function renderColors() {
   // add li for each color
   savedColors.innerHTML = savedColorsArray
     .map(
-      (color) => `
+      (color: string) => `
     <li class="color">
         <span class="rect${
           movingColor ? " draggable" : deletingColor ? " deletable" : ""
@@ -256,19 +294,19 @@ function renderColors() {
   addColorListeners();
 }
 
-function addColorListeners() {
+function addColorListeners(): void {
   document.querySelectorAll(".color .rect").forEach((color) => {
     // click listener
-    color.addEventListener("click", (elem) =>
-      savedColorClicked(elem.currentTarget.dataset.color)
-    );
+    color.addEventListener("click", (elem) => {
+      savedColorClicked((elem.currentTarget! as HTMLElement).dataset.color);
+    });
 
     // moving and deleting listeners
     if (!movingColor && !deletingColor) return;
 
     // mouse enter listener
     color.addEventListener("mouseenter", (elem) => {
-      elem.target.lastElementChild.setAttribute(
+      (elem.target as HTMLElement).lastElementChild?.setAttribute(
         "src",
         `icons/${(movingColor && "move") || (deletingColor && "delete")}.svg`
       );
@@ -285,7 +323,7 @@ function addColorListeners() {
 
     // mouse leave listener
     color.addEventListener("mouseleave", (elem) => {
-      elem.target.lastElementChild.setAttribute("src", "");
+      (elem.target as HTMLElement).lastElementChild?.setAttribute("src", "");
     });
   });
 
@@ -293,7 +331,7 @@ function addColorListeners() {
   if (!movingColor) return;
 
   let draggables = document.querySelectorAll(".draggable");
-  let draggingColorElement, closestColorElement;
+  let draggingColorElement: HTMLElement, closestColorElement: HTMLElement;
   let mouseOverColor = false;
 
   draggables.forEach((draggable) => {
@@ -311,14 +349,14 @@ function addColorListeners() {
     // dragging listener
     draggable.addEventListener("dragover", (elem) => {
       elem.preventDefault(); // prevent dragging blocked icon
-      closestColorElement = elem.target;
+      closestColorElement = elem.target as HTMLElement;
       closestColorElement.classList.add("closest");
     });
 
     // drag start listener
     draggable.addEventListener("dragstart", function () {
       draggable.classList.add("dragging");
-      draggingColorElement = draggable;
+      draggingColorElement = draggable as HTMLElement;
       draggingColorElement.lastElementChild.setAttribute("src", "");
     });
 
@@ -356,12 +394,15 @@ function addColorListeners() {
   });
 }
 
-function swapColors(draggingColorElement, closestColorElement) {
+function swapColors(
+  draggingColorElement: HTMLElement,
+  closestColorElement: HTMLElement
+): void {
   let draggingIndex = savedColorsArray.findIndex(
-    (color) => color === draggingColorElement.dataset.color
+    (color: string) => color === draggingColorElement.dataset.color
   );
   let closestIndex = savedColorsArray.findIndex(
-    (color) => color === closestColorElement.dataset.color
+    (color: string) => color === closestColorElement.dataset.color
   );
 
   if (draggingIndex === -1 || closestIndex === -1) {
@@ -386,8 +427,12 @@ function swapColors(draggingColorElement, closestColorElement) {
   renderColors();
 }
 
-function displayMessage(text, color, colorFormat) {
-  if (!JSON.parse(localStorage.getItem("colorpal-display-messages"))) return;
+function displayMessage(
+  text: string,
+  color: string | null,
+  colorFormat: string | null
+): void {
+  if (!JSON.parse(localStorage.getItem("colorpal-display-messages")!)) return;
 
   displayMessages.classList.remove("hide");
   displayMessageText.textContent = text;
@@ -398,24 +443,33 @@ function displayMessage(text, color, colorFormat) {
     displayMessages.classList.add("hide");
   }, 2000);
 
-  function displayColorCode(color, colorFormat) {
+  function displayColorCode(
+    color: string | null,
+    colorFormat: string | null
+  ): string {
     if (color === null || colorFormat === null) return;
 
-    let rgbColor = hexToRgb(color, false);
+    let rgbColor = hexToRgb(color, false) as {
+      r: number;
+      g: number;
+      b: number;
+    };
     switch (colorFormat) {
       case "RGB":
-        return hexToRgb(color, true);
+        return hexToRgb(color, true) as string;
       case "HEX":
         return color;
       case "HSL":
-        return rgbToHsl(rgbColor, true);
+        return rgbToHsl(rgbColor);
       case "HSV":
-        return rgbToHsv(rgbColor, true);
+        return rgbToHsv(rgbColor);
     }
   }
 }
 
-function savedColorClicked(color) {
+function savedColorClicked(color: any): void {
+  if (!color) return;
+
   setCurrentSelectedColor(color);
 
   if (movingColor) {
@@ -429,7 +483,7 @@ function savedColorClicked(color) {
   }
 
   let text = "";
-  if (JSON.parse(localStorage.getItem("colorpal-auto-copy-color-code"))) {
+  if (JSON.parse(localStorage.getItem("colorpal-auto-copy-color-code")!)) {
     copyToClipboard(color, localStorage.getItem("colorpal-color-code-format"));
     text = "Copied";
   } else text = "Selected";
@@ -441,7 +495,9 @@ function savedColorClicked(color) {
   );
 }
 
-function saveColor(color) {
+function saveColor(color: string): void {
+  if (!color) return;
+
   if (savedColorsArray.includes(color)) {
     displayMessage(
       "Already saved",
@@ -460,10 +516,10 @@ function saveColor(color) {
   setColorsCount();
   renderColors();
 
-  selectedColor.lastElementChild.setAttribute("src", "");
+  selectedColor.lastElementChild?.setAttribute("src", "");
 
   let text = "";
-  if (JSON.parse(localStorage.getItem("colorpal-auto-copy-color-code"))) {
+  if (JSON.parse(localStorage.getItem("colorpal-auto-copy-color-code")!)) {
     copyToClipboard(color, localStorage.getItem("colorpal-color-code-format"));
     text = "Saved and Copied";
   } else text = "Saved";
@@ -475,25 +531,25 @@ function saveColor(color) {
   );
 }
 
-function copyToClipboard(color, colorFormat) {
-  let rgbColor = hexToRgb(color, false);
+function copyToClipboard(color: string, colorFormat: string): void {
+  let rgbColor = hexToRgb(color, false) as { r: number; g: number; b: number };
   switch (colorFormat) {
     case "RGB":
-      navigator.clipboard.writeText(hexToRgb(color, true));
+      navigator.clipboard.writeText(hexToRgb(color, true) as string);
       break;
     case "HEX":
       navigator.clipboard.writeText(color);
       break;
     case "HSL":
-      navigator.clipboard.writeText(rgbToHsl(rgbColor, true));
+      navigator.clipboard.writeText(rgbToHsl(rgbColor));
       break;
     case "HSV":
-      navigator.clipboard.writeText(rgbToHsv(rgbColor, true));
+      navigator.clipboard.writeText(rgbToHsv(rgbColor));
       break;
   }
 }
 
-function activateEyeDropper() {
+function activateEyeDropper(): void {
   if (movingColor || deletingColor) {
     setMoveColor(false);
     setDeleteColor(false);
@@ -504,13 +560,13 @@ function activateEyeDropper() {
 
   setTimeout(async function () {
     try {
-      const eyeDropper = new EyeDropper();
-      const { sRGBHex } = await eyeDropper.open(); // hex color
+      const eyeDropper = new (window as any).EyeDropper();
+      const { sRGBHex } = await eyeDropper.open();
       setCurrentSelectedColor(sRGBHex);
 
-      if (JSON.parse(localStorage.getItem("colorpal-auto-save-eye-dropper"))) {
+      if (JSON.parse(localStorage.getItem("colorpal-auto-save-eye-dropper")!)) {
         saveColor(sRGBHex);
-        JSON.parse(localStorage.getItem("colorpal-auto-copy-color-code")) &&
+        JSON.parse(localStorage.getItem("colorpal-auto-copy-color-code")!) &&
           copyToClipboard(
             sRGBHex,
             localStorage.getItem("colorpal-color-code-format")
@@ -529,10 +585,14 @@ function activateEyeDropper() {
   }, 10);
 }
 
-function deleteColor(color) {
-  let deleteColorIndex = savedColorsArray.findIndex((clr) => {
+function deleteColor(color: string): void {
+  if (!color) return;
+
+  let deleteColorIndex: number = savedColorsArray.findIndex((clr: string) => {
     return clr === color;
   });
+
+  if (deleteColorIndex === -1) return;
 
   savedColorsArray.splice(deleteColorIndex, 1);
   localStorage.setItem(
@@ -543,7 +603,7 @@ function deleteColor(color) {
   setColorsCount();
   renderColors();
 
-  selectedColor.lastElementChild.setAttribute("src", "icons/save.svg");
+  selectedColor.lastElementChild?.setAttribute("src", "icons/save.svg");
 
   displayMessage(
     "Deleted",
@@ -554,7 +614,7 @@ function deleteColor(color) {
   !savedColorsArray.length && resetEmptyColorsArray();
 }
 
-function deleteAllColors() {
+function deleteAllColors(): void {
   if (confirm("Delete All Your Colors?")) {
     savedColorsArray.length = 0;
     localStorage.setItem("colorpal-saved-colors-array", "[]");
@@ -563,14 +623,14 @@ function deleteAllColors() {
   }
 }
 
-function resetEmptyColorsArray() {
+function resetEmptyColorsArray(): void {
   setCurrentSelectedColor("#000000");
   movingColor && setMoveColor(false);
   deletingColor && setDeleteColor(false);
   savedColorsPanel.classList.add("hide");
 }
 
-function setMoveColor(isMoving) {
+function setMoveColor(isMoving: boolean): void {
   movingColor = isMoving;
 
   moveColor.setAttribute(
@@ -586,7 +646,7 @@ function setMoveColor(isMoving) {
   );
 }
 
-function setDeleteColor(isDeleting) {
+function setDeleteColor(isDeleting: boolean): void {
   deletingColor = isDeleting;
 
   deleteOnClick.setAttribute(
@@ -602,8 +662,13 @@ function setDeleteColor(isDeleting) {
   );
 }
 
-function hexToRgb(hex, returnString) {
-  let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+function hexToRgb(
+  hex: string,
+  returnString: boolean
+): string | { r: number; b: number; g: number } {
+  let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(
+    hex
+  ) as RegExpExecArray;
   let r = parseInt(result[1], 16);
   let g = parseInt(result[2], 16);
   let b = parseInt(result[3], 16);
@@ -612,8 +677,10 @@ function hexToRgb(hex, returnString) {
   else return { r, g, b };
 }
 
-function rgbToHsl(rbg, returnString) {
-  (r = rbg.r / 255), (g = rbg.g / 255), (b = rbg.b / 255);
+function rgbToHsl(rbg: { r: number; g: number; b: number }): string {
+  let r = rbg.r / 255;
+  let g = rbg.g / 255;
+  let b = rbg.b / 255;
   let max = Math.max(r, g, b),
     min = Math.min(r, g, b);
   let h,
@@ -643,18 +710,28 @@ function rgbToHsl(rbg, returnString) {
   s = Math.round(s * 100);
   l = Math.round(l * 100);
 
-  if (returnString) return `hsl(${h}, ${s}%, ${l}%)`;
-  else return { h, s, l };
+  return `hsl(${h}, ${s}%, ${l}%)`;
 }
 
-function rgbToHsv(rbg, returnString) {
-  let rabs, gabs, babs, rr, gg, bb, h, s, v, diff, diffc, percentRoundFn;
+function rgbToHsv(rbg: { r: number; g: number; b: number }): string {
+  let rabs,
+    gabs,
+    babs,
+    rr,
+    gg,
+    bb,
+    h,
+    s,
+    v: number,
+    diff: number,
+    diffc,
+    percentRoundFn;
   rabs = rbg.r / 255;
   gabs = rbg.g / 255;
   babs = rbg.b / 255;
   (v = Math.max(rabs, gabs, babs)), (diff = v - Math.min(rabs, gabs, babs));
-  diffc = (c) => (v - c) / 6 / diff + 1 / 2;
-  percentRoundFn = (num) => Math.round(num * 100) / 100;
+  diffc = (c: number) => (v - c) / 6 / diff + 1 / 2;
+  percentRoundFn = (num: number) => Math.round(num * 100) / 100;
   if (diff === 0) {
     h = s = 0;
   } else {
@@ -681,8 +758,7 @@ function rgbToHsv(rbg, returnString) {
   s = Math.round(s * 100);
   v = Math.round(v * 100);
 
-  if (returnString) return `hsv(${h}, ${s}%, ${v}%)`;
-  else return { h, s, v };
+  return `hsv(${h}, ${s}%, ${v}%)`;
 }
 
 eyeDropperButton.addEventListener("click", activateEyeDropper);
@@ -774,9 +850,9 @@ selectedColor.addEventListener("click", function () {
     : saveColor(localStorage.getItem("colorpal-current-selected-color"));
 });
 
-collapseSavedColorsTools.addEventListener("click", function () {
+collapseColorToolsIcon.addEventListener("click", function () {
   setCollapsedColorTools(
-    !JSON.parse(localStorage.getItem("colorpal-collapsed-color-tools"))
+    !JSON.parse(localStorage.getItem("colorpal-collapsed-color-tools")!)
   );
 });
 
@@ -795,11 +871,17 @@ deleteOnClick.addEventListener("click", function () {
 deleteAll.addEventListener("click", deleteAllColors);
 
 autoSaveEyeDropper.addEventListener("change", function () {
-  localStorage.setItem("colorpal-auto-save-eye-dropper", this.checked);
+  localStorage.setItem(
+    "colorpal-auto-save-eye-dropper",
+    this.checked as unknown as string
+  );
 });
 
 autoCopyColorCode.addEventListener("change", function () {
-  localStorage.setItem("colorpal-auto-copy-color-code", this.checked);
+  localStorage.setItem(
+    "colorpal-auto-copy-color-code",
+    this.checked as unknown as string
+  );
 });
 
 colorCodeFormat.addEventListener("change", function () {
@@ -811,5 +893,8 @@ colorsPerLine.addEventListener("change", function () {
 });
 
 displayMessagesOption.addEventListener("change", function () {
-  localStorage.setItem("colorpal-display-messages", this.checked);
+  localStorage.setItem(
+    "colorpal-display-messages",
+    this.checked as unknown as string
+  );
 });

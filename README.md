@@ -1,33 +1,50 @@
+<div align="center">
+  <a href="https://chrome.google.com/webstore/detail/mbnpegpimodgjmlbfhkkdgbcfjmgpoad" target="_blank"><img alt="Logo" src="https://raw.githubusercontent.com/nikosdaridis/colorpal/main/icons/icon128.png" width="100" /></a>
+</div>
+<h1 align="center">
+  ColorPal - Color Picker - Eyedropper
+</h1>
 <p align="center">
-  <a href="https://chrome.google.com/webstore/detail/mbnpegpimodgjmlbfhkkdgbcfjmgpoad">
-    <img src="https://raw.githubusercontent.com/nikosdaridis/colorpal/main/icons/icon128.png" height="128">
-    <h3 align="center">ColorPal - Color Picker - Eyedropper</h3>
-  </a>
+  A color tool to extract any pixel from the screen, pick any color from a palette and save favorite colors. <a href="https://chrome.google.com/webstore/detail/mbnpegpimodgjmlbfhkkdgbcfjmgpoad" target="_blank"><br>
+  Download</a> the chrome extension. Built with <a href="https://www.typescriptlang.org" target="_blank">TypeScript</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank">HTML</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank">CSS</a>
 </p>
+<h2 align="center">
+Features
+</h2>
+<p align="center">
+Eye dropper<br>
+Color palette<br>
+Save favorite colors<br>
+Auto copy color code<br>
+RGB, HEX, HSL, HSV color formats<br>
+Move color position<br>
+Delete selected color or all colors<br>
+Light and Dark mode<br>
+</p>
+<div align="center">
+<img width="300" alt="Screenshot 1" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot1.jpg>
+<img width="300" alt="Screenshot 2" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot2.jpg>
+<img width="300" alt="Screenshot 3" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot3.jpg>
+</div>
 
----
+## 🛠 Installation
 
-> A color tool to extract any pixel from the screen, pick any color from a palette and save favorite colors.
-> </br>
-> <a href="https://chrome.google.com/webstore/detail/mbnpegpimodgjmlbfhkkdgbcfjmgpoad">Download</a> the chrome extension
+1. Install dependencies
 
----
+   ```sh
+   npm install
+   ```
 
-### Features:<br>
+2. Open with live server and start watch mode
 
-- Color eye dropper
-- Color palette
-- Save favorite colors
-- Auto copy color code
-- RGB, HEX, HSL, HSV color formats
-- Move color position
-- Delete selected color or all colors
-- Light and Dark mode
+   ```sh
+   tsc --watch
+   ```
 
----
+## 🚀 Build For Production
 
-### Screenshots
+1. Compile TypeScript to JavaScript for production
 
-<img width="350" alt="" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot1.jpg>
-<img width="350" alt="" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot2.jpg>
-<img width="350" alt="" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot3.jpg>
+   ```sh
+   tsc
+   ```
