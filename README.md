@@ -18,6 +18,7 @@ Save favorite colors<br>
 Auto copy color code<br>
 RGB, HEX, HSL, HSV color formats<br>
 Move color position<br>
+Tints and Shades for selected color<br>
 Delete selected color or all colors<br>
 Light and Dark mode<br>
 </p>
@@ -43,8 +44,8 @@ Light and Dark mode<br>
 
 ## 🚀 Build For Production
 
-1. Compile TypeScript to JavaScript for production
+1. Compile TypeScript to JavaScript
 
    ```sh
-   tsc
+   npm run build
    ```

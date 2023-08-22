@@ -27,6 +27,7 @@ const savedColorsCount = document.querySelector(
   ".saved-colors-count"
 ) as HTMLElement;
 const moveColor = document.querySelector("#move-color") as HTMLElement;
+const tintsShades = document.querySelector("#tints-shades") as HTMLElement;
 const deleteOnClick = document.querySelector("#delete-on-click") as HTMLElement;
 const deleteAll = document.querySelector("#delete-all") as HTMLElement;
 const themeIcon = document.querySelector("#theme-icon") as HTMLElement;
@@ -72,17 +73,20 @@ const displayMessagesOption = document.querySelector(
 const savedColorsArray = JSON.parse(
   localStorage.getItem("colorpal-saved-colors-array") ?? "[]"
 );
-const latestVersion = "1.2.4";
+
+const latestVersion = "1.3.0";
 var messageTimeout: number, hideAnimationsTimeout: number;
-var deletingColor = false,
-  movingColor = false;
+var movingColor = false,
+  selectingTintsShades = false,
+  renderedTintsShades = false,
+  deletingColor = false;
 
 setOptions();
 setPage("colors");
 
 latestVersion !== localStorage.getItem("colorpal-version") && newVersion();
 
-function newVersion() {
+function newVersion(): void {
   localStorage.setItem("colorpal-version", latestVersion);
   // future code
 }
@@ -149,14 +153,14 @@ function setTheme(theme: string): void {
 
   root.style.setProperty(
     "--theme-filter",
-    theme === "dark"
-      ? "invert(89%) sepia(7%) saturate(1464%) hue-rotate(196deg) brightness(103%) contrast(121%)"
-      : "invert(11%) sepia(9%) saturate(660%) hue-rotate(155deg) brightness(95%) contrast(87%)"
+    getComputedStyle(root).getPropertyValue(`--${theme}-theme-filter`)
   );
 
   themeIcon.setAttribute(
     "src",
-    theme === "dark" ? "icons/light.svg" : "icons/dark.svg"
+    `icons/${
+      (theme === "dark" && "light") || (theme === "light" && "dark")
+    }.svg`
   );
 }
 
@@ -185,7 +189,7 @@ function setCurrentSelectedColor(currentColor: string): void {
   selectedColorHSV.textContent = rgbToHsv(rgbColor);
 }
 
-function setColorsPerLine(clrPerLine: string | number) {
+function setColorsPerLine(clrPerLine: string | number): void {
   clrPerLine = Number(clrPerLine);
   if (clrPerLine < 5 || clrPerLine > 10) clrPerLine = 7;
 
@@ -223,11 +227,10 @@ function setCollapsedColorTools(isCollapsed: string | boolean): void {
 
   collapseColorToolsIcon.setAttribute(
     "src",
-    isCollapsed ? "icons/arrowsRight.svg" : "icons/arrowsLeft.svg"
+    `icons/${isCollapsed ? "arrowsRight" : "arrowsLeft"}.svg`
   );
 
-  movingColor && setMoveColor(false);
-  deletingColor && setDeleteColor(false);
+  disableColorTools("all");
   renderColors();
 }
 
@@ -256,18 +259,16 @@ function setPage(page: string): void {
     settingsTools.classList.remove("hide");
     settingsPanel.classList.remove("hide");
 
-    movingColor && setMoveColor(false);
-    deletingColor && setDeleteColor(false);
+    disableColorTools("all");
   }
 }
 
 function setColorsCount(): void {
   if (!savedColorsArray.length) return;
 
-  savedColorsCount.textContent =
-    savedColorsArray.length === 1
-      ? "1 Color"
-      : `${savedColorsArray.length} Colors`;
+  savedColorsCount.textContent = `${savedColorsArray.length} ${
+    savedColorsArray.length > 1 ? "Colors" : "Color"
+  }`;
 }
 
 function renderColors(): void {
@@ -281,14 +282,20 @@ function renderColors(): void {
   savedColors.innerHTML = savedColorsArray
     .map(
       (color: string) => `
-    <li class="color">
-        <span class="rect${
-          movingColor ? " draggable" : deletingColor ? " deletable" : ""
-        }" data-color="${color}" draggable="${String(
+        <li class="color">
+          <span class="rect${
+            movingColor
+              ? " draggable"
+              : selectingTintsShades
+              ? " selectableTintsShades"
+              : deletingColor
+              ? " deletable"
+              : ""
+          }" data-color="${color}" draggable="${String(
         movingColor
       )}" style="background: ${color};"> <img src="" draggable=false />
-      </span>
-    </li>`
+          </span>
+        </li>`
     )
     .join("");
   addColorListeners();
@@ -302,22 +309,32 @@ function addColorListeners(): void {
     });
 
     // moving and deleting listeners
-    if (!movingColor && !deletingColor) return;
+    if (!movingColor && !selectingTintsShades && !deletingColor) return;
 
     // mouse enter listener
     color.addEventListener("mouseenter", (elem) => {
       (elem.target as HTMLElement).lastElementChild?.setAttribute(
         "src",
-        `icons/${(movingColor && "move") || (deletingColor && "delete")}.svg`
+        `icons/${
+          (movingColor && "move") ||
+          (selectingTintsShades && "tintsShades") ||
+          (deletingColor && "delete")
+        }.svg`
       );
 
       root.style.setProperty(
         "--tool-icon-filter",
-        movingColor
-          ? "invert(44%) sepia(28%) saturate(4405%) hue-rotate(178deg) brightness(98%) contrast(95%) drop-shadow(0 0 2px black)"
-          : deletingColor
-          ? "invert(29%) sepia(79%) saturate(7465%) hue-rotate(354deg) brightness(87%) contrast(103%) drop-shadow(0 0 2px black)"
-          : ""
+        getComputedStyle(root).getPropertyValue(
+          `--${
+            movingColor
+              ? "move"
+              : selectingTintsShades
+              ? "tint-shades"
+              : deletingColor
+              ? "delete"
+              : ""
+          }-tool-filter`
+        )
       );
     });
 
@@ -467,13 +484,21 @@ function displayMessage(
   }
 }
 
-function savedColorClicked(color: any): void {
+function savedColorClicked(color: string): void {
   if (!color) return;
 
   setCurrentSelectedColor(color);
 
   if (movingColor) {
     displayMessage("Drag to move color", null, null);
+    return;
+  }
+
+  if (selectingTintsShades) {
+    if (renderedTintsShades) return;
+
+    displayMessage("Click colors to save", null, null);
+    renderTintsShades();
     return;
   }
 
@@ -514,7 +539,7 @@ function saveColor(color: string): void {
   );
 
   setColorsCount();
-  renderColors();
+  if (!selectingTintsShades) renderColors();
 
   selectedColor.lastElementChild?.setAttribute("src", "");
 
@@ -550,9 +575,8 @@ function copyToClipboard(color: string, colorFormat: string): void {
 }
 
 function activateEyeDropper(): void {
-  if (movingColor || deletingColor) {
-    setMoveColor(false);
-    setDeleteColor(false);
+  if (movingColor || deletingColor || selectingTintsShades) {
+    disableColorTools("all");
     renderColors();
   }
 
@@ -583,6 +607,36 @@ function activateEyeDropper(): void {
       document.body.className = "";
     }, 400);
   }, 10);
+}
+
+function renderTintsShades(): void {
+  // Set temporary colors per line to 10
+  savedColors.style.setProperty("grid-template-columns", `repeat(10, 1fr)`);
+  root.style.setProperty("--rect-size", "28.3px");
+
+  let baseColorHSL = hexToHsl(
+    localStorage.getItem("colorpal-current-selected-color")
+  );
+  let tintsShades = [];
+
+  for (let i = 1; i <= 99; i += 1) {
+    tintsShades.push(hslToHex(baseColorHSL.h, baseColorHSL.s, i));
+  }
+
+  // add li for each tint and shade
+  savedColors.innerHTML = tintsShades
+    .map(
+      (color: string, index: number) => `
+        <li class="color">
+          <span class="rect tintsShades" data-color="${color}" style="background: ${color}; color: ${
+        index < 50 ? "white" : "black"
+      };">${index + 1}</span>
+        </li>`
+    )
+    .join("");
+
+  renderedTintsShades = true;
+  addColorListeners();
 }
 
 function deleteColor(color: string): void {
@@ -625,24 +679,40 @@ function deleteAllColors(): void {
 
 function resetEmptyColorsArray(): void {
   setCurrentSelectedColor("#000000");
-  movingColor && setMoveColor(false);
-  deletingColor && setDeleteColor(false);
+  disableColorTools("all");
   savedColorsPanel.classList.add("hide");
 }
 
 function setMoveColor(isMoving: boolean): void {
   movingColor = isMoving;
 
-  moveColor.setAttribute(
-    "src",
-    movingColor ? "icons/check.svg" : "icons/move.svg"
-  );
+  moveColor.setAttribute("src", `icons/${movingColor ? "check" : "move"}.svg`);
 
   moveColor.style.setProperty(
     "filter",
-    movingColor
-      ? "invert(85%) sepia(6%) saturate(6698%) hue-rotate(73deg) brightness(99%) contrast(100%)"
-      : "invert(44%) sepia(28%) saturate(4405%) hue-rotate(178deg) brightness(98%) contrast(95%)"
+    getComputedStyle(root).getPropertyValue(
+      `--${movingColor ? "check" : "move"}-tool-filter`
+    )
+  );
+}
+
+function setTintsShades(setTintsShades: boolean): void {
+  selectingTintsShades = setTintsShades;
+  if (!setTintsShades) {
+    renderedTintsShades = false;
+    setColorsPerLine(localStorage.getItem("colorpal-colors-per-line"));
+  }
+
+  tintsShades.setAttribute(
+    "src",
+    `icons/${selectingTintsShades ? "check" : "tintsShades"}.svg`
+  );
+
+  tintsShades.style.setProperty(
+    "filter",
+    getComputedStyle(root).getPropertyValue(
+      `--${selectingTintsShades ? "check" : "tint-shades"}-tool-filter`
+    )
   );
 }
 
@@ -651,21 +721,36 @@ function setDeleteColor(isDeleting: boolean): void {
 
   deleteOnClick.setAttribute(
     "src",
-    deletingColor ? "icons/check.svg" : "icons/delete.svg"
+    `icons/${deletingColor ? "check" : "delete"}.svg`
   );
 
   deleteOnClick.style.setProperty(
     "filter",
-    deletingColor
-      ? "invert(85%) sepia(6%) saturate(6698%) hue-rotate(73deg) brightness(99%) contrast(100%)"
-      : "invert(11%) sepia(83%) saturate(5622%) hue-rotate(356deg) brightness(105%) contrast(100%)"
+    getComputedStyle(root).getPropertyValue(
+      `--${deletingColor ? "check" : "delete"}-tool-filter`
+    )
   );
+}
+
+function disableColorTools(tools: string | string[]): void {
+  if (tools === "all") {
+    movingColor && setMoveColor(false);
+    deletingColor && setDeleteColor(false);
+    selectingTintsShades && setTintsShades(false);
+    return;
+  }
+
+  tools.includes("setMoveColor") && movingColor && setMoveColor(false);
+  tools.includes("setTintsShades") &&
+    selectingTintsShades &&
+    setTintsShades(false);
+  tools.includes("setDeleteColor") && deletingColor && setDeleteColor(false);
 }
 
 function hexToRgb(
   hex: string,
   returnString: boolean
-): string | { r: number; b: number; g: number } {
+): string | { r: number; g: number; b: number } {
   let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(
     hex
   ) as RegExpExecArray;
@@ -761,10 +846,85 @@ function rgbToHsv(rbg: { r: number; g: number; b: number }): string {
   return `hsv(${h}, ${s}%, ${v}%)`;
 }
 
+function hexToHsl(hex: string): { h: number; s: number; l: number } {
+  let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+  let r = parseInt(result[1], 16);
+  let g = parseInt(result[2], 16);
+  let b = parseInt(result[3], 16);
+
+  (r /= 255), (g /= 255), (b /= 255);
+  let max = Math.max(r, g, b),
+    min = Math.min(r, g, b);
+  let h,
+    s,
+    l = (max + min) / 2;
+
+  if (max == min) {
+    h = s = 0;
+  } else {
+    let d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
+    }
+
+    h /= 6;
+  }
+
+  s = s * 100;
+  s = Math.round(s);
+  l = l * 100;
+  l = Math.round(l);
+  h = Math.round(360 * h);
+
+  return { h, s, l };
+}
+
+function hslToHex(h: number, s: number, l: number): string {
+  h /= 360;
+  s /= 100;
+  l /= 100;
+  let r, g, b;
+  if (s === 0) {
+    r = g = b = l;
+  } else {
+    function hueToRgb(p: number, q: number, t: number) {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    }
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    r = hueToRgb(p, q, h + 1 / 3);
+    g = hueToRgb(p, q, h);
+    b = hueToRgb(p, q, h - 1 / 3);
+  }
+
+  function toHex(x: number) {
+    const hex = Math.round(x * 255).toString(16);
+    return hex.length === 1 ? "0" + hex : hex;
+  }
+
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
 eyeDropperButton.addEventListener("click", activateEyeDropper);
 
 colorPalette.addEventListener("input", function () {
   setCurrentSelectedColor(colorPalette.value);
+
   displayMessage(
     "Selected",
     colorPalette.value,
@@ -773,9 +933,8 @@ colorPalette.addEventListener("input", function () {
 });
 
 colorPalette.addEventListener("click", function () {
-  if (movingColor || deletingColor) {
-    setMoveColor(false);
-    setDeleteColor(false);
+  if (movingColor || deletingColor || selectingTintsShades) {
+    disableColorTools("all");
     renderColors();
   }
 });
@@ -799,6 +958,7 @@ copyRGBButton.addEventListener("click", function () {
     localStorage.getItem("colorpal-current-selected-color"),
     "RGB"
   );
+
   displayMessage(
     "Copied",
     localStorage.getItem("colorpal-current-selected-color"),
@@ -811,6 +971,7 @@ copyHexButton.addEventListener("click", function () {
     localStorage.getItem("colorpal-current-selected-color"),
     "HEX"
   );
+
   displayMessage(
     "Copied",
     localStorage.getItem("colorpal-current-selected-color"),
@@ -823,6 +984,7 @@ copyHslButton.addEventListener("click", function () {
     localStorage.getItem("colorpal-current-selected-color"),
     "HSL"
   );
+
   displayMessage(
     "Copied",
     localStorage.getItem("colorpal-current-selected-color"),
@@ -835,6 +997,7 @@ copyHsvButton.addEventListener("click", function () {
     localStorage.getItem("colorpal-current-selected-color"),
     "HSV"
   );
+
   displayMessage(
     "Copied",
     localStorage.getItem("colorpal-current-selected-color"),
@@ -858,13 +1021,19 @@ collapseColorToolsIcon.addEventListener("click", function () {
 
 moveColor.addEventListener("click", function () {
   setMoveColor(!movingColor);
-  setDeleteColor(false);
+  disableColorTools(["setTintsShades", "setDeleteColor"]);
+  renderColors();
+});
+
+tintsShades.addEventListener("click", function () {
+  setTintsShades(!selectingTintsShades);
+  disableColorTools(["setMoveColor", "setDeleteColor"]);
   renderColors();
 });
 
 deleteOnClick.addEventListener("click", function () {
   setDeleteColor(!deletingColor);
-  setMoveColor(false);
+  disableColorTools(["setMoveColor", "setTintsShades"]);
   renderColors();
 });
 

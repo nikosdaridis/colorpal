@@ -19,14 +19,29 @@
 
   --selected-color: #000000;
   --move-tool-color: #0795ed;
+  --tints-shades-tool-color: #ec6f09;
   --delete-tool-color: #e70b0b;
   --check-tool-color: #5bf55e;
   --delete-all-color: #b50707;
 
   --theme-filter: invert(89%) sepia(7%) saturate(1464%) hue-rotate(196deg)
     brightness(103%) contrast(121%);
+  --dark-theme-filter: invert(89%) sepia(7%) saturate(1464%) hue-rotate(196deg)
+    brightness(103%) contrast(121%);
+  --light-theme-filter: invert(11%) sepia(9%) saturate(660%) hue-rotate(155deg)
+    brightness(95%) contrast(87%);
+
   --tool-icon-filter: invert(44%) sepia(28%) saturate(4405%) hue-rotate(178deg)
-    brightness(98%) contrast(95%) drop-shadow(0 0 2px black);
+    brightness(98%) contrast(95%);
+  --move-tool-filter: invert(44%) sepia(28%) saturate(4405%) hue-rotate(178deg)
+    brightness(98%) contrast(95%);
+  --tint-shades-tool-filter: invert(43%) sepia(97%) saturate(2220%)
+    hue-rotate(5deg) brightness(101%) contrast(93%);
+  --delete-tool-filter: invert(11%) sepia(83%) saturate(5622%)
+    hue-rotate(356deg) brightness(105%) contrast(100%);
+  --check-tool-filter: invert(85%) sepia(6%) saturate(6698%) hue-rotate(73deg)
+    brightness(99%) contrast(100%);
+
   --highlight-hover-filter: invert(53%) sepia(93%) saturate(1514%)
     hue-rotate(188deg) brightness(101%) contrast(92%);
 
@@ -294,8 +309,8 @@ img[src=""] {
 
 .selected-color .rect img {
   margin: auto;
-  height: 35px;
-  width: 35px;
+  height: 30px;
+  width: 30px;
   filter: invert(100%) sepia(64%) saturate(1161%) hue-rotate(179deg)
     brightness(99%) contrast(113%) drop-shadow(0 0 2px black);
 }
@@ -328,7 +343,7 @@ img[src=""] {
 .saved-colors-tools {
   display: flex;
   gap: 30px;
-  margin-left: 60px;
+  margin-left: 50px;
   margin-top: -22px;
   margin-bottom: -25px;
   animation: collapseShow 0.4s ease-in-out forwards;
@@ -372,8 +387,12 @@ img[src=""] {
 
 .saved-colors-tools .saved-colors-count {
   color: var(--text-color);
-  font-size: 1rem;
+  align-self: center;
+  font-size: 0.8rem;
   margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .saved-colors-tools img {
@@ -382,8 +401,8 @@ img[src=""] {
   border-radius: 5px;
   margin-top: 4px;
   width: 50%;
-  height: 23px;
-  width: 23px;
+  height: 22px;
+  width: 22px;
 }
 
 .saved-colors-tools img:hover {
@@ -393,6 +412,11 @@ img[src=""] {
 .saved-colors-tools #move-color {
   filter: invert(44%) sepia(28%) saturate(4405%) hue-rotate(178deg)
     brightness(98%) contrast(95%);
+}
+
+.saved-colors-tools #tints-shades {
+  filter: invert(43%) sepia(97%) saturate(2220%) hue-rotate(5deg)
+    brightness(101%) contrast(93%);
 }
 
 .saved-colors-tools #delete-on-click {
@@ -449,6 +473,28 @@ img[src=""] {
   transition: none !important;
 }
 
+.saved-colors .color .rect.selectableTintsShades {
+  border-color: var(--tints-shades-tool-color);
+  animation: 1.5s infinite normal shake;
+}
+
+.saved-colors .color .rect.selectableTintsShades:hover {
+  border-color: var(--text-color);
+  animation-duration: 0.2s;
+}
+
+.saved-colors .color .rect.tintsShades {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.saved-colors .color .rect.tintsShades:hover {
+  font-size: 0px;
+}
+
 .saved-colors .color .rect.deletable {
   border-color: var(--delete-tool-color);
   animation: 1.5s infinite normal shake;
@@ -483,7 +529,7 @@ img[src=""] {
   height: calc(var(--rect-size) * 0.5);
   width: calc(var(--rect-size) * 0.5);
   margin-top: calc(var(--rect-margin) * 2.5);
-  filter: var(--tool-icon-filter);
+  filter: var(--tool-icon-filter) drop-shadow(0 0 2px black);
 }
 
 .saved-colors .color img[src=""] {
