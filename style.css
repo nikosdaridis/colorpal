@@ -26,10 +26,10 @@
 
   --theme-filter: invert(89%) sepia(7%) saturate(1464%) hue-rotate(196deg)
     brightness(103%) contrast(121%);
-  --dark-theme-filter: invert(89%) sepia(7%) saturate(1464%) hue-rotate(196deg)
-    brightness(103%) contrast(121%);
-  --light-theme-filter: invert(11%) sepia(9%) saturate(660%) hue-rotate(155deg)
+  --dark-theme-filter: invert(11%) sepia(9%) saturate(660%) hue-rotate(155deg)
     brightness(95%) contrast(87%);
+  --light-theme-filter: invert(89%) sepia(7%) saturate(1464%) hue-rotate(196deg)
+    brightness(103%) contrast(121%);
 
   --tool-icon-filter: invert(44%) sepia(28%) saturate(4405%) hue-rotate(178deg)
     brightness(98%) contrast(95%);
@@ -39,9 +39,13 @@
     hue-rotate(5deg) brightness(101%) contrast(93%);
   --delete-tool-filter: invert(11%) sepia(83%) saturate(5622%)
     hue-rotate(356deg) brightness(105%) contrast(100%);
+  --delete-all-tool-filter: invert(11%) sepia(53%) saturate(6817%)
+    hue-rotate(358deg) brightness(104%) contrast(98%);
   --check-tool-filter: invert(85%) sepia(6%) saturate(6698%) hue-rotate(73deg)
     brightness(99%) contrast(100%);
 
+  --highlight-filter: invert(47%) sepia(30%) saturate(5460%) hue-rotate(178deg)
+    brightness(97%) contrast(96%);
   --highlight-hover-filter: invert(53%) sepia(93%) saturate(1514%)
     hue-rotate(188deg) brightness(101%) contrast(92%);
 
@@ -94,8 +98,7 @@ img[src=""] {
   margin-left: auto;
   margin-right: auto;
   width: 50%;
-  filter: invert(89%) sepia(7%) saturate(1464%) hue-rotate(196deg)
-    brightness(103%) contrast(121%);
+  filter: var(--light-theme-filter);
   height: 30px;
   width: 30px;
 }
@@ -206,8 +209,7 @@ img[src=""] {
   margin-top: 5px;
   height: 30px;
   width: 30px;
-  filter: invert(38%) sepia(96%) saturate(2667%) hue-rotate(198deg)
-    brightness(105%) contrast(101%);
+  filter: var(--highlight-filter);
 }
 
 .info .help img {
@@ -311,8 +313,7 @@ img[src=""] {
   margin: auto;
   height: 30px;
   width: 30px;
-  filter: invert(100%) sepia(64%) saturate(1161%) hue-rotate(179deg)
-    brightness(99%) contrast(113%) drop-shadow(0 0 2px black);
+  filter: var(--light-theme-filter) drop-shadow(0 0 2px black);
 }
 
 .saved-colors-panel {
@@ -410,23 +411,19 @@ img[src=""] {
 }
 
 .saved-colors-tools #move-color {
-  filter: invert(44%) sepia(28%) saturate(4405%) hue-rotate(178deg)
-    brightness(98%) contrast(95%);
+  filter: var(--move-tool-filter);
 }
 
 .saved-colors-tools #tints-shades {
-  filter: invert(43%) sepia(97%) saturate(2220%) hue-rotate(5deg)
-    brightness(101%) contrast(93%);
+  filter: var(--tint-shades-tool-filter);
 }
 
 .saved-colors-tools #delete-on-click {
-  filter: invert(11%) sepia(83%) saturate(5622%) hue-rotate(356deg)
-    brightness(105%) contrast(100%);
+  filter: var(--delete-tool-filter);
 }
 
 .saved-colors-tools #delete-all {
-  filter: invert(11%) sepia(53%) saturate(6817%) hue-rotate(358deg)
-    brightness(104%) contrast(98%);
+  filter: var(--delete-all-tool-filter);
 }
 
 .saved-colors {

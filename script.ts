@@ -92,7 +92,18 @@ function newVersion(): void {
 }
 
 function setOptions(): void {
-  setTheme(localStorage.getItem("colorpal-theme") ?? "dark");
+  // Theme
+  if (
+    localStorage.getItem("colorpal-theme") === "light" ||
+    localStorage.getItem("colorpal-theme") === "dark"
+  )
+    setTheme(localStorage.getItem("colorpal-theme"));
+  else if (
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme: dark)").matches
+  )
+    setTheme("dark");
+  else setTheme("light");
 
   setCurrentSelectedColor(
     localStorage.getItem("colorpal-current-selected-color") ?? "#000000"
@@ -153,7 +164,11 @@ function setTheme(theme: string): void {
 
   root.style.setProperty(
     "--theme-filter",
-    getComputedStyle(root).getPropertyValue(`--${theme}-theme-filter`)
+    getComputedStyle(root).getPropertyValue(
+      `--${
+        (theme === "dark" && "light") || (theme === "light" && "dark")
+      }-theme-filter`
+    )
   );
 
   themeIcon.setAttribute(
@@ -308,7 +323,7 @@ function addColorListeners(): void {
       savedColorClicked((elem.currentTarget! as HTMLElement).dataset.color);
     });
 
-    // moving and deleting listeners
+    // color tools listeners
     if (!movingColor && !selectingTintsShades && !deletingColor) return;
 
     // mouse enter listener
@@ -539,7 +554,7 @@ function saveColor(color: string): void {
   );
 
   setColorsCount();
-  if (!selectingTintsShades) renderColors();
+  if (!renderedTintsShades) renderColors();
 
   selectedColor.lastElementChild?.setAttribute("src", "");
 
@@ -611,7 +626,7 @@ function activateEyeDropper(): void {
 
 function renderTintsShades(): void {
   // Set temporary colors per line to 10
-  savedColors.style.setProperty("grid-template-columns", `repeat(10, 1fr)`);
+  savedColors.style.setProperty("grid-template-columns", "repeat(10, 1fr)");
   root.style.setProperty("--rect-size", "28.3px");
 
   let baseColorHSL = hexToHsl(
@@ -619,7 +634,7 @@ function renderTintsShades(): void {
   );
   let tintsShades = [];
 
-  for (let i = 1; i <= 99; i += 1) {
+  for (let i = 1; i <= 99; i++) {
     tintsShades.push(hslToHex(baseColorHSL.h, baseColorHSL.s, i));
   }
 
@@ -629,7 +644,7 @@ function renderTintsShades(): void {
       (color: string, index: number) => `
         <li class="color">
           <span class="rect tintsShades" data-color="${color}" style="background: ${color}; color: ${
-        index < 50 ? "white" : "black"
+        index < 40 ? "white" : "black"
       };">${index + 1}</span>
         </li>`
     )
@@ -683,8 +698,8 @@ function resetEmptyColorsArray(): void {
   savedColorsPanel.classList.add("hide");
 }
 
-function setMoveColor(isMoving: boolean): void {
-  movingColor = isMoving;
+function setMoveColor(moving: boolean): void {
+  movingColor = moving;
 
   moveColor.setAttribute("src", `icons/${movingColor ? "check" : "move"}.svg`);
 
@@ -696,9 +711,9 @@ function setMoveColor(isMoving: boolean): void {
   );
 }
 
-function setTintsShades(setTintsShades: boolean): void {
-  selectingTintsShades = setTintsShades;
-  if (!setTintsShades) {
+function setTintsShades(selecting: boolean): void {
+  selectingTintsShades = selecting;
+  if (!selecting) {
     renderedTintsShades = false;
     setColorsPerLine(localStorage.getItem("colorpal-colors-per-line"));
   }
@@ -716,8 +731,8 @@ function setTintsShades(setTintsShades: boolean): void {
   );
 }
 
-function setDeleteColor(isDeleting: boolean): void {
-  deletingColor = isDeleting;
+function setDeleteColor(deleting: boolean): void {
+  deletingColor = deleting;
 
   deleteOnClick.setAttribute(
     "src",
@@ -740,11 +755,11 @@ function disableColorTools(tools: string | string[]): void {
     return;
   }
 
-  tools.includes("setMoveColor") && movingColor && setMoveColor(false);
-  tools.includes("setTintsShades") &&
-    selectingTintsShades &&
+  movingColor && tools.includes("setMoveColor") && setMoveColor(false);
+  selectingTintsShades &&
+    tools.includes("setTintsShades") &&
     setTintsShades(false);
-  tools.includes("setDeleteColor") && deletingColor && setDeleteColor(false);
+  deletingColor && tools.includes("setDeleteColor") && setDeleteColor(false);
 }
 
 function hexToRgb(
