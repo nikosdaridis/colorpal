@@ -145,7 +145,7 @@ function setOptions(): void {
 }
 
 function setTheme(theme: string): void {
-  localStorage.setItem("colorpal-theme", theme === "light" ? "light" : "dark");
+  localStorage.setItem("colorpal-theme", theme);
 
   root.style.setProperty(
     "--primary-color",

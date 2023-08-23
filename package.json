@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "minify": "uglifyjs script.js -o script.js -c -m && uglifyjs service-worker.js -o service-worker.js -c -m && uglifyjs content-script.js -o content-script.js -c -m",
+    "minify": "uglifyjs script.js -o script.js -c -m && uglifyjs service-worker.js -o service-worker.js -c -m",
     "build": "tsc && npm run minify"
   },
   "devDependencies": {

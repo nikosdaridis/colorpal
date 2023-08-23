@@ -1,5 +1,5 @@
 <div align="center">
-  <a href="https://chrome.google.com/webstore/detail/mbnpegpimodgjmlbfhkkdgbcfjmgpoad" target="_blank"><img alt="Logo" src="https://raw.githubusercontent.com/nikosdaridis/colorpal/main/icons/icon128.png" width="100" /></a>
+  <a href="https://chrome.google.com/webstore/detail/mbnpegpimodgjmlbfhkkdgbcfjmgpoad" target="_blank"><img alt="Logo" src="https://raw.githubusercontent.com/nikosdaridis/colorpal/main/icons/logo128.png" width="100" /></a>
 </div>
 <h1 align="center">
   ColorPal - Color Picker - Eyedropper
@@ -23,9 +23,10 @@ Delete selected color or all colors<br>
 Light and Dark mode<br>
 </p>
 <div align="center">
-<img width="300" alt="Screenshot 1" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot1.jpg>
-<img width="300" alt="Screenshot 2" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot2.jpg>
-<img width="300" alt="Screenshot 3" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot3.jpg>
+<img alt="Screenshot 1" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot1.jpg>
+<img alt="Screenshot 2" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot2.jpg>
+<img alt="Screenshot 3" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot3.jpg>
+<img alt="Screenshot 4" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot4.jpg>
 </div>
 
 ## 🛠 Installation

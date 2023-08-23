@@ -89,7 +89,13 @@ img[src=""] {
   padding: 7px 7px;
   margin-right: 2rem;
   background: var(--highlight-color);
-  transition: 0.2s ease;
+  transition: 0.3s ease;
+}
+
+.colors-tools label:hover,
+.settings-tools label:hover {
+  background: var(--highlight-hover-color);
+  transform: scale(1.1);
 }
 
 .colors-tools img,
@@ -105,11 +111,6 @@ img[src=""] {
 
 .settings-tools #theme-button img {
   filter: var(--theme-filter) !important;
-}
-
-.colors-tools label:hover,
-.settings-tools label:hover {
-  background: var(--highlight-hover-color);
 }
 
 #settings-button,
@@ -157,6 +158,11 @@ img[src=""] {
   border-color: var(--secondary-color);
 }
 
+.settings-panel .options input,
+select {
+  cursor: pointer;
+}
+
 .info {
   display: flex;
   justify-content: center;
@@ -165,9 +171,24 @@ img[src=""] {
   gap: 0.7rem;
 }
 
-.info span {
-  font-size: 0.75rem;
-  align-self: center;
+.info a {
+  transition: 0.3s ease;
+}
+
+.info a:hover {
+  transform: scale(1.1);
+}
+
+.info .feedback,
+.review {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.info p {
+  font-size: 0.8rem;
+  font-weight: 500;
   color: var(--highlight-color);
 }
 
@@ -186,35 +207,36 @@ img[src=""] {
   border: none;
   color: #fafcff;
   font-size: 0.7rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   border-radius: 5px;
-  padding: 7px 5px;
+  padding: 5px 5px;
   text-decoration: none;
   background: #24da70;
-  transition: 0.2s ease;
+  transition: 0.3s ease;
 }
 
 .info .review a:hover {
   background: #4be48a;
 }
 
-.info .github {
+.info .github a,
+.info .help a {
   display: flex;
-  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
 }
 
 .info .github img,
 .info .help img {
-  margin-top: 5px;
   height: 30px;
   width: 30px;
   filter: var(--highlight-filter);
 }
 
 .info .help img {
-  height: 20px;
-  width: 20px;
+  height: 25px;
+  width: 25px;
 }
 
 .info .github img:hover,
@@ -234,7 +256,7 @@ img[src=""] {
 .color-codes {
   position: absolute;
   margin-top: 11px;
-  margin-right: 240px;
+  margin-right: 235px;
   display: grid;
   gap: 0.8rem;
 }
@@ -257,6 +279,7 @@ img[src=""] {
 
 .color-codes button:hover {
   background: var(--highlight-hover-color);
+  transform: scale(1.05);
 }
 
 .display-messages {
@@ -304,7 +327,7 @@ img[src=""] {
 }
 
 .selected-color .rect:hover {
-  transform: scale(1.25);
+  transform: scale(1.15);
   border-radius: 5%;
   box-shadow: none;
 }
@@ -328,13 +351,14 @@ img[src=""] {
 
 #collapse-color-tools-icon {
   position: flex;
-  width: 25px;
-  height: 25px;
+  width: 18px;
+  height: 18px;
   margin-left: 10px;
   margin-bottom: -10px;
   cursor: pointer;
   text-align: center;
   filter: var(--theme-filter);
+  transition: 0.3s ease;
 }
 
 #collapse-color-tools-icon:hover {
@@ -345,8 +369,8 @@ img[src=""] {
   display: flex;
   gap: 30px;
   margin-left: 50px;
-  margin-top: -22px;
-  margin-bottom: -25px;
+  margin-top: -15px;
+  margin-bottom: -24px;
   animation: collapseShow 0.4s ease-in-out forwards;
 }
 
@@ -390,18 +414,14 @@ img[src=""] {
   color: var(--text-color);
   align-self: center;
   font-size: 0.8rem;
-  margin-top: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .saved-colors-tools img {
-  display: block;
   cursor: pointer;
-  border-radius: 5px;
-  margin-top: 4px;
-  width: 50%;
+  align-self: center;
   height: 22px;
   width: 22px;
 }
@@ -430,8 +450,8 @@ img[src=""] {
   display: grid;
   justify-self: center;
   padding: 0.3rem;
-  margin-top: 23px;
-  grid-template-columns: repeat(8, 1fr);
+  margin-top: 22px;
+  grid-template-columns: repeat(6, 1fr);
   list-style-type: none;
 }
 
@@ -447,7 +467,7 @@ img[src=""] {
 }
 
 .saved-colors .color .rect:hover {
-  transform: scale(1.25);
+  transform: scale(1.2);
   border-radius: 5%;
   border: 1px solid var(--highlight-color);
 }
