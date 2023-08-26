@@ -9,7 +9,7 @@
   <body class="hide-animations">
     <div class="popup">
       <div class="colors-tools">
-        <label id="eye-dropper-button">
+        <label id="eyedropper-button">
           <img src="icons/eyedropper.svg" draggable="false" />
         </label>
         <label id="color-palette-button" for="color-palette">
@@ -33,26 +33,15 @@
       <div class="settings-panel">
         <div class="options">
           <div>
-            <label for="auto-save-eye-dropper">Auto Save Eye Dropper</label
-            ><br />
+            <label for="auto-save-eyedropper">Auto Save EyeDropper</label><br />
           </div>
           <div>
-            <input
-              type="checkbox"
-              id="auto-save-eye-dropper"
-              name="Save Eye Dropper"
-            />
+            <input type="checkbox" id="auto-save-eyedropper" />
           </div>
 
+          <div><label for="auto-copy-code">Auto Copy Code</label><br /></div>
           <div>
-            <label for="auto-copy-color-code">Auto Copy Color Code</label><br />
-          </div>
-          <div>
-            <input
-              type="checkbox"
-              id="auto-copy-color-code"
-              name="Copy Color Code"
-            />
+            <input type="checkbox" id="auto-copy-code" />
           </div>
 
           <div>
@@ -65,6 +54,14 @@
               <option value="HSL">HSL</option>
               <option value="HSV">HSV</option>
             </select>
+          </div>
+
+          <div>
+            <label for="add-hex-character-option">Add # in HEX</label><br />
+          </div>
+
+          <div>
+            <input type="checkbox" id="add-hex-character-option" />
           </div>
 
           <div><label for="colors-per-line">Colors Per Line</label></div>
@@ -80,15 +77,10 @@
           </div>
 
           <div>
-            <label for="display-messages-option">Display Messages</label><br />
+            <label for="show-messages-option">Show Messages</label><br />
           </div>
-
           <div>
-            <input
-              type="checkbox"
-              id="display-messages-option"
-              name="Display Messages"
-            />
+            <input type="checkbox" id="show-messages-option" />
           </div>
         </div>
 
@@ -120,7 +112,7 @@
             </a>
           </div>
 
-          <p>v1.3.0</p>
+          <p>v1.3.1</p>
         </div>
       </div>
 
@@ -140,9 +132,9 @@
           </button>
         </div>
 
-        <div class="display-messages">
-          <h2 id="display-message-text"></h2>
-          <h3 id="display-message-color-code"></h3>
+        <div class="show-messages">
+          <h2 id="show-message-text"></h2>
+          <h3 id="show-message-color-code"></h3>
         </div>
       </div>
 

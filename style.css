@@ -282,7 +282,7 @@ select {
   transform: scale(1.05);
 }
 
-.display-messages {
+.show-messages {
   position: absolute;
   display: grid;
   justify-items: center;
@@ -293,13 +293,13 @@ select {
   transition: 0.5s ease;
 }
 
-.display-messages.hide {
+.show-messages.hide {
   opacity: 0;
   pointer-events: none;
 }
 
-#display-message-text,
-#display-message-color-code {
+#show-message-text,
+#show-message-color-code {
   font-size: 0.6rem;
   text-overflow: ellipsis;
   white-space: nowrap;
