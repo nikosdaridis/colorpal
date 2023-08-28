@@ -1,3 +1,5 @@
+declare const domtoimage: any;
+
 const root = document.querySelector(":root") as HTMLElement;
 const eyeDropperButton = document.querySelector(
   "#eyedropper-button"
@@ -29,6 +31,9 @@ const savedColorsCount = document.querySelector(
 const moveColor = document.querySelector("#move-color") as HTMLElement;
 const tintsShades = document.querySelector("#tints-shades") as HTMLElement;
 const deleteOnClick = document.querySelector("#delete-on-click") as HTMLElement;
+const downloadPalette = document.querySelector(
+  "#download-palette"
+) as HTMLElement;
 const deleteAll = document.querySelector("#delete-all") as HTMLElement;
 const themeIcon = document.querySelector("#theme-icon") as HTMLElement;
 const settingsPanel = document.querySelector(".settings-panel") as HTMLElement;
@@ -702,6 +707,64 @@ function deleteColor(color: string): void {
   !savedColorsArray.length && resetEmptyColorsArray();
 }
 
+function downloadPaletteImage(): void {
+  if (!savedColorsArray.length) return;
+
+  let cardWidth = 100;
+  let cardHeight = 200;
+
+  let name = document.createElement("h1");
+  name.textContent = "ColorPal";
+  name.style.fontSize = "50px";
+  name.style.fontWeight = "900";
+  name.style.whiteSpace = "pre";
+
+  let colorsContainer = document.createElement("div");
+  colorsContainer.append(name);
+  colorsContainer.append(
+    drawColors(JSON.parse(localStorage.getItem(storage.savedColorsArray)))
+  );
+
+  let node = document.body.appendChild(colorsContainer);
+
+  domtoimage
+    .toBlob(node)
+    .then((blob: Blob) => {
+      // download image
+      let blobUrl = URL.createObjectURL(blob);
+      let link = window.document.createElement("a");
+      link.href = blobUrl;
+      link.download = "ColorPal Palette.png";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showMessage("Downloaded Palette", null, null);
+    })
+    .catch(() => {
+      showMessage("Error palette download", null, null);
+    })
+    .finally(() => node.remove());
+
+  function drawColors(colors: string[]): HTMLElement {
+    let colorsContainer = document.createElement("div");
+    colorsContainer.style.display = "grid";
+    colorsContainer.style.gridTemplateColumns = `repeat(${localStorage.getItem(
+      storage.colorsPerLine
+    )}, 1fr)`;
+
+    colors.map((color: string) => {
+      let div = document.createElement("div");
+      div.style.width = `${cardWidth}px`;
+      div.style.height = `${cardHeight}px`;
+      div.style.backgroundColor = color;
+
+      colorsContainer.appendChild(div);
+    });
+    return colorsContainer;
+  }
+}
+
 function deleteAllColors(): void {
   if (confirm("Delete All Your Colors?")) {
     savedColorsArray.length = 0;
@@ -1038,6 +1101,8 @@ deleteOnClick.addEventListener("click", function () {
   disableColorTools(["setMoveColor", "setTintsShades"]);
   renderColors();
 });
+
+downloadPalette.addEventListener("click", downloadPaletteImage);
 
 deleteAll.addEventListener("click", deleteAllColors);
 

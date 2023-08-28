@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="style.css" />
+    <script src="./utils/dom-to-image.js" defer></script>
     <script src="script.js" defer></script>
   </head>
 
@@ -153,14 +154,24 @@
 
         <div class="saved-colors-tools">
           <span class="saved-colors-count"></span>
+
           <img id="move-color" src="icons/move.svg" draggable="false" />
+
           <img
             id="tints-shades"
             src="icons/tintsShades.svg"
             draggable="false"
           />
+
           <img id="delete-on-click" src="icons/delete.svg" draggable="false" />
+
           <img id="delete-all" src="icons/deleteAll.svg" draggable="false" />
+
+          <img
+            id="download-palette"
+            src="icons/downloadPalette.svg"
+            draggable="false"
+          />
         </div>
         <ul class="saved-colors"></ul>
       </div>
