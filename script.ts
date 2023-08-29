@@ -31,9 +31,8 @@ const savedColorsCount = document.querySelector(
 const moveColor = document.querySelector("#move-color") as HTMLElement;
 const tintsShades = document.querySelector("#tints-shades") as HTMLElement;
 const deleteOnClick = document.querySelector("#delete-on-click") as HTMLElement;
-const downloadPalette = document.querySelector(
-  "#download-palette"
-) as HTMLElement;
+const downloadPNG = document.querySelector("#download-png") as HTMLElement;
+const downloadCSV = document.querySelector("#download-csv") as HTMLElement;
 const deleteAll = document.querySelector("#delete-all") as HTMLElement;
 const themeIcon = document.querySelector("#theme-icon") as HTMLElement;
 const settingsPanel = document.querySelector(".settings-panel") as HTMLElement;
@@ -241,7 +240,7 @@ function setColorsPerLine(clrPerLine: string | number): void {
   clrPerLine = Number(clrPerLine);
   if (clrPerLine < 5 || clrPerLine > 10) clrPerLine = 6;
 
-  localStorage.setItem(storage.colorsPerLine, clrPerLine as unknown as string);
+  localStorage.setItem(storage.colorsPerLine, String(clrPerLine));
 
   colorsPerLine.value = String(clrPerLine);
 
@@ -266,14 +265,13 @@ function setColorsPerLine(clrPerLine: string | number): void {
 function setCollapsedColorTools(isCollapsed: boolean): void {
   localStorage.setItem(storage.collapsedColorTools, String(isCollapsed));
 
-  isCollapsed
-    ? savedColorsTools.classList.add("hide")
-    : savedColorsTools.classList.remove("hide");
-
-  collapseColorToolsIcon.setAttribute(
-    "src",
-    `icons/${isCollapsed ? "arrowsRight" : "arrowsLeft"}.svg`
-  );
+  if (isCollapsed) {
+    savedColorsTools.classList.add("hide");
+    collapseColorToolsIcon.classList.add("flip");
+  } else {
+    savedColorsTools.classList.remove("hide");
+    collapseColorToolsIcon.classList.remove("flip");
+  }
 
   disableColorTools("all");
   renderColors();
@@ -281,6 +279,7 @@ function setCollapsedColorTools(isCollapsed: boolean): void {
 
 function setPage(page: string): void {
   document.body.className = "hide-animations";
+  collapseColorToolsIcon.classList.add("hide-transitions");
 
   if (page === "colors") {
     settingsTools.classList.add("hide");
@@ -292,9 +291,10 @@ function setPage(page: string): void {
     clearTimeout(hideAnimationsTimeout);
     hideAnimationsTimeout = setTimeout(function () {
       document.body.className = "";
+      collapseColorToolsIcon.classList.remove("hide-transitions");
     }, 400);
 
-    setColorsCount();
+    savedColorsCount.textContent = String(savedColorsArray.length);
     renderColors();
   } else if (page === "settings") {
     colorsTools.classList.add("hide");
@@ -306,14 +306,6 @@ function setPage(page: string): void {
 
     disableColorTools("all");
   }
-}
-
-function setColorsCount(): void {
-  if (!savedColorsArray.length) return;
-
-  savedColorsCount.textContent = `${savedColorsArray.length} ${
-    savedColorsArray.length > 1 ? "Colors" : "Color"
-  }`;
 }
 
 function renderColors(): void {
@@ -582,7 +574,8 @@ function saveColor(color: string): void {
     JSON.stringify(savedColorsArray)
   );
 
-  setColorsCount();
+  savedColorsCount.textContent = String(savedColorsArray.length);
+
   if (!renderedTintsShades) renderColors();
 
   selectedColor.lastElementChild?.setAttribute("src", "");
@@ -697,7 +690,7 @@ function deleteColor(color: string): void {
     JSON.stringify(savedColorsArray)
   );
 
-  setColorsCount();
+  savedColorsCount.textContent = String(savedColorsArray.length);
   renderColors();
 
   selectedColor.lastElementChild?.setAttribute("src", "icons/save.svg");
@@ -707,20 +700,38 @@ function deleteColor(color: string): void {
   !savedColorsArray.length && resetEmptyColorsArray();
 }
 
-function downloadPaletteImage(): void {
+function downloadImage(): void {
   if (!savedColorsArray.length) return;
 
   let cardWidth = 100;
   let cardHeight = 200;
+  let columnsInImage: number;
 
-  let name = document.createElement("h1");
-  name.textContent = "ColorPal";
-  name.style.fontSize = "50px";
-  name.style.fontWeight = "900";
-  name.style.whiteSpace = "pre";
+  if (savedColorsArray.length < 3) columnsInImage = 3;
+  else if (
+    savedColorsArray.length < 10 &&
+    Number(localStorage.getItem(storage.colorsPerLine)) >
+      savedColorsArray.length
+  )
+    columnsInImage = savedColorsArray.length;
+  else columnsInImage = Number(localStorage.getItem(storage.colorsPerLine));
+
+  let watermarkDiv = document.createElement("div");
+  watermarkDiv.style.marginBottom = "-45px";
+  watermarkDiv.style.marginLeft = `${(columnsInImage / 2) * cardWidth - 65}px`;
+
+  let watermark = document.createElement("h1");
+  watermark.textContent = "ColorPal";
+  watermark.style.fontSize = "30px";
+  watermark.style.fontWeight = "700";
+  watermark.style.color =
+    getComputedStyle(root).getPropertyValue("--highlight-color");
+  watermark.style.textShadow = "0px 0px 6px black";
+
+  watermarkDiv.appendChild(watermark);
 
   let colorsContainer = document.createElement("div");
-  colorsContainer.append(name);
+  colorsContainer.append(watermarkDiv);
   colorsContainer.append(
     drawColors(JSON.parse(localStorage.getItem(storage.savedColorsArray)))
   );
@@ -734,15 +745,15 @@ function downloadPaletteImage(): void {
       let blobUrl = URL.createObjectURL(blob);
       let link = window.document.createElement("a");
       link.href = blobUrl;
-      link.download = "ColorPal Palette.png";
+      link.download = "ColorPal-Palette.png";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
-      showMessage("Downloaded Palette", null, null);
+      showMessage("Downloaded PNG", null, null);
     })
     .catch(() => {
-      showMessage("Error palette download", null, null);
+      showMessage("Error PNG download", null, null);
     })
     .finally(() => node.remove());
 
@@ -755,6 +766,7 @@ function downloadPaletteImage(): void {
 
     colors.map((color: string) => {
       let div = document.createElement("div");
+      div.style.zIndex = "-10";
       div.style.width = `${cardWidth}px`;
       div.style.height = `${cardHeight}px`;
       div.style.backgroundColor = color;
@@ -763,6 +775,33 @@ function downloadPaletteImage(): void {
     });
     return colorsContainer;
   }
+}
+
+function downloadData(): void {
+  if (!savedColorsArray.length) return;
+
+  let dataString = `"RGB","#HEX","HEX","HSL","HSV"\r\n`;
+
+  savedColorsArray.map((color: string) => {
+    let rgbColor = hexToRgb(color, false) as {
+      r: number;
+      g: number;
+      b: number;
+    };
+
+    dataString += `"${hexToRgb(color, true)}","${color}","${color.slice(
+      1
+    )}","${rgbToHsl(rgbColor)}","${rgbToHsv(rgbColor)}"\r\n`;
+  });
+
+  let data = "data:text/csv;base64," + btoa(dataString);
+  let link = document.createElement("a");
+  link.href = data;
+  link.download = "ColorPal-Data.csv";
+  link.click();
+  link.remove;
+
+  showMessage("Downloaded CSV", null, null);
 }
 
 function deleteAllColors(): void {
@@ -1102,19 +1141,18 @@ deleteOnClick.addEventListener("click", function () {
   renderColors();
 });
 
-downloadPalette.addEventListener("click", downloadPaletteImage);
+downloadPNG.addEventListener("click", downloadImage);
+
+downloadCSV.addEventListener("click", downloadData);
 
 deleteAll.addEventListener("click", deleteAllColors);
 
 autoSaveEyeDropper.addEventListener("change", function () {
-  localStorage.setItem(
-    storage.autoSaveEyedropper,
-    this.checked as unknown as string
-  );
+  localStorage.setItem(storage.autoSaveEyedropper, String(this.checked));
 });
 
 autoCopyCode.addEventListener("change", function () {
-  localStorage.setItem(storage.autoCopyCode, this.checked as unknown as string);
+  localStorage.setItem(storage.autoCopyCode, String(this.checked));
 });
 
 colorCodeFormat.addEventListener("change", function () {
@@ -1126,14 +1164,11 @@ colorsPerLine.addEventListener("change", function () {
 });
 
 addHexCharacterOption.addEventListener("change", function () {
-  localStorage.setItem(
-    storage.addHexCharacter,
-    this.checked as unknown as string
-  );
+  localStorage.setItem(storage.addHexCharacter, String(this.checked));
 
   setSelectedColorCodes(localStorage.getItem(storage.selectedColor));
 });
 
 showMessagesOption.addEventListener("change", function () {
-  localStorage.setItem(storage.showMessages, this.checked as unknown as string);
+  localStorage.setItem(storage.showMessages, String(this.checked));
 });

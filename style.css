@@ -193,11 +193,11 @@ select {
 }
 
 .info .feedback a {
-  background: #ee5173;
+  background: #c52447;
 }
 
 .info .feedback a:hover {
-  background: #f06f8b;
+  background: #e42f56;
 }
 
 .info .review a,
@@ -212,12 +212,12 @@ select {
   border-radius: 5px;
   padding: 5px 5px;
   text-decoration: none;
-  background: #24da70;
+  background: #0d9747;
   transition: 0.3s ease;
 }
 
 .info .review a:hover {
-  background: #4be48a;
+  background: #19cf65;
 }
 
 .info .github a,
@@ -231,7 +231,13 @@ select {
 .info .help img {
   height: 30px;
   width: 30px;
-  filter: var(--highlight-filter);
+  filter: var(--theme-filter);
+  transition: 0.1s ease;
+}
+
+.info .github a:hover,
+.info .help a:hover {
+  transform: scale(1.2);
 }
 
 .info .help img {
@@ -359,23 +365,54 @@ select {
   text-align: center;
   filter: var(--theme-filter);
   transition: 0.3s ease;
+  animation: flipRight 0.3s ease-in-out none;
 }
 
 #collapse-color-tools-icon:hover {
-  transform: scale(1.2);
+  width: 20px;
+  height: 20px;
+  margin-bottom: -11px;
+}
+
+#collapse-color-tools-icon.flip {
+  transform: scaleX(-1);
+  animation: flipLeft 0.3s ease-in-out none;
+}
+
+#collapse-color-tools-icon.hide-transitions {
+  transition-duration: 0s !important;
+}
+
+@keyframes flipRight {
+  0% {
+    transform: scaleX(-1);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes flipLeft {
+  0% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(-1);
+  }
 }
 
 .saved-colors-tools {
   display: flex;
   gap: 24px;
-  margin-left: 40px;
-  margin-top: -15px;
+  margin-top: -14px;
   margin-bottom: -24px;
-  animation: collapseShow 0.4s ease-in-out forwards;
+  margin-left: 40px;
+  align-items: center;
+  animation: collapseShow 0.3s ease-in-out forwards;
 }
 
 .saved-colors-tools.hide {
-  animation: collapseHide 0.4s ease-in-out forwards;
+  animation: collapseHide 0.3s ease-in-out forwards;
 }
 
 @keyframes collapseShow {
@@ -412,7 +449,7 @@ select {
 
 .saved-colors-tools .saved-colors-count {
   color: var(--text-color);
-  align-self: center;
+  margin-right: -10px;
   font-size: 0.8rem;
   font-weight: 500;
   white-space: nowrap;
@@ -420,15 +457,19 @@ select {
   text-overflow: ellipsis;
 }
 
-.saved-colors-tools img {
-  cursor: pointer;
-  align-self: center;
-  height: 22px;
-  width: 22px;
+.color-tool {
+  display: flex;
+  transition: 0.2s ease;
 }
 
-.saved-colors-tools img:hover {
+.color-tool:hover {
   transform: scale(1.2);
+}
+
+.saved-colors-tools img {
+  cursor: pointer;
+  height: 20px;
+  width: 20px;
 }
 
 .saved-colors-tools #move-color {
@@ -447,7 +488,8 @@ select {
   filter: var(--delete-all-tool-filter);
 }
 
-.saved-colors-tools #download-palette {
+.saved-colors-tools #download-png,
+#download-csv {
   filter: var(--theme-filter);
 }
 

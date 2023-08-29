@@ -13,10 +13,13 @@
         <label id="eyedropper-button">
           <img src="icons/eyedropper.svg" draggable="false" />
         </label>
+
         <label id="color-palette-button" for="color-palette">
           <img src="icons/palette.svg" draggable="false" />
         </label>
+
         <input type="color" id="color-palette" />
+
         <label id="settings-button">
           <img src="icons/settings.svg" draggable="false" />
         </label>
@@ -26,6 +29,7 @@
         <label id="colors-button">
           <img src="icons/leftArrow.svg" draggable="false" />
         </label>
+
         <label id="theme-button">
           <img id="theme-icon" src="icons/dark.svg" draggable="false" />
         </label>
@@ -36,11 +40,13 @@
           <div>
             <label for="auto-save-eyedropper">Auto Save EyeDropper</label><br />
           </div>
+
           <div>
             <input type="checkbox" id="auto-save-eyedropper" />
           </div>
 
           <div><label for="auto-copy-code">Auto Copy Code</label><br /></div>
+
           <div>
             <input type="checkbox" id="auto-copy-code" />
           </div>
@@ -48,6 +54,7 @@
           <div>
             <label for="color-code-format">Color Code Format</label>
           </div>
+
           <div>
             <select name="Code Format" id="color-code-format">
               <option value="RGB">RGB</option>
@@ -66,6 +73,7 @@
           </div>
 
           <div><label for="colors-per-line">Colors Per Line</label></div>
+
           <div>
             <select name="Colors Per Line" id="colors-per-line">
               <option value="5">5</option>
@@ -80,6 +88,7 @@
           <div>
             <label for="show-messages-option">Show Messages</label><br />
           </div>
+
           <div>
             <input type="checkbox" id="show-messages-option" />
           </div>
@@ -93,11 +102,12 @@
               >Bug/Suggestion</a
             >
           </div>
+
           <div class="review">
             <a
               href="https://chrome.google.com/webstore/detail/mbnpegpimodgjmlbfhkkdgbcfjmgpoad/reviews"
               target="_blank"
-              >Write review</a
+              >Write a review</a
             >
           </div>
 
@@ -122,12 +132,15 @@
           <button id="copy-rgb-button">
             <h2 id="rgb"></h2>
           </button>
+
           <button id="copy-hex-button">
             <h2 id="hex"></h2>
           </button>
+
           <button id="copy-hsl-button">
             <h2 id="hsl"></h2>
           </button>
+
           <button id="copy-hsv-button">
             <h2 id="hsv"></h2>
           </button>
@@ -135,6 +148,7 @@
 
         <div class="show-messages">
           <h2 id="show-message-text"></h2>
+
           <h3 id="show-message-color-code"></h3>
         </div>
       </div>
@@ -148,30 +162,52 @@
       <div class="saved-colors-panel">
         <img
           id="collapse-color-tools-icon"
-          src="icons/arrowsLeft.svg"
+          src="icons/arrows.svg"
           draggable="false"
         />
 
         <div class="saved-colors-tools">
           <span class="saved-colors-count"></span>
 
-          <img id="move-color" src="icons/move.svg" draggable="false" />
+          <div class="color-tool">
+            <img id="move-color" src="icons/move.svg" draggable="false" />
+          </div>
 
-          <img
-            id="tints-shades"
-            src="icons/tintsShades.svg"
-            draggable="false"
-          />
+          <div class="color-tool">
+            <img
+              id="tints-shades"
+              src="icons/tintsShades.svg"
+              draggable="false"
+            />
+          </div>
 
-          <img id="delete-on-click" src="icons/delete.svg" draggable="false" />
+          <div class="color-tool">
+            <img
+              id="delete-on-click"
+              src="icons/delete.svg"
+              draggable="false"
+            />
+          </div>
 
-          <img id="delete-all" src="icons/deleteAll.svg" draggable="false" />
+          <div class="color-tool">
+            <img id="delete-all" src="icons/deleteAll.svg" draggable="false" />
+          </div>
 
-          <img
-            id="download-palette"
-            src="icons/downloadPalette.svg"
-            draggable="false"
-          />
+          <div class="color-tool">
+            <img
+              id="download-png"
+              src="icons/downloadPNG.svg"
+              draggable="false"
+            />
+          </div>
+
+          <div class="color-tool">
+            <img
+              id="download-csv"
+              src="icons/downloadCSV.svg"
+              draggable="false"
+            />
+          </div>
         </div>
         <ul class="saved-colors"></ul>
       </div>

@@ -12,14 +12,16 @@
 Features
 </h2>
 <p align="center">
-Eye dropper<br>
-Color palette<br>
+Eyedropper<br>
+Color Picker<br>
 Save favorite colors<br>
 Auto copy color code<br>
-RGB, HEX, HSL, HSV color formats<br>
+RGB, HEX, HSL, HSV formats<br>
 Move color position<br>
-Tints and Shades for selected color<br>
+Tints and Shades tool<br>
 Delete selected color or all colors<br>
+Download palette image<br>
+Download colors data csv<br>
 Light and Dark mode<br>
 </p>
 <div align="center">
