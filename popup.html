@@ -9,7 +9,8 @@
 
   <body class="hide-animations">
     <div class="popup">
-      <div class="colors-tools">
+      <!-- Colors page buttons -->
+      <div class="colors-buttons">
         <label id="eyedropper-button">
           <img src="icons/eyedropper.svg" draggable="false" />
         </label>
@@ -25,8 +26,9 @@
         </label>
       </div>
 
-      <div class="settings-tools">
-        <label id="colors-button">
+      <!-- Settings page buttons -->
+      <div class="settings-buttons">
+        <label id="colors-page-button">
           <img src="icons/leftArrow.svg" draggable="false" />
         </label>
 
@@ -35,28 +37,29 @@
         </label>
       </div>
 
+      <!-- Settings panel -->
       <div class="settings-panel">
         <div class="options">
+          <!-- Auto Save EyeDropper -->
           <div>
             <label for="auto-save-eyedropper">Auto Save EyeDropper</label><br />
           </div>
-
-          <div>
+          <div class="input-option">
             <input type="checkbox" id="auto-save-eyedropper" />
           </div>
 
+          <!-- Auto Copy Code -->
           <div><label for="auto-copy-code">Auto Copy Code</label><br /></div>
-
-          <div>
+          <div class="input-option">
             <input type="checkbox" id="auto-copy-code" />
           </div>
 
+          <!-- Color Code Format -->
           <div>
             <label for="color-code-format">Color Code Format</label>
           </div>
-
-          <div>
-            <select name="Code Format" id="color-code-format">
+          <div class="input-option">
+            <select id="color-code-format">
               <option value="RGB">RGB</option>
               <option value="HEX">HEX</option>
               <option value="HSL">HSL</option>
@@ -64,17 +67,17 @@
             </select>
           </div>
 
+          <!-- Add # in HEX -->
           <div>
             <label for="add-hex-character-option">Add # in HEX</label><br />
           </div>
-
-          <div>
+          <div class="input-option">
             <input type="checkbox" id="add-hex-character-option" />
           </div>
 
+          <!-- Colors Per Line -->
           <div><label for="colors-per-line">Colors Per Line</label></div>
-
-          <div>
+          <div class="input-option">
             <select name="Colors Per Line" id="colors-per-line">
               <option value="5">5</option>
               <option value="6">6</option>
@@ -85,15 +88,16 @@
             </select>
           </div>
 
+          <!-- Show messages -->
           <div>
             <label for="show-messages-option">Show Messages</label><br />
           </div>
-
-          <div>
+          <div class="input-option">
             <input type="checkbox" id="show-messages-option" />
           </div>
         </div>
 
+        <!-- Info -->
         <div class="info">
           <div class="feedback">
             <a
@@ -127,6 +131,7 @@
         </div>
       </div>
 
+      <!-- Color codes and Messages -->
       <div class="codes-messages">
         <div class="color-codes">
           <button id="copy-rgb-button">
@@ -153,12 +158,14 @@
         </div>
       </div>
 
+      <!-- Selected color -->
       <div class="selected-color-rect">
         <div class="selected-color">
           <span class="rect"> <img src="" draggable="false" /></span>
         </div>
       </div>
 
+      <!-- Saved colors panel -->
       <div class="saved-colors-panel">
         <img
           id="collapse-color-tools-icon"
@@ -166,49 +173,62 @@
           draggable="false"
         />
 
+        <!-- Saved colors tools -->
         <div class="saved-colors-tools">
           <span class="saved-colors-count"></span>
 
+          <!-- Move tool -->
           <div class="color-tool">
-            <img id="move-color" src="icons/move.svg" draggable="false" />
+            <img id="move-color-tool" src="icons/move.svg" draggable="false" />
           </div>
 
+          <!-- Tints and Shades tool -->
           <div class="color-tool">
             <img
-              id="tints-shades"
+              id="tints-shades-tool"
               src="icons/tintsShades.svg"
               draggable="false"
             />
           </div>
 
+          <!-- Delete tool -->
           <div class="color-tool">
             <img
-              id="delete-on-click"
+              id="delete-color-tool"
               src="icons/delete.svg"
               draggable="false"
             />
           </div>
 
-          <div class="color-tool">
-            <img id="delete-all" src="icons/deleteAll.svg" draggable="false" />
-          </div>
-
+          <!-- Delete all tool -->
           <div class="color-tool">
             <img
-              id="download-png"
+              id="delete-all-colors-tool"
+              src="icons/deleteAll.svg"
+              draggable="false"
+            />
+          </div>
+
+          <!-- Download PNG tool -->
+          <div class="color-tool">
+            <img
+              id="download-png-tool"
               src="icons/downloadPNG.svg"
               draggable="false"
             />
           </div>
 
+          <!-- Download CSV tool -->
           <div class="color-tool">
             <img
-              id="download-csv"
+              id="download-csv-tool"
               src="icons/downloadCSV.svg"
               draggable="false"
             />
           </div>
         </div>
+
+        <!-- List of saved colors -->
         <ul class="saved-colors"></ul>
       </div>
     </div>

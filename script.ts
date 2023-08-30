@@ -14,9 +14,13 @@ const copyRGBButton = document.querySelector("#copy-rgb-button") as HTMLElement;
 const copyHexButton = document.querySelector("#copy-hex-button") as HTMLElement;
 const copyHslButton = document.querySelector("#copy-hsl-button") as HTMLElement;
 const copyHsvButton = document.querySelector("#copy-hsv-button") as HTMLElement;
-const colorsTools = document.querySelector(".colors-tools") as HTMLElement;
-const settingsTools = document.querySelector(".settings-tools") as HTMLElement;
-const colorsButton = document.querySelector("#colors-button") as HTMLElement;
+const colorsButtons = document.querySelector(".colors-buttons") as HTMLElement;
+const settingsButtons = document.querySelector(
+  ".settings-buttons"
+) as HTMLElement;
+const colorsPageButton = document.querySelector(
+  "#colors-page-button"
+) as HTMLElement;
 const themeButton = document.querySelector("#theme-button") as HTMLElement;
 const savedColors = document.querySelector(".saved-colors") as HTMLElement;
 const collapseColorToolsIcon = document.querySelector(
@@ -28,12 +32,22 @@ const savedColorsTools = document.querySelector(
 const savedColorsCount = document.querySelector(
   ".saved-colors-count"
 ) as HTMLElement;
-const moveColor = document.querySelector("#move-color") as HTMLElement;
-const tintsShades = document.querySelector("#tints-shades") as HTMLElement;
-const deleteOnClick = document.querySelector("#delete-on-click") as HTMLElement;
-const downloadPNG = document.querySelector("#download-png") as HTMLElement;
-const downloadCSV = document.querySelector("#download-csv") as HTMLElement;
-const deleteAll = document.querySelector("#delete-all") as HTMLElement;
+const moveColorTool = document.querySelector("#move-color-tool") as HTMLElement;
+const tintsShadesTool = document.querySelector(
+  "#tints-shades-tool"
+) as HTMLElement;
+const deleteColorTool = document.querySelector(
+  "#delete-color-tool"
+) as HTMLElement;
+const downloadPNGTool = document.querySelector(
+  "#download-png-tool"
+) as HTMLElement;
+const downloadCSVTool = document.querySelector(
+  "#download-csv-tool"
+) as HTMLElement;
+const deleteAllColorsTool = document.querySelector(
+  "#delete-all-colors-tool"
+) as HTMLElement;
 const themeIcon = document.querySelector("#theme-icon") as HTMLElement;
 const settingsPanel = document.querySelector(".settings-panel") as HTMLElement;
 const codesMessages = document.querySelector(".codes-messages") as HTMLElement;
@@ -282,9 +296,9 @@ function setPage(page: string): void {
   collapseColorToolsIcon.classList.add("hide-transitions");
 
   if (page === "colors") {
-    settingsTools.classList.add("hide");
+    settingsButtons.classList.add("hide");
     settingsPanel.classList.add("hide");
-    colorsTools.classList.remove("hide");
+    colorsButtons.classList.remove("hide");
     selectedColorRect.classList.remove("hide");
     codesMessages.classList.remove("hide");
 
@@ -297,11 +311,11 @@ function setPage(page: string): void {
     savedColorsCount.textContent = String(savedColorsArray.length);
     renderColors();
   } else if (page === "settings") {
-    colorsTools.classList.add("hide");
+    colorsButtons.classList.add("hide");
     selectedColorRect.classList.add("hide");
     codesMessages.classList.add("hide");
     savedColorsPanel.classList.add("hide");
-    settingsTools.classList.remove("hide");
+    settingsButtons.classList.remove("hide");
     settingsPanel.classList.remove("hide");
 
     disableColorTools("all");
@@ -717,7 +731,7 @@ function downloadImage(): void {
   else columnsInImage = Number(localStorage.getItem(storage.colorsPerLine));
 
   let watermarkDiv = document.createElement("div");
-  watermarkDiv.style.marginBottom = "-45px";
+  watermarkDiv.style.marginBottom = "-46px";
   watermarkDiv.style.marginLeft = `${(columnsInImage / 2) * cardWidth - 65}px`;
 
   let watermark = document.createElement("h1");
@@ -822,9 +836,12 @@ function resetEmptyColorsArray(): void {
 function setMoveColor(moving: boolean): void {
   movingColor = moving;
 
-  moveColor.setAttribute("src", `icons/${movingColor ? "check" : "move"}.svg`);
+  moveColorTool.setAttribute(
+    "src",
+    `icons/${movingColor ? "check" : "move"}.svg`
+  );
 
-  moveColor.style.setProperty(
+  moveColorTool.style.setProperty(
     "filter",
     getComputedStyle(root).getPropertyValue(
       `--${movingColor ? "check" : "move"}-tool-filter`
@@ -839,12 +856,12 @@ function setTintsShades(selecting: boolean): void {
     setColorsPerLine(localStorage.getItem(storage.colorsPerLine));
   }
 
-  tintsShades.setAttribute(
+  tintsShadesTool.setAttribute(
     "src",
     `icons/${selectingTintsShades ? "check" : "tintsShades"}.svg`
   );
 
-  tintsShades.style.setProperty(
+  tintsShadesTool.style.setProperty(
     "filter",
     getComputedStyle(root).getPropertyValue(
       `--${selectingTintsShades ? "check" : "tint-shades"}-tool-filter`
@@ -855,12 +872,12 @@ function setTintsShades(selecting: boolean): void {
 function setDeleteColor(deleting: boolean): void {
   deletingColor = deleting;
 
-  deleteOnClick.setAttribute(
+  deleteColorTool.setAttribute(
     "src",
     `icons/${deletingColor ? "check" : "delete"}.svg`
   );
 
-  deleteOnClick.style.setProperty(
+  deleteColorTool.style.setProperty(
     "filter",
     getComputedStyle(root).getPropertyValue(
       `--${deletingColor ? "check" : "delete"}-tool-filter`
@@ -1079,7 +1096,7 @@ settingsButton.addEventListener("click", function () {
   setPage("settings");
 });
 
-colorsButton.addEventListener("click", function () {
+colorsPageButton.addEventListener("click", function () {
   setPage("colors");
 });
 
@@ -1123,29 +1140,29 @@ collapseColorToolsIcon.addEventListener("click", function () {
   );
 });
 
-moveColor.addEventListener("click", function () {
+moveColorTool.addEventListener("click", function () {
   setMoveColor(!movingColor);
   disableColorTools(["setTintsShades", "setDeleteColor"]);
   renderColors();
 });
 
-tintsShades.addEventListener("click", function () {
+tintsShadesTool.addEventListener("click", function () {
   setTintsShades(!selectingTintsShades);
   disableColorTools(["setMoveColor", "setDeleteColor"]);
   renderColors();
 });
 
-deleteOnClick.addEventListener("click", function () {
+deleteColorTool.addEventListener("click", function () {
   setDeleteColor(!deletingColor);
   disableColorTools(["setMoveColor", "setTintsShades"]);
   renderColors();
 });
 
-downloadPNG.addEventListener("click", downloadImage);
+downloadPNGTool.addEventListener("click", downloadImage);
 
-downloadCSV.addEventListener("click", downloadData);
+downloadCSVTool.addEventListener("click", downloadData);
 
-deleteAll.addEventListener("click", deleteAllColors);
+deleteAllColorsTool.addEventListener("click", deleteAllColors);
 
 autoSaveEyeDropper.addEventListener("change", function () {
   localStorage.setItem(storage.autoSaveEyedropper, String(this.checked));

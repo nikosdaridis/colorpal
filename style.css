@@ -5,9 +5,16 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-
   user-select: none;
+  font-family: "Poppins", sans-serif;
+}
+
+body.hide-animations * {
+  animation-duration: 0s !important;
+}
+
+img[src=""] {
+  display: none !important;
 }
 
 :root {
@@ -21,8 +28,8 @@
   --move-tool-color: #0795ed;
   --tints-shades-tool-color: #ec6f09;
   --delete-tool-color: #e70b0b;
-  --check-tool-color: #5bf55e;
   --delete-all-color: #b50707;
+  --check-tool-color: #5bf55e;
 
   --theme-filter: invert(89%) sepia(7%) saturate(1464%) hue-rotate(196deg)
     brightness(103%) contrast(121%);
@@ -30,6 +37,11 @@
     brightness(95%) contrast(87%);
   --light-theme-filter: invert(89%) sepia(7%) saturate(1464%) hue-rotate(196deg)
     brightness(103%) contrast(121%);
+
+  --highlight-filter: invert(47%) sepia(30%) saturate(5460%) hue-rotate(178deg)
+    brightness(97%) contrast(96%);
+  --highlight-hover-filter: invert(53%) sepia(93%) saturate(1514%)
+    hue-rotate(188deg) brightness(101%) contrast(92%);
 
   --tool-icon-filter: invert(44%) sepia(28%) saturate(4405%) hue-rotate(178deg)
     brightness(98%) contrast(95%);
@@ -44,21 +56,8 @@
   --check-tool-filter: invert(85%) sepia(6%) saturate(6698%) hue-rotate(73deg)
     brightness(99%) contrast(100%);
 
-  --highlight-filter: invert(47%) sepia(30%) saturate(5460%) hue-rotate(178deg)
-    brightness(97%) contrast(96%);
-  --highlight-hover-filter: invert(53%) sepia(93%) saturate(1514%)
-    hue-rotate(188deg) brightness(101%) contrast(92%);
-
   --rect-size: 40.5px;
   --rect-margin: calc(var(--rect-size) * 0.1);
-}
-
-body.hide-animations * {
-  animation-duration: 0s !important;
-}
-
-img[src=""] {
-  display: none !important;
 }
 
 .popup {
@@ -68,22 +67,20 @@ img[src=""] {
   background: var(--primary-color);
 }
 
-.colors-tools,
-.settings-tools {
+.colors-buttons,
+.settings-buttons {
   display: flex;
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
 
-.colors-tools.hide,
-.settings-tools.hide {
+.colors-buttons.hide,
+.settings-buttons.hide {
   display: none;
 }
 
-.colors-tools label,
-.settings-tools label {
-  outline: none;
-  border: none;
+.colors-buttons label,
+.settings-buttons label {
   cursor: pointer;
   border-radius: 5px;
   padding: 7px 7px;
@@ -92,25 +89,22 @@ img[src=""] {
   transition: 0.3s ease;
 }
 
-.colors-tools label:hover,
-.settings-tools label:hover {
+.colors-buttons label:hover,
+.settings-buttons label:hover {
   background: var(--highlight-hover-color);
-  transform: scale(1.1);
+  scale: 1.1;
 }
 
-.colors-tools img,
-.settings-tools img {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 50%;
-  filter: var(--light-theme-filter);
+.colors-buttons img,
+.settings-buttons img {
+  display: flex;
   height: 30px;
   width: 30px;
+  filter: var(--light-theme-filter);
 }
 
-.settings-tools #theme-button img {
-  filter: var(--theme-filter) !important;
+.settings-buttons #theme-button img {
+  filter: var(--theme-filter);
 }
 
 #settings-button,
@@ -120,16 +114,16 @@ img[src=""] {
 
 #color-palette {
   opacity: 0;
-  width: 0;
-  height: 0;
   padding: 0;
   border: 0;
+  width: 0;
+  height: 0;
   margin-top: -16px;
-  margin-left: 10px;
+  margin-left: 5px;
 }
 
 #settings-button {
-  margin-left: -10px;
+  margin-left: -5px;
 }
 
 .settings-panel {
@@ -137,7 +131,7 @@ img[src=""] {
   margin-bottom: 1rem;
 }
 
-.settings-panel label {
+.settings-panel .options label {
   font-size: 1rem;
   color: var(--text-color);
 }
@@ -149,13 +143,16 @@ img[src=""] {
 .settings-panel .options {
   display: grid;
   grid-template: "a a" "b b";
-  justify-content: center;
   gap: 1rem;
   padding: 5px;
   margin: 0rem 2rem 0 2rem;
   background-color: var(--secondary-color);
   box-shadow: 0 0 0.5rem var(--secondary-color);
   border-color: var(--secondary-color);
+}
+
+.settings-panel .input-option {
+  display: flex;
 }
 
 .settings-panel .options input,
@@ -168,7 +165,7 @@ select {
   justify-content: center;
   align-items: center;
   margin-top: 2rem;
-  gap: 0.7rem;
+  gap: 0.8rem;
 }
 
 .info a {
@@ -176,7 +173,7 @@ select {
 }
 
 .info a:hover {
-  transform: scale(1.1);
+  scale: 1.1;
 }
 
 .info .feedback,
@@ -202,16 +199,14 @@ select {
 
 .info .review a,
 .feedback a {
-  white-space: nowrap;
-  outline: none;
-  border: none;
-  color: #fafcff;
-  font-size: 0.7rem;
-  font-weight: 700;
   cursor: pointer;
   border-radius: 5px;
   padding: 5px 5px;
+  font-size: 0.7rem;
+  font-weight: 800;
   text-decoration: none;
+  white-space: pre;
+  color: #fafcff;
   background: #0d9747;
   transition: 0.3s ease;
 }
@@ -223,8 +218,6 @@ select {
 .info .github a,
 .info .help a {
   display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .info .github img,
@@ -237,12 +230,12 @@ select {
 
 .info .github a:hover,
 .info .help a:hover {
-  transform: scale(1.2);
+  scale: 1.2;
 }
 
 .info .help img {
-  height: 25px;
-  width: 25px;
+  height: 24px;
+  width: 24px;
 }
 
 .info .github img:hover,
@@ -273,35 +266,34 @@ select {
 }
 
 .color-codes button {
+  cursor: pointer;
   outline: none;
   border: none;
-  color: #fafcff;
-  cursor: pointer;
   border-radius: 5px;
   padding: 2px 2px;
+  color: #fafcff;
   background: var(--highlight-color);
   transition: 0.3s ease;
 }
 
 .color-codes button:hover {
   background: var(--highlight-hover-color);
-  transform: scale(1.05);
+  scale: 1.05;
 }
 
 .show-messages {
-  position: absolute;
   display: grid;
-  justify-items: center;
-  margin-top: 48px;
-  margin-left: 225px;
-  color: var(--text-color);
   opacity: 100;
+  position: absolute;
+  justify-items: center;
+  margin-top: 50px;
+  margin-left: 230px;
+  color: var(--text-color);
   transition: 0.5s ease;
 }
 
 .show-messages.hide {
   opacity: 0;
-  pointer-events: none;
 }
 
 #show-message-text,
@@ -322,8 +314,8 @@ select {
 }
 
 .selected-color .rect {
-  display: flex;
   cursor: pointer;
+  display: flex;
   height: 100px;
   width: 100px;
   border-radius: 15%;
@@ -333,22 +325,21 @@ select {
 }
 
 .selected-color .rect:hover {
-  transform: scale(1.15);
+  scale: 1.15;
   border-radius: 5%;
   box-shadow: none;
 }
 
 .selected-color .rect img {
+  height: 25px;
+  width: 25px;
   margin: auto;
-  height: 30px;
-  width: 30px;
   filter: var(--light-theme-filter) drop-shadow(0 0 2px black);
 }
 
 .saved-colors-panel {
-  margin-top: 1rem;
+  margin-top: 10px;
   background-color: var(--secondary-color);
-  box-shadow: 0 0 0.3rem var(--secondary-color);
 }
 
 .saved-colors-panel.hide {
@@ -356,63 +347,40 @@ select {
 }
 
 #collapse-color-tools-icon {
+  cursor: pointer;
   position: flex;
   width: 18px;
   height: 18px;
   margin-left: 10px;
   margin-bottom: -10px;
-  cursor: pointer;
-  text-align: center;
   filter: var(--theme-filter);
   transition: 0.3s ease;
-  animation: flipRight 0.3s ease-in-out none;
 }
 
 #collapse-color-tools-icon:hover {
-  width: 20px;
-  height: 20px;
-  margin-bottom: -11px;
+  scale: 1.2;
 }
 
 #collapse-color-tools-icon.flip {
   transform: scaleX(-1);
-  animation: flipLeft 0.3s ease-in-out none;
 }
 
 #collapse-color-tools-icon.hide-transitions {
   transition-duration: 0s !important;
 }
 
-@keyframes flipRight {
-  0% {
-    transform: scaleX(-1);
-  }
-  100% {
-    transform: scaleX(1);
-  }
-}
-
-@keyframes flipLeft {
-  0% {
-    transform: scaleX(1);
-  }
-  100% {
-    transform: scaleX(-1);
-  }
-}
-
 .saved-colors-tools {
   display: flex;
-  gap: 24px;
+  gap: 25px;
   margin-top: -14px;
   margin-bottom: -24px;
   margin-left: 40px;
   align-items: center;
-  animation: collapseShow 0.3s ease-in-out forwards;
+  animation: collapseShow 0.3s ease-out forwards;
 }
 
 .saved-colors-tools.hide {
-  animation: collapseHide 0.3s ease-in-out forwards;
+  animation: collapseHide 0.3s ease-in forwards;
 }
 
 @keyframes collapseShow {
@@ -448,22 +416,22 @@ select {
 }
 
 .saved-colors-tools .saved-colors-count {
-  color: var(--text-color);
   margin-right: -10px;
   font-size: 0.8rem;
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--text-color);
 }
 
 .color-tool {
   display: flex;
-  transition: 0.2s ease;
+  transition: 0.3s ease;
 }
 
 .color-tool:hover {
-  transform: scale(1.2);
+  scale: 1.2;
 }
 
 .saved-colors-tools img {
@@ -472,32 +440,31 @@ select {
   width: 20px;
 }
 
-.saved-colors-tools #move-color {
+.saved-colors-tools #move-color-tool {
   filter: var(--move-tool-filter);
 }
 
-.saved-colors-tools #tints-shades {
+.saved-colors-tools #tints-shades-tool {
   filter: var(--tint-shades-tool-filter);
 }
 
-.saved-colors-tools #delete-on-click {
+.saved-colors-tools #delete-color-tool {
   filter: var(--delete-tool-filter);
 }
 
-.saved-colors-tools #delete-all {
+.saved-colors-tools #delete-all-colors-tool {
   filter: var(--delete-all-tool-filter);
 }
 
-.saved-colors-tools #download-png,
-#download-csv {
+.saved-colors-tools #download-png-tool,
+#download-csv-tool {
   filter: var(--theme-filter);
 }
 
 .saved-colors {
   display: grid;
-  justify-self: center;
   padding: 0.3rem;
-  margin-top: 22px;
+  margin-top: 25px;
   grid-template-columns: repeat(6, 1fr);
   list-style-type: none;
 }
@@ -514,7 +481,7 @@ select {
 }
 
 .saved-colors .color .rect:hover {
-  transform: scale(1.2);
+  scale: 1.15;
   border-radius: 5%;
   border: 1px solid var(--highlight-color);
 }
@@ -524,17 +491,13 @@ select {
   animation: 1.5s infinite normal shake;
 }
 
-.saved-colors .color .rect.draggable:hover {
-  border-color: var(--text-color);
-  animation-duration: 0.2s;
-}
-
 .saved-colors .color .rect.dragging,
 .closest {
+  scale: 1.15 !important;
   border-radius: 5% !important;
   border-color: var(--text-color) !important;
-  animation: 0.2s infinite normal shake !important;
-  transition: none !important;
+  animation: 0.3s infinite normal shake !important;
+  transition-duration: 0.1s !important;
 }
 
 .saved-colors .color .rect.selectableTintsShades {
@@ -542,16 +505,11 @@ select {
   animation: 1.5s infinite normal shake;
 }
 
-.saved-colors .color .rect.selectableTintsShades:hover {
-  border-color: var(--text-color);
-  animation-duration: 0.2s;
-}
-
 .saved-colors .color .rect.tintsShades {
   display: flex;
   justify-content: center;
-  align-items: center;
-  font-size: 9px;
+  align-items: flex-end;
+  font-size: 8px;
   font-weight: 900;
 }
 
@@ -564,9 +522,11 @@ select {
   animation: 1.5s infinite normal shake;
 }
 
+.saved-colors .color .rect.draggable:hover,
+.saved-colors .color .rect.selectableTintsShades:hover,
 .saved-colors .color .rect.deletable:hover {
   border-color: var(--text-color);
-  animation-duration: 0.2s;
+  animation-duration: 0.3s;
 }
 
 @keyframes shake {
@@ -589,13 +549,9 @@ select {
 
 .saved-colors .color img {
   display: block;
-  margin: auto;
   height: calc(var(--rect-size) * 0.5);
   width: calc(var(--rect-size) * 0.5);
-  margin-top: calc(var(--rect-margin) * 2.5);
+  margin: auto;
+  margin-top: calc(var(--rect-size) * 0.25);
   filter: var(--tool-icon-filter) drop-shadow(0 0 2px black);
-}
-
-.saved-colors .color img[src=""] {
-  display: none !important;
 }
