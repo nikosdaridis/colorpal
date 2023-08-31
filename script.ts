@@ -717,8 +717,8 @@ function deleteColor(color: string): void {
 function downloadImage(): void {
   if (!savedColorsArray.length) return;
 
-  let cardWidth = 100;
-  let cardHeight = 200;
+  let cardWidth = 150;
+  let cardHeight = 250;
   let columnsInImage: number;
 
   if (savedColorsArray.length < 3) columnsInImage = 3;
@@ -731,16 +731,16 @@ function downloadImage(): void {
   else columnsInImage = Number(localStorage.getItem(storage.colorsPerLine));
 
   let watermarkDiv = document.createElement("div");
-  watermarkDiv.style.marginBottom = "-46px";
-  watermarkDiv.style.marginLeft = `${(columnsInImage / 2) * cardWidth - 65}px`;
+  watermarkDiv.style.marginBottom = "-60px";
+  watermarkDiv.style.marginLeft = `${(columnsInImage / 2) * cardWidth - 87}px`;
 
   let watermark = document.createElement("h1");
   watermark.textContent = "ColorPal";
-  watermark.style.fontSize = "30px";
-  watermark.style.fontWeight = "700";
+  watermark.style.fontSize = "40px";
+  watermark.style.fontWeight = "800";
   watermark.style.color =
     getComputedStyle(root).getPropertyValue("--highlight-color");
-  watermark.style.textShadow = "0px 0px 6px black";
+  watermark.style.textShadow = "0px 0px 4px black";
 
   watermarkDiv.appendChild(watermark);
 
@@ -778,15 +778,55 @@ function downloadImage(): void {
       storage.colorsPerLine
     )}, 1fr)`;
 
-    colors.map((color: string) => {
-      let div = document.createElement("div");
-      div.style.zIndex = "-10";
-      div.style.width = `${cardWidth}px`;
-      div.style.height = `${cardHeight}px`;
-      div.style.backgroundColor = color;
+    // Templates
+    let colorRectTemplate = document.createElement("div");
+    colorRectTemplate.style.display = "flex";
+    colorRectTemplate.style.justifyContent = "center";
+    colorRectTemplate.style.alignItems = "flex-end";
+    colorRectTemplate.style.zIndex = "-10";
+    colorRectTemplate.style.width = `${cardWidth}px`;
+    colorRectTemplate.style.height = `${cardHeight}px`;
 
-      colorsContainer.appendChild(div);
+    let colorsTextTemplate = document.createElement("p");
+    colorsTextTemplate.style.display = "grid";
+    colorsTextTemplate.style.justifyItems = "center";
+    colorsTextTemplate.style.fontSize = "12px";
+    colorsTextTemplate.style.fontWeight = "800";
+    colorsTextTemplate.style.lineHeight = "22px";
+    colorsTextTemplate.style.whiteSpace = "pre";
+    colorsTextTemplate.style.color = "white";
+    colorsTextTemplate.style.textShadow = "0px 0px 4px black";
+
+    let indexTextTemplate = document.createElement("p");
+    indexTextTemplate.style.fontSize = "11px";
+    indexTextTemplate.style.fontWeight = "600";
+    indexTextTemplate.style.color = "white";
+    indexTextTemplate.style.textShadow = "0px 0px 4px black";
+
+    colors.map((color: string, index: number) => {
+      let colorRect = colorRectTemplate.cloneNode(false) as HTMLElement;
+      colorRect.style.backgroundColor = color;
+
+      let rgbColor = hexToRgb(color, false) as {
+        r: number;
+        g: number;
+        b: number;
+      };
+
+      let colorsText = colorsTextTemplate.cloneNode(false) as HTMLElement;
+      colorsText.textContent = `${hexToRgb(
+        color,
+        true
+      )}\r\n${color}\r\n${rgbToHsl(rgbColor)}\r\n${rgbToHsv(rgbColor)}`;
+
+      let indexText = indexTextTemplate.cloneNode(false) as HTMLElement;
+      indexText.textContent = String(index + 1);
+
+      colorsText.appendChild(indexText);
+      colorRect.appendChild(colorsText);
+      colorsContainer.appendChild(colorRect);
     });
+
     return colorsContainer;
   }
 }
