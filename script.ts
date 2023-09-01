@@ -90,7 +90,7 @@ const showMessagesOption = document.querySelector(
   "#show-messages-option"
 ) as HTMLInputElement;
 
-const latestVersion = "1.3.1";
+const latestVersion = "1.3.2";
 
 // localStorage keys
 const storage = {
@@ -107,8 +107,9 @@ const storage = {
   collapsedColorTools: "colorpal-collapsed-color-tools",
 };
 
-const savedColorsArray = JSON.parse(
-  localStorage.getItem(storage.savedColorsArray) ?? "[]"
+// validate json and remove any non 6 digit #hex color
+const savedColorsArray = validateJson(storage.savedColorsArray, "[]").filter(
+  (color: string) => color.match(/^#[\dabcdef]{6}$/i)
 );
 
 var messageTimeout: number, hideAnimationsTimeout: number;
@@ -117,16 +118,35 @@ var movingColor = false,
   renderedTintsShades = false,
   deletingColor = false;
 
-// initialization
 latestVersion !== localStorage.getItem(storage.version) && newVersion();
+
+// update LocalStorage savedColorsArray in case any removed invalid hex code
+localStorage.setItem(
+  storage.savedColorsArray,
+  JSON.stringify(savedColorsArray)
+);
+
 setOptions();
 setPage("colors");
+
+function validateJson(storageKey: string, fallbackValue: string) {
+  localStorage.getItem(storageKey) ??
+    localStorage.setItem(storageKey, fallbackValue);
+
+  try {
+    return JSON.parse(localStorage.getItem(storageKey));
+  } catch {
+    localStorage.setItem(storageKey, fallbackValue);
+    return JSON.parse(localStorage.getItem(storageKey));
+  }
+}
 
 function newVersion(): void {
   localStorage.setItem(storage.version, latestVersion);
   // future code
 }
 
+// validate storage values
 function setOptions(): void {
   let localStorageTheme = localStorage.getItem(storage.theme);
 
@@ -139,46 +159,64 @@ function setOptions(): void {
     setTheme("dark");
   else setTheme("light");
 
-  localStorage.getItem(storage.autoSaveEyedropper) ??
-    localStorage.setItem(storage.autoSaveEyedropper, "true");
+  validateTrueOrFalse(storage.autoSaveEyedropper, "true");
+  validateTrueOrFalse(storage.autoCopyCode, "true");
 
-  localStorage.getItem(storage.autoCopyCode) ??
-    localStorage.setItem(storage.autoCopyCode, "true");
-
-  localStorage.getItem(storage.colorCodeFormat) ??
+  if (
+    localStorage.getItem(storage.colorCodeFormat) !== "RGB" &&
+    localStorage.getItem(storage.colorCodeFormat) !== "HEX" &&
+    localStorage.getItem(storage.colorCodeFormat) !== "HSL" &&
+    localStorage.getItem(storage.colorCodeFormat) !== "HSV"
+  )
     localStorage.setItem(storage.colorCodeFormat, "HEX");
+
   colorCodeFormat.value = localStorage.getItem(storage.colorCodeFormat)!;
 
-  localStorage.getItem(storage.addHexCharacter) ??
-    localStorage.setItem(storage.addHexCharacter, "true");
+  validateTrueOrFalse(storage.addHexCharacter, "true");
 
-  setColorsPerLine(localStorage.getItem(storage.colorsPerLine) ?? "6");
+  if (
+    Number(localStorage.getItem(storage.colorsPerLine)) >= 5 &&
+    Number(localStorage.getItem(storage.colorsPerLine)) <= 10
+  )
+    setColorsPerLine(localStorage.getItem(storage.colorsPerLine));
+  else setColorsPerLine(6);
 
-  localStorage.getItem(storage.showMessages) ??
-    localStorage.setItem(storage.showMessages, "true");
+  validateTrueOrFalse(storage.showMessages, "true");
 
+  validateTrueOrFalse(storage.collapsedColorTools, "false");
   setCollapsedColorTools(
-    JSON.parse(localStorage.getItem(storage.collapsedColorTools) ?? "false")
+    JSON.parse(localStorage.getItem(storage.collapsedColorTools))
   );
 
-  setSelectedColor(localStorage.getItem(storage.selectedColor) ?? "#000000");
+  try {
+    hexToRgb(localStorage.getItem(storage.selectedColor), false);
+    setSelectedColor(localStorage.getItem(storage.selectedColor));
+  } catch {
+    setSelectedColor("#000000");
+  }
 
-  // visual check boxes
+  // update visual check boxes
   autoSaveEyeDropper.checked = JSON.parse(
-    localStorage.getItem(storage.autoSaveEyedropper)!
+    localStorage.getItem(storage.autoSaveEyedropper)
   );
 
-  autoCopyCode.checked = JSON.parse(
-    localStorage.getItem(storage.autoCopyCode)!
-  );
+  autoCopyCode.checked = JSON.parse(localStorage.getItem(storage.autoCopyCode));
 
   addHexCharacterOption.checked = JSON.parse(
     localStorage.getItem(storage.addHexCharacter)
   );
 
   showMessagesOption.checked = JSON.parse(
-    localStorage.getItem(storage.showMessages)!
+    localStorage.getItem(storage.showMessages)
   );
+
+  function validateTrueOrFalse(storageKey: string, defaultValue: string) {
+    if (
+      localStorage.getItem(storageKey) !== "true" &&
+      localStorage.getItem(storageKey) !== "false"
+    )
+      localStorage.setItem(storageKey, defaultValue);
+  }
 }
 
 function setTheme(theme: string): void {
@@ -500,7 +538,7 @@ function showMessage(
   color: string | null,
   colorFormat: string | null
 ): void {
-  if (!JSON.parse(localStorage.getItem(storage.showMessages)!)) return;
+  if (!JSON.parse(localStorage.getItem(storage.showMessages))) return;
 
   showMessages.classList.remove("hide");
   showMessageText.textContent = text;
@@ -562,7 +600,7 @@ function savedColorClicked(color: string): void {
   }
 
   let text = "";
-  if (JSON.parse(localStorage.getItem(storage.autoCopyCode)!)) {
+  if (JSON.parse(localStorage.getItem(storage.autoCopyCode))) {
     copyToClipboard(color, localStorage.getItem(storage.colorCodeFormat));
     text = "Copied";
   } else text = "Selected";
@@ -595,7 +633,7 @@ function saveColor(color: string): void {
   selectedColor.lastElementChild?.setAttribute("src", "");
 
   let text = "";
-  if (JSON.parse(localStorage.getItem(storage.autoCopyCode)!)) {
+  if (JSON.parse(localStorage.getItem(storage.autoCopyCode))) {
     copyToClipboard(color, localStorage.getItem(storage.colorCodeFormat));
     text = "Saved and Copied";
   } else text = "Saved";
@@ -640,9 +678,9 @@ function activateEyeDropper(): void {
       const { sRGBHex } = await eyeDropper.open();
       setSelectedColor(sRGBHex);
 
-      if (JSON.parse(localStorage.getItem(storage.autoSaveEyedropper)!)) {
+      if (JSON.parse(localStorage.getItem(storage.autoSaveEyedropper))) {
         saveColor(sRGBHex);
-        JSON.parse(localStorage.getItem(storage.autoCopyCode)!) &&
+        JSON.parse(localStorage.getItem(storage.autoCopyCode)) &&
           copyToClipboard(
             sRGBHex,
             localStorage.getItem(storage.colorCodeFormat)
@@ -1176,7 +1214,7 @@ selectedColor.addEventListener("click", function () {
 
 collapseColorToolsIcon.addEventListener("click", function () {
   setCollapsedColorTools(
-    !JSON.parse(localStorage.getItem(storage.collapsedColorTools)!)
+    !JSON.parse(localStorage.getItem(storage.collapsedColorTools))
   );
 });
 

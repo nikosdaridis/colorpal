@@ -3,9 +3,9 @@
     "message": "Color Picker - Eyedropper - ColorPal"
   },
   "description": {
-    "message": "Grab colors from web pages, color picker, eye dropper. Compared to color pick, eyedropper, geco, colorzilla this is better, free."
+    "message": "Color picker, Eyedropper. Pick colour and gradient, HEX, RGB. Better than color pick, eye dropper, colour pick, colorzilla, geco."
   },
   "defaultTitle": {
-    "message": "Click to activate ColorPal"
+    "message": "Click to open ColorPal"
   }
 }
