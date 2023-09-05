@@ -90,8 +90,6 @@ const showMessagesOption = document.querySelector(
   "#show-messages-option"
 ) as HTMLInputElement;
 
-const latestVersion = "1.3.2";
-
 // localStorage keys
 const storage = {
   version: "colorpal-version",
@@ -107,10 +105,7 @@ const storage = {
   collapsedColorTools: "colorpal-collapsed-color-tools",
 };
 
-// validate json and remove any non 6 digit #hex color
-const savedColorsArray = validateJson(storage.savedColorsArray, "[]").filter(
-  (color: string) => color.match(/^#[\dabcdef]{6}$/i)
-);
+const latestVersion = "1.3.3";
 
 var messageTimeout: number, hideAnimationsTimeout: number;
 var movingColor = false,
@@ -120,16 +115,26 @@ var movingColor = false,
 
 latestVersion !== localStorage.getItem(storage.version) && newVersion();
 
-// update LocalStorage savedColorsArray in case any removed invalid hex code
+// validate json and remove any non 6 digit #hex color
+const savedColorsArray = validateJson(storage.savedColorsArray, "[]").filter(
+  (color: string) => color.match(/^#[\dabcdef]{6}$/i)
+);
+
+// update localstorage savedcolorsarray in case any removed invalid hex code
 localStorage.setItem(
   storage.savedColorsArray,
   JSON.stringify(savedColorsArray)
 );
 
+document.querySelector("#version").textContent = `v${latestVersion}`;
+
+// opera disable eyedropper and hide feedback and review buttons
+navigator.userAgent.indexOf("OP") > -1 && disableOpera();
+
 setOptions();
 setPage("colors");
 
-function validateJson(storageKey: string, fallbackValue: string) {
+function validateJson(storageKey: string, fallbackValue: string): string[] {
   localStorage.getItem(storageKey) ??
     localStorage.setItem(storageKey, fallbackValue);
 
@@ -143,7 +148,13 @@ function validateJson(storageKey: string, fallbackValue: string) {
 
 function newVersion(): void {
   localStorage.setItem(storage.version, latestVersion);
-  // future code
+}
+
+function disableOpera(): void {
+  eyeDropperButton.classList.add("disable");
+
+  document.querySelector(".feedback").classList.add("hide");
+  document.querySelector(".review").classList.add("hide");
 }
 
 // validate storage values
@@ -210,7 +221,7 @@ function setOptions(): void {
     localStorage.getItem(storage.showMessages)
   );
 
-  function validateTrueOrFalse(storageKey: string, defaultValue: string) {
+  function validateTrueOrFalse(storageKey: string, defaultValue: string): void {
     if (
       localStorage.getItem(storageKey) !== "true" &&
       localStorage.getItem(storageKey) !== "false"
@@ -797,7 +808,7 @@ function downloadImage(): void {
       let blobUrl = URL.createObjectURL(blob);
       let link = window.document.createElement("a");
       link.href = blobUrl;
-      link.download = "ColorPal-Palette.png";
+      link.download = "ColorPalPalette.png";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -816,7 +827,7 @@ function downloadImage(): void {
       storage.colorsPerLine
     )}, 1fr)`;
 
-    // Templates
+    // templates
     let colorRectTemplate = document.createElement("div");
     colorRectTemplate.style.display = "flex";
     colorRectTemplate.style.justifyContent = "center";
@@ -889,7 +900,7 @@ function downloadData(): void {
   let data = "data:text/csv;base64," + btoa(dataString);
   let link = document.createElement("a");
   link.href = data;
-  link.download = "ColorPal-Data.csv";
+  link.download = "ColorPalData.csv";
   link.click();
   link.remove;
 
@@ -1151,7 +1162,11 @@ function hslToHex(h: number, s: number, l: number): string {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
-eyeDropperButton.addEventListener("click", activateEyeDropper);
+eyeDropperButton.addEventListener("click", function () {
+  eyeDropperButton.classList.contains("disable")
+    ? showMessage("Not supported in Opera\r\nuse Chrome or Edge", null, null)
+    : activateEyeDropper();
+});
 
 colorPalette.addEventListener("input", function () {
   setSelectedColor(colorPalette.value);

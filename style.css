@@ -103,8 +103,13 @@ img[src=""] {
   filter: var(--light-theme-filter);
 }
 
-.settings-buttons #theme-button img {
-  filter: var(--theme-filter);
+#eyedropper-button.disable {
+  cursor: not-allowed;
+  background: #a8a7a7;
+}
+
+#eyedropper-button.disable:hover {
+  scale: none;
 }
 
 #settings-button,
@@ -164,8 +169,8 @@ select {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 2rem;
-  gap: 0.8rem;
+  margin-top: 1.5rem;
+  gap: 11px;
 }
 
 .info a {
@@ -183,18 +188,23 @@ select {
   align-items: center;
 }
 
+.feedback.hide,
+.review.hide {
+  display: none;
+}
+
 .info p {
   font-size: 0.8rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--highlight-color);
 }
 
 .info .feedback a {
-  background: #c52447;
+  background: #b31f3f;
 }
 
 .info .feedback a:hover {
-  background: #e42f56;
+  background: #d8294f;
 }
 
 .info .review a,
@@ -207,12 +217,51 @@ select {
   text-decoration: none;
   white-space: pre;
   color: #fafcff;
-  background: #0d9747;
   transition: 0.3s ease;
 }
 
+.info .review a {
+  display: flex;
+  align-items: center;
+  background: #0b8b41;
+}
+
 .info .review a:hover {
-  background: #19cf65;
+  background: #15ca61;
+}
+
+.info .review img {
+  width: 15px;
+  height: 15px;
+  margin-left: 4px;
+  filter: invert(22%) sepia(95%) saturate(5809%) hue-rotate(353deg)
+    brightness(96%) contrast(93%) drop-shadow(0 0 2px black);
+  transition: 0.3s ease;
+}
+
+.info .review:hover img {
+  animation: heartbeat 1.5s linear infinite !important;
+}
+
+@keyframes heartbeat {
+  0% {
+    transform: scale(0.75);
+  }
+  20% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(0.75);
+  }
+  60% {
+    transform: scale(1);
+  }
+  80% {
+    transform: scale(0.75);
+  }
+  100% {
+    transform: scale(0.75);
+  }
 }
 
 .info .github a,
@@ -299,8 +348,7 @@ select {
 #show-message-text,
 #show-message-color-code {
   font-size: 0.6rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: pre;
   overflow: hidden;
 }
 
@@ -421,7 +469,6 @@ select {
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
   color: var(--text-color);
 }
 
