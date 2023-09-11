@@ -78,7 +78,7 @@
           <!-- Colors Per Line -->
           <div><label for="colors-per-line">Colors Per Line</label></div>
           <div class="input-option">
-            <select name="Colors Per Line" id="colors-per-line">
+            <select id="colors-per-line">
               <option value="5">5</option>
               <option value="6">6</option>
               <option value="7">7</option>
@@ -88,7 +88,17 @@
             </select>
           </div>
 
-          <!-- Show messages -->
+          <!-- Show Color Names -->
+          <div><label for="show-color-name">Show Color Name</label></div>
+          <div class="input-option">
+            <select id="show-color-name">
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
+              <option value="Yes%">Yes%</option>
+            </select>
+          </div>
+
+          <!-- Show Messages -->
           <div>
             <label for="show-messages-option">Show Messages</label><br />
           </div>
@@ -132,7 +142,7 @@
       </div>
 
       <!-- Color codes and Messages -->
-      <div class="codes-messages">
+      <div class="codes-name-messages">
         <div class="color-codes">
           <button id="copy-rgb-button">
             <h2 id="rgb"></h2>
@@ -149,6 +159,11 @@
           <button id="copy-hsv-button">
             <h2 id="hsv"></h2>
           </button>
+        </div>
+
+        <div class="color-name">
+          <h2 id="color-name-text"></h2>
+          <h2 id="color-name-percentage"></h2>
         </div>
 
         <div class="show-messages">

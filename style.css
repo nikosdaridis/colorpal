@@ -292,18 +292,18 @@ select {
   filter: var(--highlight-hover-filter);
 }
 
-.codes-messages {
+.codes-name-messages {
   display: flex;
   justify-content: space-around;
 }
 
-.codes-messages.hide {
+.codes-name-messages.hide {
   display: none;
 }
 
 .color-codes {
   position: absolute;
-  margin-top: 11px;
+  margin-top: 7px;
   margin-right: 235px;
   display: grid;
   gap: 0.8rem;
@@ -330,12 +330,30 @@ select {
   scale: 1.05;
 }
 
+.color-name {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  margin-top: 122px;
+  color: var(--text-color);
+}
+
+#color-name-text {
+  user-select: all !important;
+  font-size: 0.65rem;
+}
+
+#color-name-percentage {
+  margin-left: 4px;
+  font-size: 0.6rem;
+}
+
 .show-messages {
   display: grid;
   opacity: 100;
   position: absolute;
   justify-items: center;
-  margin-top: 50px;
+  margin-top: 51px;
   margin-left: 230px;
   color: var(--text-color);
   transition: 0.5s ease;
@@ -358,7 +376,8 @@ select {
 
 .selected-color {
   display: flex;
-  margin: 1rem;
+  margin-top: 12px;
+  margin-bottom: 28px;
 }
 
 .selected-color .rect {
@@ -386,7 +405,7 @@ select {
 }
 
 .saved-colors-panel {
-  margin-top: 10px;
+  margin-top: 2px;
   background-color: var(--secondary-color);
 }
 

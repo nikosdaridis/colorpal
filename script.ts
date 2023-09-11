@@ -50,7 +50,9 @@ const deleteAllColorsTool = document.querySelector(
 ) as HTMLElement;
 const themeIcon = document.querySelector("#theme-icon") as HTMLElement;
 const settingsPanel = document.querySelector(".settings-panel") as HTMLElement;
-const codesMessages = document.querySelector(".codes-messages") as HTMLElement;
+const codesNameMessages = document.querySelector(
+  ".codes-name-messages"
+) as HTMLElement;
 const selectedColorRect = document.querySelector(
   ".selected-color-rect"
 ) as HTMLElement;
@@ -59,6 +61,10 @@ const savedColorsPanel = document.querySelector(
 ) as HTMLElement;
 const selectedColor = document.querySelector(
   ".selected-color .rect"
+) as HTMLElement;
+const colorNameText = document.querySelector("#color-name-text") as HTMLElement;
+const colorNamePercentage = document.querySelector(
+  "#color-name-percentage"
 ) as HTMLElement;
 const showMessages = document.querySelector(".show-messages") as HTMLElement;
 const showMessageText = document.querySelector(
@@ -86,6 +92,9 @@ const colorsPerLine = document.querySelector(
 const addHexCharacterOption = document.querySelector(
   "#add-hex-character-option"
 ) as HTMLInputElement;
+const showColorName = document.querySelector(
+  "#show-color-name"
+) as HTMLInputElement;
 const showMessagesOption = document.querySelector(
   "#show-messages-option"
 ) as HTMLInputElement;
@@ -101,12 +110,17 @@ const storage = {
   colorCodeFormat: "colorpal-color-code-format",
   addHexCharacter: "colorpal-add-hex-character",
   colorsPerLine: "colorpal-colors-per-line",
+  showColorNames: "colorpal-show-color-names",
   showMessages: "colorpal-show-messages",
   collapsedColorTools: "colorpal-collapsed-color-tools",
 };
 
 const latestVersion = "1.3.3";
 
+var colorsNames: {
+  name: string;
+  rgb: { r: number; g: number; b: number };
+}[];
 var messageTimeout: number, hideAnimationsTimeout: number;
 var movingColor = false,
   selectingTintsShades = false,
@@ -120,11 +134,20 @@ const savedColorsArray = validateJson(storage.savedColorsArray, "[]").filter(
   (color: string) => color.match(/^#[\dabcdef]{6}$/i)
 );
 
-// update localstorage savedcolorsarray in case any removed invalid hex code
+// update localstorage saved colors array in case any removed invalid hex code
 localStorage.setItem(
   storage.savedColorsArray,
   JSON.stringify(savedColorsArray)
 );
+
+// fetch colors names array and set selected color name
+fetch("/data/colorsNames.json")
+  .then((res) => res.json())
+  .then((data) => {
+    colorsNames = data;
+
+    setColorName(localStorage.getItem(storage.selectedColor));
+  });
 
 document.querySelector("#version").textContent = `v${latestVersion}`;
 
@@ -191,6 +214,15 @@ function setOptions(): void {
   )
     setColorsPerLine(localStorage.getItem(storage.colorsPerLine));
   else setColorsPerLine(6);
+
+  if (
+    localStorage.getItem(storage.showColorNames) !== "No" &&
+    localStorage.getItem(storage.showColorNames) !== "Yes" &&
+    localStorage.getItem(storage.showColorNames) !== "Yes%"
+  )
+    localStorage.setItem(storage.showColorNames, "Yes%");
+
+  showColorName.value = localStorage.getItem(storage.showColorNames);
 
   validateTrueOrFalse(storage.showMessages, "true");
 
@@ -280,6 +312,7 @@ function setSelectedColor(color: string): void {
   root.style.setProperty("--selected-color", color);
 
   setSelectedColorCodes(color);
+  setColorName(color);
 }
 
 function setSelectedColorCodes(color: string): void {
@@ -297,6 +330,35 @@ function setSelectedColorCodes(color: string): void {
 
   selectedColorHSL.textContent = rgbToHsl(rgbColor);
   selectedColorHSV.textContent = rgbToHsv(rgbColor);
+}
+
+function setColorName(color: string): void {
+  if (!colorsNames || !color) return;
+
+  if (localStorage.getItem(storage.showColorNames) === "No") {
+    colorNameText.textContent = "";
+    colorNamePercentage.textContent = "";
+    return;
+  }
+
+  let closestColor = findClosestColorName(
+    hexToRgb(color, false) as { r: number; g: number; b: number }
+  );
+
+  colorNameText.textContent = colorsNames[closestColor[0]].name;
+
+  if (
+    localStorage.getItem(storage.showColorNames) === "Yes%" &&
+    closestColor[1] > 0
+  ) {
+    colorNamePercentage.style.display = "block";
+
+    colorNamePercentage.textContent = `${(((765 - closestColor[1]) / 765) * 100)
+      .toFixed(1)
+      .replace(/[.,]0+$/, "")}%`;
+  } else {
+    colorNamePercentage.style.display = "none";
+  }
 }
 
 function setColorsPerLine(clrPerLine: string | number): void {
@@ -349,7 +411,7 @@ function setPage(page: string): void {
     settingsPanel.classList.add("hide");
     colorsButtons.classList.remove("hide");
     selectedColorRect.classList.remove("hide");
-    codesMessages.classList.remove("hide");
+    codesNameMessages.classList.remove("hide");
 
     clearTimeout(hideAnimationsTimeout);
     hideAnimationsTimeout = setTimeout(function () {
@@ -362,7 +424,7 @@ function setPage(page: string): void {
   } else if (page === "settings") {
     colorsButtons.classList.add("hide");
     selectedColorRect.classList.add("hide");
-    codesMessages.classList.add("hide");
+    codesNameMessages.classList.add("hide");
     savedColorsPanel.classList.add("hide");
     settingsButtons.classList.remove("hide");
     settingsPanel.classList.remove("hide");
@@ -376,6 +438,7 @@ function renderColors(): void {
     savedColorsPanel.classList.add("hide");
     return;
   }
+
   savedColorsPanel.classList.remove("hide");
 
   // add li for each color
@@ -542,6 +605,40 @@ function swapColors(
   );
 
   renderColors();
+}
+
+function findClosestColorName(color: {
+  r: number;
+  g: number;
+  b: number;
+}): [index: number, distance: number] {
+  let closestIndex = -1;
+  let closestDistance = Number.MAX_VALUE;
+  let distance = Number.MAX_VALUE;
+
+  for (let i = 0; i < colorsNames.length; i++) {
+    distance = getColorsDistance(color, colorsNames[i].rgb);
+
+    if (distance < closestDistance) {
+      closestIndex = i;
+      closestDistance = distance;
+    }
+
+    if (closestDistance === 0) return [closestIndex, closestDistance];
+  }
+
+  return [closestIndex, closestDistance];
+
+  function getColorsDistance(
+    color: { r: number; g: number; b: number },
+    match: { r: number; g: number; b: number }
+  ): number {
+    let redDifference = Math.abs(color.r - match.r);
+    let greenDifference = Math.abs(color.g - match.g);
+    let blueDifference = Math.abs(color.b - match.b);
+
+    return redDifference + greenDifference + blueDifference;
+  }
 }
 
 function showMessage(
@@ -863,10 +960,11 @@ function downloadImage(): void {
       };
 
       let colorsText = colorsTextTemplate.cloneNode(false) as HTMLElement;
-      colorsText.textContent = `${hexToRgb(
-        color,
-        true
-      )}\r\n${color}\r\n${rgbToHsl(rgbColor)}\r\n${rgbToHsv(rgbColor)}`;
+      colorsText.textContent = `${hexToRgb(color, true)}\r\n${
+        localStorage.getItem(storage.addHexCharacter) === "true"
+          ? color
+          : color.slice(1)
+      }\r\n${rgbToHsl(rgbColor)}\r\n${rgbToHsv(rgbColor)}`;
 
       let indexText = indexTextTemplate.cloneNode(false) as HTMLElement;
       indexText.textContent = String(index + 1);
@@ -1277,6 +1375,12 @@ addHexCharacterOption.addEventListener("change", function () {
   localStorage.setItem(storage.addHexCharacter, String(this.checked));
 
   setSelectedColorCodes(localStorage.getItem(storage.selectedColor));
+});
+
+showColorName.addEventListener("change", function () {
+  localStorage.setItem(storage.showColorNames, String(showColorName.value));
+
+  setColorName(localStorage.getItem(storage.selectedColor));
 });
 
 showMessagesOption.addEventListener("change", function () {
