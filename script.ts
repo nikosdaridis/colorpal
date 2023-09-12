@@ -863,7 +863,7 @@ function deleteColor(color: string): void {
 function downloadImage(): void {
   if (!savedColorsArray.length) return;
 
-  let cardWidth = 150;
+  let cardWidth = 200;
   let cardHeight = 250;
   let columnsInImage: number;
 
@@ -878,6 +878,8 @@ function downloadImage(): void {
 
   let watermarkDiv = document.createElement("div");
   watermarkDiv.style.marginBottom = "-60px";
+  watermarkDiv.style.position = "relative";
+  watermarkDiv.style.zIndex = "10";
   watermarkDiv.style.marginLeft = `${(columnsInImage / 2) * cardWidth - 87}px`;
 
   let watermark = document.createElement("h1");
@@ -926,28 +928,28 @@ function downloadImage(): void {
 
     // templates
     let colorRectTemplate = document.createElement("div");
-    colorRectTemplate.style.display = "flex";
-    colorRectTemplate.style.justifyContent = "center";
-    colorRectTemplate.style.alignItems = "flex-end";
-    colorRectTemplate.style.zIndex = "-10";
+    colorRectTemplate.style.display = "grid";
+    colorRectTemplate.style.gridTemplateRows = "1fr";
+    colorRectTemplate.style.justifyItems = "center";
+    colorRectTemplate.style.alignItems = "end";
     colorRectTemplate.style.width = `${cardWidth}px`;
     colorRectTemplate.style.height = `${cardHeight}px`;
+    colorRectTemplate.style.color = "white";
+    colorRectTemplate.style.textShadow = "0px 0px 4px black";
 
-    let colorsTextTemplate = document.createElement("p");
+    let nameTextTemplate = document.createElement("h1");
+    nameTextTemplate.style.whiteSpace = "nowrap";
+
+    let colorsTextTemplate = document.createElement("h2");
     colorsTextTemplate.style.display = "grid";
-    colorsTextTemplate.style.justifyItems = "center";
-    colorsTextTemplate.style.fontSize = "12px";
-    colorsTextTemplate.style.fontWeight = "800";
+    colorsTextTemplate.style.marginTop = "15px";
+    colorsTextTemplate.style.fontSize = "14px";
     colorsTextTemplate.style.lineHeight = "22px";
     colorsTextTemplate.style.whiteSpace = "pre";
-    colorsTextTemplate.style.color = "white";
-    colorsTextTemplate.style.textShadow = "0px 0px 4px black";
 
-    let indexTextTemplate = document.createElement("p");
+    let indexTextTemplate = document.createElement("h2");
+    indexTextTemplate.style.marginTop = "5px";
     indexTextTemplate.style.fontSize = "11px";
-    indexTextTemplate.style.fontWeight = "600";
-    indexTextTemplate.style.color = "white";
-    indexTextTemplate.style.textShadow = "0px 0px 4px black";
 
     colors.map((color: string, index: number) => {
       let colorRect = colorRectTemplate.cloneNode(false) as HTMLElement;
@@ -959,6 +961,34 @@ function downloadImage(): void {
         b: number;
       };
 
+      // name
+      if (
+        localStorage.getItem(storage.showColorNames) === "Yes" ||
+        localStorage.getItem(storage.showColorNames) === "Yes%"
+      ) {
+        let nameText = nameTextTemplate.cloneNode(false) as HTMLElement;
+
+        let closestColor = findClosestColorName(
+          hexToRgb(color, false) as { r: number; g: number; b: number }
+        );
+
+        nameText.textContent = colorsNames[closestColor[0]].name;
+
+        if (nameText.textContent.length > 30) nameText.style.fontSize = "10px";
+        else if (nameText.textContent.length > 25)
+          nameText.style.fontSize = "11px";
+        else if (nameText.textContent.length > 20)
+          nameText.style.fontSize = "13px";
+        else if (nameText.textContent.length > 15)
+          nameText.style.fontSize = "14px";
+        else if (nameText.textContent.length > 10)
+          nameText.style.fontSize = "15px";
+        else nameText.style.fontSize = "16px";
+
+        colorRect.appendChild(nameText);
+      }
+
+      // color codes
       let colorsText = colorsTextTemplate.cloneNode(false) as HTMLElement;
       colorsText.textContent = `${hexToRgb(color, true)}\r\n${
         localStorage.getItem(storage.addHexCharacter) === "true"
@@ -966,11 +996,12 @@ function downloadImage(): void {
           : color.slice(1)
       }\r\n${rgbToHsl(rgbColor)}\r\n${rgbToHsv(rgbColor)}`;
 
+      // index
       let indexText = indexTextTemplate.cloneNode(false) as HTMLElement;
       indexText.textContent = String(index + 1);
 
-      colorsText.appendChild(indexText);
       colorRect.appendChild(colorsText);
+      colorRect.appendChild(indexText);
       colorsContainer.appendChild(colorRect);
     });
 
@@ -981,7 +1012,7 @@ function downloadImage(): void {
 function downloadData(): void {
   if (!savedColorsArray.length) return;
 
-  let dataString = `"RGB","#HEX","HEX","HSL","HSV"\r\n`;
+  let dataString = `"Name","Name%","RGB","#HEX","HEX","HSL","HSV"\r\n`;
 
   savedColorsArray.map((color: string) => {
     let rgbColor = hexToRgb(color, false) as {
@@ -990,14 +1021,26 @@ function downloadData(): void {
       b: number;
     };
 
-    dataString += `"${hexToRgb(color, true)}","${color}","${color.slice(
-      1
-    )}","${rgbToHsl(rgbColor)}","${rgbToHsv(rgbColor)}"\r\n`;
+    let closestColor = findClosestColorName(rgbColor);
+
+    dataString += `"${colorsNames[closestColor[0]].name}",`;
+    dataString += `"${(((765 - closestColor[1]) / 765) * 100)
+      .toFixed(2)
+      .replace(/[.,]0+$/, "")}",`;
+    dataString += `"${hexToRgb(color, true)}",`;
+    dataString += `"${color}",`;
+    dataString += `"${color.slice(1)}",`;
+    dataString += `"${rgbToHsl(rgbColor)}",`;
+    dataString += `"${rgbToHsv(rgbColor)}"\r\n`;
   });
 
-  let data = "data:text/csv;base64," + btoa(dataString);
+  // encode data string as UTF-8 and convert it to Base64
+  let dataUTF8 = new TextEncoder().encode(dataString);
+  let dataBase64 =
+    "data:text/csv;base64," + btoa(String.fromCharCode.apply(null, dataUTF8));
+
   let link = document.createElement("a");
-  link.href = data;
+  link.href = dataBase64;
   link.download = "ColorPalData.csv";
   link.click();
   link.remove;
