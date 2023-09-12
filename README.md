@@ -22,6 +22,7 @@ Tints and Shades tool<br>
 Delete selected color or all colors<br>
 Download palette image<br>
 Download colors data csv<br>
+30.000 color names<br>
 Light and Dark mode<br>
 </p>
 <div align="center">

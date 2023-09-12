@@ -353,9 +353,10 @@ function setColorName(color: string): void {
   ) {
     colorNamePercentage.style.display = "block";
 
-    colorNamePercentage.textContent = `${(((765 - closestColor[1]) / 765) * 100)
-      .toFixed(1)
-      .replace(/[.,]0+$/, "")}%`;
+    colorNamePercentage.textContent =
+      (((765 - closestColor[1]) / 765) * 100)
+        .toFixed(1)
+        .replace(/[.,]0+$/, "") + "%";
   } else {
     colorNamePercentage.style.display = "none";
   }
@@ -968,9 +969,7 @@ function downloadImage(): void {
       ) {
         let nameText = nameTextTemplate.cloneNode(false) as HTMLElement;
 
-        let closestColor = findClosestColorName(
-          hexToRgb(color, false) as { r: number; g: number; b: number }
-        );
+        let closestColor = findClosestColorName(rgbColor);
 
         nameText.textContent = colorsNames[closestColor[0]].name;
 
@@ -990,11 +989,15 @@ function downloadImage(): void {
 
       // color codes
       let colorsText = colorsTextTemplate.cloneNode(false) as HTMLElement;
-      colorsText.textContent = `${hexToRgb(color, true)}\r\n${
+
+      colorsText.textContent += `${hexToRgb(color, true)}\r\n`;
+      colorsText.textContent += `${
         localStorage.getItem(storage.addHexCharacter) === "true"
           ? color
           : color.slice(1)
-      }\r\n${rgbToHsl(rgbColor)}\r\n${rgbToHsv(rgbColor)}`;
+      }\r\n`;
+      colorsText.textContent += `${rgbToHsl(rgbColor)}\r\n`;
+      colorsText.textContent += `${rgbToHsv(rgbColor)}`;
 
       // index
       let indexText = indexTextTemplate.cloneNode(false) as HTMLElement;
