@@ -131,6 +131,10 @@ img[src=""] {
   margin-left: -5px;
 }
 
+#theme-button img {
+  filter: var(--theme-filter);
+}
+
 .settings-panel {
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -558,7 +562,7 @@ select {
 }
 
 .saved-colors .color .rect.dragging,
-.closest {
+.replacing {
   scale: 1.15 !important;
   border-radius: 5% !important;
   border-color: var(--text-color) !important;

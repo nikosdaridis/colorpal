@@ -1,5 +1,17 @@
 declare const domtoimage: any;
 
+interface ColorRGB {
+  r: number;
+  g: number;
+  b: number;
+}
+
+interface ColorHSL {
+  h: number;
+  s: number;
+  l: number;
+}
+
 const root = document.querySelector(":root") as HTMLElement;
 const eyeDropperButton = document.querySelector(
   "#eyedropper-button"
@@ -99,6 +111,8 @@ const showMessagesOption = document.querySelector(
   "#show-messages-option"
 ) as HTMLInputElement;
 
+const latestVersion = "1.3.3";
+
 // localStorage keys
 const storage = {
   version: "colorpal-version",
@@ -115,13 +129,14 @@ const storage = {
   collapsedColorTools: "colorpal-collapsed-color-tools",
 };
 
-const latestVersion = "1.3.3";
-
 var colorsNames: {
   name: string;
-  rgb: { r: number; g: number; b: number };
+  rgb: ColorRGB;
 }[];
-var messageTimeout: number, hideAnimationsTimeout: number;
+
+var messageTimeout = 0,
+  hideAnimationsTimeout = 0;
+
 var movingColor = false,
   selectingTintsShades = false,
   renderedTintsShades = false,
@@ -129,12 +144,12 @@ var movingColor = false,
 
 latestVersion !== localStorage.getItem(storage.version) && newVersion();
 
-// validate json and remove any non 6 digit #hex color
+// validate json and remove non 6 digit #hex color code
 const savedColorsArray = validateJson(storage.savedColorsArray, "[]").filter(
   (color: string) => color.match(/^#[\dabcdef]{6}$/i)
 );
 
-// update localstorage saved colors array in case any removed invalid hex code
+// update localStorage saved colors array in case any removed invalid hex code
 localStorage.setItem(
   storage.savedColorsArray,
   JSON.stringify(savedColorsArray)
@@ -154,7 +169,7 @@ document.querySelector("#version").textContent = `v${latestVersion}`;
 // opera disable eyedropper and hide feedback and review buttons
 navigator.userAgent.indexOf("OP") > -1 && disableOpera();
 
-setOptions();
+validateStorage();
 setPage("colors");
 
 function validateJson(storageKey: string, fallbackValue: string): string[] {
@@ -180,8 +195,8 @@ function disableOpera(): void {
   document.querySelector(".review").classList.add("hide");
 }
 
-// validate storage values
-function setOptions(): void {
+// validate localStorage values
+function validateStorage(): void {
   let localStorageTheme = localStorage.getItem(storage.theme);
 
   if (localStorageTheme === "light" || localStorageTheme === "dark")
@@ -263,6 +278,8 @@ function setOptions(): void {
 }
 
 function setTheme(theme: string): void {
+  if (!theme) return;
+
   localStorage.setItem(storage.theme, theme);
 
   root.style.setProperty(
@@ -283,17 +300,13 @@ function setTheme(theme: string): void {
   root.style.setProperty(
     "--theme-filter",
     getComputedStyle(root).getPropertyValue(
-      `--${
-        (theme === "dark" && "light") || (theme === "light" && "dark")
-      }-theme-filter`
+      `--${theme === "dark" ? "light" : "dark"}-theme-filter`
     )
   );
 
   themeIcon.setAttribute(
     "src",
-    `icons/${
-      (theme === "dark" && "light") || (theme === "light" && "dark")
-    }.svg`
+    `icons/${theme === "dark" ? "light" : "dark"}.svg`
   );
 }
 
@@ -317,16 +330,13 @@ function setSelectedColor(color: string): void {
 
 function setSelectedColorCodes(color: string): void {
   selectedColorRGB.textContent = hexToRgb(color, true) as string;
-  selectedColorHex.textContent =
-    localStorage.getItem(storage.addHexCharacter) === "true"
-      ? color
-      : color.slice(1);
+  selectedColorHex.textContent = JSON.parse(
+    localStorage.getItem(storage.addHexCharacter)
+  )
+    ? color
+    : color.slice(1);
 
-  let rgbColor = hexToRgb(color, false) as {
-    r: number;
-    g: number;
-    b: number;
-  };
+  let rgbColor = hexToRgb(color, false) as ColorRGB;
 
   selectedColorHSL.textContent = rgbToHsl(rgbColor);
   selectedColorHSV.textContent = rgbToHsv(rgbColor);
@@ -341,9 +351,7 @@ function setColorName(color: string): void {
     return;
   }
 
-  let closestColor = findClosestColorName(
-    hexToRgb(color, false) as { r: number; g: number; b: number }
-  );
+  let closestColor = findClosestColorName(hexToRgb(color, false) as ColorRGB);
 
   colorNameText.textContent = colorsNames[closestColor[0]].name;
 
@@ -462,10 +470,11 @@ function renderColors(): void {
         </li>`
     )
     .join("");
-  addColorListeners();
+
+  addColorsListeners();
 }
 
-function addColorListeners(): void {
+function addColorsListeners(): void {
   document.querySelectorAll(".color .rect").forEach((color) => {
     // click listener
     color.addEventListener("click", (elem) => {
@@ -512,7 +521,7 @@ function addColorListeners(): void {
   if (!movingColor) return;
 
   let draggables = document.querySelectorAll(".draggable");
-  let draggingColorElement: HTMLElement, closestColorElement: HTMLElement;
+  let draggingColorElement: HTMLElement, replacingColorElement: HTMLElement;
   let mouseOverColor = false;
 
   draggables.forEach((draggable) => {
@@ -524,20 +533,20 @@ function addColorListeners(): void {
     // drag leave listener
     draggable.addEventListener("dragleave", function () {
       mouseOverColor = false;
-      draggable.classList.remove("closest");
+      draggable.classList.remove("replacing");
     });
 
     // dragging listener
     draggable.addEventListener("dragover", (elem) => {
       elem.preventDefault(); // prevent dragging blocked icon
-      closestColorElement = elem.target as HTMLElement;
-      closestColorElement.classList.add("closest");
+      replacingColorElement = draggable as HTMLElement;
+      replacingColorElement.classList.add("replacing");
     });
 
     // drag start listener
     draggable.addEventListener("dragstart", function () {
-      draggable.classList.add("dragging");
       draggingColorElement = draggable as HTMLElement;
+      draggingColorElement.classList.add("dragging");
       draggingColorElement.lastElementChild.setAttribute("src", "");
     });
 
@@ -550,26 +559,28 @@ function addColorListeners(): void {
 
       if (
         !mouseOverColor ||
-        !closestColorElement.dataset.color ||
-        draggingColorElement.dataset.color === closestColorElement.dataset.color
+        !replacingColorElement.dataset.color ||
+        draggingColorElement.dataset.color ===
+          replacingColorElement.dataset.color
       ) {
         showMessage(
           `${
             (!mouseOverColor && "Drag over a color") ||
-            ((!closestColorElement.dataset.color ||
+            ((!replacingColorElement.dataset.color ||
               draggingColorElement.dataset.color ===
-                closestColorElement.dataset.color) &&
+                replacingColorElement.dataset.color) &&
               "Drag over another color")
           }`,
           null,
           null
         );
-        draggable.classList.remove("closest");
+
         draggable.classList.remove("dragging");
+        draggable.classList.remove("replacing");
         return;
       }
 
-      swapColors(draggingColorElement, closestColorElement);
+      swapColors(draggingColorElement, replacingColorElement);
       draggable.classList.remove("dragging");
     });
   });
@@ -577,22 +588,23 @@ function addColorListeners(): void {
 
 function swapColors(
   draggingColorElement: HTMLElement,
-  closestColorElement: HTMLElement
+  replacingColorElement: HTMLElement
 ): void {
   let draggingIndex = savedColorsArray.findIndex(
     (color: string) => color === draggingColorElement.dataset.color
   );
-  let closestIndex = savedColorsArray.findIndex(
-    (color: string) => color === closestColorElement.dataset.color
+
+  let replacingIndex = savedColorsArray.findIndex(
+    (color: string) => color === replacingColorElement.dataset.color
   );
 
-  if (draggingIndex === -1 || closestIndex === -1) {
+  if (draggingIndex === -1 || replacingIndex === -1) {
     showMessage("Something went wrong", null, null);
     return;
   }
 
-  savedColorsArray[draggingIndex] = closestColorElement.dataset.color;
-  savedColorsArray[closestIndex] = draggingColorElement.dataset.color;
+  savedColorsArray[draggingIndex] = replacingColorElement.dataset.color;
+  savedColorsArray[replacingIndex] = draggingColorElement.dataset.color;
 
   localStorage.setItem(
     storage.savedColorsArray,
@@ -600,7 +612,7 @@ function swapColors(
   );
 
   showMessage(
-    `Swapped ${draggingIndex + 1} with ${closestIndex + 1}`,
+    `Swapped ${draggingIndex + 1} with ${replacingIndex + 1}`,
     null,
     null
   );
@@ -608,11 +620,9 @@ function swapColors(
   renderColors();
 }
 
-function findClosestColorName(color: {
-  r: number;
-  g: number;
-  b: number;
-}): [index: number, distance: number] {
+function findClosestColorName(
+  color: ColorRGB
+): [index: number, distance: number] {
   let closestIndex = -1;
   let closestDistance = Number.MAX_VALUE;
   let distance = Number.MAX_VALUE;
@@ -630,15 +640,12 @@ function findClosestColorName(color: {
 
   return [closestIndex, closestDistance];
 
-  function getColorsDistance(
-    color: { r: number; g: number; b: number },
-    match: { r: number; g: number; b: number }
-  ): number {
-    let redDifference = Math.abs(color.r - match.r);
-    let greenDifference = Math.abs(color.g - match.g);
-    let blueDifference = Math.abs(color.b - match.b);
-
-    return redDifference + greenDifference + blueDifference;
+  function getColorsDistance(color: ColorRGB, match: ColorRGB): number {
+    return (
+      Math.abs(color.r - match.r) +
+      Math.abs(color.g - match.g) +
+      Math.abs(color.b - match.b)
+    );
   }
 }
 
@@ -664,17 +671,13 @@ function showMessage(
   ): string {
     if (color === null || colorFormat === null) return;
 
-    let rgbColor = hexToRgb(color, false) as {
-      r: number;
-      g: number;
-      b: number;
-    };
+    let rgbColor = hexToRgb(color, false) as ColorRGB;
 
     switch (colorFormat) {
       case "RGB":
         return hexToRgb(color, true) as string;
       case "HEX":
-        return localStorage.getItem(storage.addHexCharacter) === "true"
+        return JSON.parse(localStorage.getItem(storage.addHexCharacter))
           ? color
           : color.slice(1);
       case "HSL":
@@ -751,7 +754,7 @@ function saveColor(color: string): void {
 }
 
 function copyToClipboard(color: string, colorFormat: string): void {
-  let rgbColor = hexToRgb(color, false) as { r: number; g: number; b: number };
+  let rgbColor = hexToRgb(color, false) as ColorRGB;
 
   switch (colorFormat) {
     case "RGB":
@@ -759,7 +762,7 @@ function copyToClipboard(color: string, colorFormat: string): void {
       break;
     case "HEX":
       navigator.clipboard.writeText(
-        localStorage.getItem(storage.addHexCharacter) === "true"
+        JSON.parse(localStorage.getItem(storage.addHexCharacter))
           ? color
           : color.slice(1)
       );
@@ -789,6 +792,7 @@ function activateEyeDropper(): void {
 
       if (JSON.parse(localStorage.getItem(storage.autoSaveEyedropper))) {
         saveColor(sRGBHex);
+
         JSON.parse(localStorage.getItem(storage.autoCopyCode)) &&
           copyToClipboard(
             sRGBHex,
@@ -833,7 +837,8 @@ function renderTintsShades(): void {
     .join("");
 
   renderedTintsShades = true;
-  addColorListeners();
+
+  addColorsListeners();
 }
 
 function deleteColor(color: string): void {
@@ -852,6 +857,7 @@ function deleteColor(color: string): void {
   );
 
   savedColorsCount.textContent = String(savedColorsArray.length);
+
   renderColors();
 
   selectedColor.lastElementChild?.setAttribute("src", "icons/save.svg");
@@ -883,15 +889,15 @@ function downloadImage(): void {
   watermarkDiv.style.zIndex = "10";
   watermarkDiv.style.marginLeft = `${(columnsInImage / 2) * cardWidth - 87}px`;
 
-  let watermark = document.createElement("h1");
-  watermark.textContent = "ColorPal";
-  watermark.style.fontSize = "40px";
-  watermark.style.fontWeight = "800";
-  watermark.style.color =
+  let watermarkText = document.createElement("h1");
+  watermarkText.textContent = "ColorPal";
+  watermarkText.style.fontSize = "40px";
+  watermarkText.style.fontWeight = "800";
+  watermarkText.style.color =
     getComputedStyle(root).getPropertyValue("--highlight-color");
-  watermark.style.textShadow = "0px 0px 4px black";
+  watermarkText.style.textShadow = "0px 0px 4px black";
 
-  watermarkDiv.appendChild(watermark);
+  watermarkDiv.appendChild(watermarkText);
 
   let colorsContainer = document.createElement("div");
   colorsContainer.append(watermarkDiv);
@@ -944,23 +950,19 @@ function downloadImage(): void {
     let colorsTextTemplate = document.createElement("h2");
     colorsTextTemplate.style.display = "grid";
     colorsTextTemplate.style.marginTop = "15px";
-    colorsTextTemplate.style.fontSize = "14px";
+    colorsTextTemplate.style.fontSize = "16px";
     colorsTextTemplate.style.lineHeight = "22px";
     colorsTextTemplate.style.whiteSpace = "pre";
 
     let indexTextTemplate = document.createElement("h2");
     indexTextTemplate.style.marginTop = "5px";
-    indexTextTemplate.style.fontSize = "11px";
+    indexTextTemplate.style.fontSize = "12px";
 
     colors.map((color: string, index: number) => {
       let colorRect = colorRectTemplate.cloneNode(false) as HTMLElement;
       colorRect.style.backgroundColor = color;
 
-      let rgbColor = hexToRgb(color, false) as {
-        r: number;
-        g: number;
-        b: number;
-      };
+      let rgbColor = hexToRgb(color, false) as ColorRGB;
 
       // name
       if (
@@ -973,16 +975,18 @@ function downloadImage(): void {
 
         nameText.textContent = colorsNames[closestColor[0]].name;
 
-        if (nameText.textContent.length > 30) nameText.style.fontSize = "10px";
-        else if (nameText.textContent.length > 25)
+        if (nameText.textContent.length > 33) nameText.style.fontSize = "10px";
+        else if (nameText.textContent.length > 30)
           nameText.style.fontSize = "11px";
+        else if (nameText.textContent.length > 25)
+          nameText.style.fontSize = "12px";
         else if (nameText.textContent.length > 20)
-          nameText.style.fontSize = "13px";
-        else if (nameText.textContent.length > 15)
           nameText.style.fontSize = "14px";
-        else if (nameText.textContent.length > 10)
+        else if (nameText.textContent.length > 15)
           nameText.style.fontSize = "15px";
-        else nameText.style.fontSize = "16px";
+        else if (nameText.textContent.length > 10)
+          nameText.style.fontSize = "16px";
+        else nameText.style.fontSize = "18px";
 
         colorRect.appendChild(nameText);
       }
@@ -992,7 +996,7 @@ function downloadImage(): void {
 
       colorsText.textContent += `${hexToRgb(color, true)}\r\n`;
       colorsText.textContent += `${
-        localStorage.getItem(storage.addHexCharacter) === "true"
+        JSON.parse(localStorage.getItem(storage.addHexCharacter))
           ? color
           : color.slice(1)
       }\r\n`;
@@ -1018,11 +1022,7 @@ function downloadData(): void {
   let dataString = `"Name","Name%","RGB","#HEX","HEX","HSL","HSV"\r\n`;
 
   savedColorsArray.map((color: string) => {
-    let rgbColor = hexToRgb(color, false) as {
-      r: number;
-      g: number;
-      b: number;
-    };
+    let rgbColor = hexToRgb(color, false) as ColorRGB;
 
     let closestColor = findClosestColorName(rgbColor);
 
@@ -1084,6 +1084,7 @@ function setMoveColor(moving: boolean): void {
 
 function setTintsShades(selecting: boolean): void {
   selectingTintsShades = selecting;
+
   if (!selecting) {
     renderedTintsShades = false;
     setColorsPerLine(localStorage.getItem(storage.colorsPerLine));
@@ -1127,16 +1128,15 @@ function disableColorTools(tools: string | string[]): void {
   }
 
   movingColor && tools.includes("setMoveColor") && setMoveColor(false);
+
   selectingTintsShades &&
     tools.includes("setTintsShades") &&
     setTintsShades(false);
+
   deletingColor && tools.includes("setDeleteColor") && setDeleteColor(false);
 }
 
-function hexToRgb(
-  hex: string,
-  returnString: boolean
-): string | { r: number; g: number; b: number } {
+function hexToRgb(hex: string, returnString: boolean): string | ColorRGB {
   let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(
     hex
   ) as RegExpExecArray;
@@ -1148,7 +1148,7 @@ function hexToRgb(
   else return { r, g, b };
 }
 
-function rgbToHsl(rbg: { r: number; g: number; b: number }): string {
+function rgbToHsl(rbg: ColorRGB): string {
   let r = rbg.r / 255;
   let g = rbg.g / 255;
   let b = rbg.b / 255;
@@ -1184,7 +1184,7 @@ function rgbToHsl(rbg: { r: number; g: number; b: number }): string {
   return `hsl(${h}, ${s}%, ${l}%)`;
 }
 
-function rgbToHsv(rbg: { r: number; g: number; b: number }): string {
+function rgbToHsv(rbg: ColorRGB): string {
   let rabs,
     gabs,
     babs,
@@ -1197,6 +1197,7 @@ function rgbToHsv(rbg: { r: number; g: number; b: number }): string {
     diff: number,
     diffc,
     percentRoundFn;
+
   rabs = rbg.r / 255;
   gabs = rbg.g / 255;
   babs = rbg.b / 255;
@@ -1232,7 +1233,7 @@ function rgbToHsv(rbg: { r: number; g: number; b: number }): string {
   return `hsv(${h}, ${s}%, ${v}%)`;
 }
 
-function hexToHsl(hex: string): { h: number; s: number; l: number } {
+function hexToHsl(hex: string): ColorHSL {
   let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 
   let r = parseInt(result[1], 16);
@@ -1280,10 +1281,11 @@ function hslToHex(h: number, s: number, l: number): string {
   s /= 100;
   l /= 100;
   let r, g, b;
+
   if (s === 0) {
     r = g = b = l;
   } else {
-    function hueToRgb(p: number, q: number, t: number) {
+    function hueToRgb(p: number, q: number, t: number): number {
       if (t < 0) t += 1;
       if (t > 1) t -= 1;
       if (t < 1 / 6) return p + (q - p) * 6 * t;
@@ -1298,7 +1300,7 @@ function hslToHex(h: number, s: number, l: number): string {
     b = hueToRgb(p, q, h - 1 / 3);
   }
 
-  function toHex(x: number) {
+  function toHex(x: number): string {
     const hex = Math.round(x * 255).toString(16);
     return hex.length === 1 ? "0" + hex : hex;
   }
