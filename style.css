@@ -391,7 +391,7 @@ select {
   width: 100px;
   border-radius: 15%;
   border: 1px solid var(--text-color);
-  box-shadow: 0 0 10px var(--selected-color);
+  box-shadow: 0 0 5px var(--selected-color);
   transition: 0.3s ease;
 }
 

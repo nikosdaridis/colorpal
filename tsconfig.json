@@ -8,5 +8,5 @@
     "preserveConstEnums": true,
     "sourceMap": true
   },
-  "files": ["script.ts", "service-worker.ts"]
+  "files": ["script.ts", "utils/color-converters.ts", "service-worker.ts"]
 }

@@ -12,18 +12,18 @@
 Features
 </h2>
 <p align="center">
-Eyedropper<br>
 Color Picker<br>
+EyeDropper<br>
 Save favorite colors<br>
 Auto copy color code<br>
 RGB, HEX, HSL, HSV formats<br>
-Move color position<br>
-Tints and Shades tool<br>
-Delete selected color or all colors<br>
+Tints and Shades<br>
 Download palette image<br>
 Download colors data csv<br>
+Move colors<br>
+Delete colors<br>
 30.000 color names<br>
-Light and Dark mode<br>
+Light and Dark theme<br>
 </p>
 <div align="center">
 <img alt="Screenshot 1" src=https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Screenshot1.jpg>

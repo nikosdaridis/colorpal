@@ -1,10 +1,12 @@
 {
   "scripts": {
-    "minify": "uglifyjs script.js -o script.js -c -m && uglifyjs service-worker.js -o service-worker.js -c -m",
+    "minify": "uglifyjs script.js -o script.js -c -m && uglifyjs utils/color-converters.js -o utils/color-converters.js -c -m && uglifyjs service-worker.js -o service-worker.js -c -m",
     "build": "tsc && npm run minify"
   },
+  "dependencies": {
+    "@types/chrome": "^0.0.246"
+  },
   "devDependencies": {
-    "@types/chrome": "^0.0.243",
     "uglify-js": "^3.17.4"
   }
 }
