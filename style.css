@@ -174,7 +174,7 @@ select {
   justify-content: center;
   align-items: center;
   margin-top: 1.5rem;
-  gap: 11px;
+  gap: 20px;
 }
 
 .info a {
@@ -185,15 +185,13 @@ select {
   scale: 1.1;
 }
 
-.info .feedback,
-.review {
+.info .feedback {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.feedback.hide,
-.review.hide {
+.feedback.hide {
   display: none;
 }
 
@@ -211,8 +209,7 @@ select {
   background: #d8294f;
 }
 
-.info .review a,
-.feedback a {
+.info .feedback a {
   cursor: pointer;
   border-radius: 5px;
   padding: 5px 5px;
@@ -224,76 +221,36 @@ select {
   transition: 0.3s ease;
 }
 
-.info .review a {
-  display: flex;
-  align-items: center;
-  background: #0b8b41;
-}
-
-.info .review a:hover {
-  background: #15ca61;
-}
-
-.info .review img {
-  width: 15px;
-  height: 15px;
-  margin-left: 4px;
-  filter: invert(22%) sepia(95%) saturate(5809%) hue-rotate(353deg)
-    brightness(96%) contrast(93%) drop-shadow(0 0 2px black);
-  transition: 0.3s ease;
-}
-
-.info .review:hover img {
-  animation: heartbeat 1.5s linear infinite !important;
-}
-
-@keyframes heartbeat {
-  0% {
-    transform: scale(0.75);
-  }
-  20% {
-    transform: scale(1);
-  }
-  40% {
-    transform: scale(0.75);
-  }
-  60% {
-    transform: scale(1);
-  }
-  80% {
-    transform: scale(0.75);
-  }
-  100% {
-    transform: scale(0.75);
-  }
-}
-
 .info .github a,
-.info .help a {
+.info .website a {
   display: flex;
-}
-
-.info .github img,
-.info .help img {
-  height: 30px;
-  width: 30px;
-  filter: var(--theme-filter);
-  transition: 0.1s ease;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+  text-decoration: none;
 }
 
 .info .github a:hover,
-.info .help a:hover {
-  scale: 1.2;
+.info .website a:hover {
+  scale: 1.1;
 }
 
-.info .help img {
-  height: 24px;
-  width: 24px;
-}
-
-.info .github img:hover,
-.info .help img:hover {
+.info .github a:hover img,
+.info .website a:hover img {
   filter: var(--highlight-hover-filter);
+}
+
+.info .github a:hover p,
+.info .website a:hover p {
+  color: var(--highlight-hover-color);
+}
+
+.info .github img,
+.info .website img {
+  height: 28px;
+  width: 28px;
+  filter: var(--theme-filter);
+  transition: 0.1s ease;
 }
 
 .codes-name-messages {
@@ -529,6 +486,50 @@ select {
 .saved-colors-tools #download-png-tool,
 #download-csv-tool {
   filter: var(--theme-filter);
+}
+
+.review-banner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 2px;
+  gap: 2rem;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: pre;
+  color: white;
+  background-color: #610596;
+  animation: bannerScale 0.4s ease-out forwards;
+}
+
+.review-banner:hover {
+  background-color: #910fdd;
+  transition: 0.1s;
+}
+
+.review-banner.hide {
+  display: none;
+}
+
+.review-banner p {
+  display: flex;
+}
+
+.review-banner img {
+  scale: 0.8;
+  filter: invert(15%) sepia(84%) saturate(7450%) hue-rotate(2deg)
+    brightness(116%) contrast(118%) drop-shadow(0 0 2px black);
+}
+
+@keyframes bannerScale {
+  0% {
+    scale: 0.2;
+  }
+
+  100% {
+    scale: 1;
+  }
 }
 
 .saved-colors {

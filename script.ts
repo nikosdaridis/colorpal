@@ -34,6 +34,7 @@ const colorsPageButton = document.querySelector(
   "#colors-page-button"
 ) as HTMLElement;
 const themeButton = document.querySelector("#theme-button") as HTMLElement;
+const reviewBanner = document.querySelector(".review-banner") as HTMLElement;
 const savedColors = document.querySelector(".saved-colors") as HTMLElement;
 const collapseColorToolsIcon = document.querySelector(
   "#collapse-color-tools-icon"
@@ -127,6 +128,8 @@ const storage = {
   showColorNames: "colorpal-show-color-names",
   showMessages: "colorpal-show-messages",
   collapsedColorTools: "colorpal-collapsed-color-tools",
+  openedCount: "colorpal-opened-count",
+  reviewBannerClosed: "colorpal-review-banner-closed",
 };
 
 var colorsNames: {
@@ -166,7 +169,7 @@ fetch("/data/colorsNames.json")
 
 document.querySelector("#version").textContent = `v${latestVersion}`;
 
-// opera disable eyedropper and hide feedback and review buttons
+// opera disable eyedropper and hide feedback button and review banner
 navigator.userAgent.indexOf("OP") > -1 && disableOpera();
 
 validateStorage();
@@ -186,13 +189,17 @@ function validateJson(storageKey: string, fallbackValue: string): string[] {
 
 function newVersion(): void {
   localStorage.setItem(storage.version, latestVersion);
+
+  // reset review banner
+  localStorage.setItem(storage.reviewBannerClosed, "false");
+  localStorage.setItem(storage.openedCount, "0");
 }
 
 function disableOpera(): void {
   eyeDropperButton.classList.add("disable");
 
   document.querySelector(".feedback").classList.add("hide");
-  document.querySelector(".review").classList.add("hide");
+  reviewBanner.classList.add("hide");
 }
 
 // validate localStorage values
@@ -252,6 +259,20 @@ function validateStorage(): void {
   } catch {
     setSelectedColor("#000000");
   }
+
+  if (
+    !localStorage.getItem(storage.openedCount) ||
+    isNaN(Number(localStorage.getItem(storage.openedCount)))
+  ) {
+    localStorage.setItem(storage.openedCount, "1");
+  } else {
+    localStorage.setItem(
+      storage.openedCount,
+      String(Number(localStorage.getItem(storage.openedCount)) + 1)
+    );
+  }
+
+  validateTrueOrFalse(storage.reviewBannerClosed, "false");
 
   // update visual check boxes
   autoSaveEyeDropper.checked = JSON.parse(
@@ -421,6 +442,18 @@ function setPage(page: string): void {
     colorsButtons.classList.remove("hide");
     selectedColorRect.classList.remove("hide");
     codesNameMessages.classList.remove("hide");
+
+    // review banner
+    if (
+      !JSON.parse(localStorage.getItem(storage.reviewBannerClosed)) &&
+      Number(localStorage.getItem(storage.openedCount)) > 25
+    ) {
+      setTimeout(function () {
+        reviewBanner.classList.remove("hide");
+      }, 5000);
+    } else {
+      reviewBanner.classList.add("hide");
+    }
 
     clearTimeout(hideAnimationsTimeout);
     hideAnimationsTimeout = setTimeout(function () {
@@ -1261,4 +1294,14 @@ showColorName.addEventListener("change", function () {
 
 showMessagesOption.addEventListener("change", function () {
   localStorage.setItem(storage.showMessages, String(this.checked));
+});
+
+reviewBanner.addEventListener("click", function () {
+  localStorage.setItem(storage.reviewBannerClosed, "true");
+
+  window.open(
+    "https://chrome.google.com/webstore/detail/mbnpegpimodgjmlbfhkkdgbcfjmgpoad/reviews"
+  );
+
+  reviewBanner.classList.add("hide");
 });

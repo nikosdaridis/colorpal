@@ -2,11 +2,11 @@
   <a href="https://chrome.google.com/webstore/detail/mbnpegpimodgjmlbfhkkdgbcfjmgpoad" target="_blank"><img alt="Logo" src="https://raw.githubusercontent.com/nikosdaridis/colorpal/main/icons/logo128.png" width="100" /></a>
 </div>
 <h1 align="center">
-  ColorPal - Color Picker - Eyedropper
+  ColorPal
 </h1>
 <p align="center">
   A color tool to extract any pixel from the screen, pick any color from a palette and save favorite colors. <a href="https://chrome.google.com/webstore/detail/mbnpegpimodgjmlbfhkkdgbcfjmgpoad" target="_blank"><br>
-  Download</a> the chrome extension. Built with <a href="https://www.typescriptlang.org" target="_blank">TypeScript</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank">HTML</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank">CSS</a>
+  Add</a> the extension to Chrome and Edge. Built with <a href="https://www.typescriptlang.org" target="_blank">TypeScript</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank">HTML</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank">CSS</a>
 </p>
 <h2 align="center">
 Features
