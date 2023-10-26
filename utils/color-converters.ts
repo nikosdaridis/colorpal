@@ -2,6 +2,7 @@ function hexToRgb(hex: string, returnString: boolean): string | ColorRGB {
   let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(
     hex
   ) as RegExpExecArray;
+
   let r = parseInt(result[1], 16);
   let g = parseInt(result[2], 16);
   let b = parseInt(result[3], 16);
@@ -14,8 +15,10 @@ function rgbToHsl(rbg: ColorRGB): string {
   let r = rbg.r / 255;
   let g = rbg.g / 255;
   let b = rbg.b / 255;
+
   let max = Math.max(r, g, b),
     min = Math.min(r, g, b);
+
   let h,
     s,
     l = (max + min) / 2;
@@ -63,6 +66,7 @@ function rgbToHsv(rbg: ColorRGB): string {
   rabs = rbg.r / 255;
   gabs = rbg.g / 255;
   babs = rbg.b / 255;
+
   (v = Math.max(rabs, gabs, babs)), (diff = v - Math.min(rabs, gabs, babs));
   diffc = (c: number) => (v - c) / 6 / diff + 1 / 2;
   percentRoundFn = (num: number) => Math.round(num * 100) / 100;
@@ -96,15 +100,14 @@ function rgbToHsv(rbg: ColorRGB): string {
 }
 
 function hexToHsl(hex: string): ColorHSL {
-  let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  let r: number, g: number, b: number;
+  let rgb = hexToRgb(hex, false) as ColorRGB;
 
-  let r = parseInt(result[1], 16);
-  let g = parseInt(result[2], 16);
-  let b = parseInt(result[3], 16);
+  (r = rgb.r / 255), (g = rgb.g / 255), (b = rgb.b / 255);
 
-  (r /= 255), (g /= 255), (b /= 255);
   let max = Math.max(r, g, b),
     min = Math.min(r, g, b);
+
   let h,
     s,
     l = (max + min) / 2;
@@ -142,6 +145,7 @@ function hslToHex(h: number, s: number, l: number): string {
   h /= 360;
   s /= 100;
   l /= 100;
+
   let r, g, b;
 
   if (s === 0) {

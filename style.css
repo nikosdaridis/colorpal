@@ -250,7 +250,7 @@ select {
   height: 28px;
   width: 28px;
   filter: var(--theme-filter);
-  transition: 0.1s ease;
+  transition: 0.3s ease;
 }
 
 .codes-name-messages {
@@ -399,7 +399,7 @@ select {
 
 .saved-colors-tools {
   display: flex;
-  gap: 25px;
+  gap: 27px;
   margin-top: -14px;
   margin-bottom: -24px;
   margin-left: 40px;
@@ -494,18 +494,17 @@ select {
   align-items: center;
   cursor: pointer;
   padding: 2px;
-  gap: 2rem;
+  gap: 20px;
   font-size: 15px;
-  font-weight: 700;
-  white-space: pre;
+  font-weight: 800;
   color: white;
   background-color: #610596;
   animation: bannerScale 0.4s ease-out forwards;
+  transition: 0.3s ease;
 }
 
 .review-banner:hover {
   background-color: #910fdd;
-  transition: 0.1s;
 }
 
 .review-banner.hide {
@@ -514,12 +513,23 @@ select {
 
 .review-banner p {
   display: flex;
+  transition: 0.3s ease;
+}
+
+.review-banner:hover p {
+  font-size: 16px;
 }
 
 .review-banner img {
-  scale: 0.8;
+  margin-left: 3px;
+  scale: 0.7;
   filter: invert(15%) sepia(84%) saturate(7450%) hue-rotate(2deg)
     brightness(116%) contrast(118%) drop-shadow(0 0 2px black);
+  transition: 0.3s ease;
+}
+
+.review-banner:hover img {
+  scale: 0.75;
 }
 
 @keyframes bannerScale {

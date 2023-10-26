@@ -112,8 +112,6 @@ const showMessagesOption = document.querySelector(
   "#show-messages-option"
 ) as HTMLInputElement;
 
-const latestVersion = "1.3.4";
-
 // localStorage keys
 const storage = {
   version: "colorpal-version",
@@ -132,77 +130,72 @@ const storage = {
   reviewBannerClosed: "colorpal-review-banner-closed",
 };
 
+const latestVersion = "1.3.4";
+
+var savedColorsArray: string[];
+
 var colorsNames: {
   name: string;
   rgb: ColorRGB;
 }[];
-
-var messageTimeout = 0,
-  hideAnimationsTimeout = 0;
 
 var movingColor = false,
   selectingTintsShades = false,
   renderedTintsShades = false,
   deletingColor = false;
 
-latestVersion !== localStorage.getItem(storage.version) && newVersion();
+var messageTimeout = 0,
+  hideAnimationsTimeout = 0;
 
-// validate json and remove non 6 digit #hex color code
-const savedColorsArray = validateJson(storage.savedColorsArray, "[]").filter(
-  (color: string) => color.match(/^#[\dabcdef]{6}$/i)
-);
-
-// update localStorage saved colors array in case any removed invalid hex code
-localStorage.setItem(
-  storage.savedColorsArray,
-  JSON.stringify(savedColorsArray)
-);
-
-// fetch colors names array and set selected color name
-fetch("/data/colorsNames.json")
-  .then((res) => res.json())
-  .then((data) => {
-    colorsNames = data;
-
-    setColorName(localStorage.getItem(storage.selectedColor));
-  });
-
-document.querySelector("#version").textContent = `v${latestVersion}`;
-
-// opera disable eyedropper and hide feedback button and review banner
-navigator.userAgent.indexOf("OP") > -1 && disableOpera();
-
+initialize();
 validateStorage();
 setPage("colors");
 
-function validateJson(storageKey: string, fallbackValue: string): string[] {
-  localStorage.getItem(storageKey) ??
-    localStorage.setItem(storageKey, fallbackValue);
+function initialize(): void {
+  // validate json and remove non 6 digit #hex color code
+  savedColorsArray = validateJson(storage.savedColorsArray, "[]").filter(
+    (color: string) => color.match(/^#[\dabcdef]{6}$/i)
+  );
 
-  try {
-    return JSON.parse(localStorage.getItem(storageKey));
-  } catch {
-    localStorage.setItem(storageKey, fallbackValue);
-    return JSON.parse(localStorage.getItem(storageKey));
+  // update localStorage saved colors array in case any removed invalid hex code
+  localStorage.setItem(
+    storage.savedColorsArray,
+    JSON.stringify(savedColorsArray)
+  );
+
+  // fetch colors names array and set selected color name
+  fetch("/data/colorsNames.json")
+    .then((res) => res.json())
+    .then((data) => {
+      colorsNames = data;
+
+      setColorName(localStorage.getItem(storage.selectedColor));
+    });
+
+  latestVersion !== localStorage.getItem(storage.version) && newVersion();
+  document.querySelector("#version").textContent = `v${latestVersion}`;
+
+  function validateJson(storageKey: string, fallbackValue: string): string[] {
+    localStorage.getItem(storageKey) ??
+      localStorage.setItem(storageKey, fallbackValue);
+
+    try {
+      return JSON.parse(localStorage.getItem(storageKey));
+    } catch {
+      localStorage.setItem(storageKey, fallbackValue);
+      return JSON.parse(localStorage.getItem(storageKey));
+    }
+  }
+
+  function newVersion(): void {
+    localStorage.setItem(storage.version, latestVersion);
+
+    // reset review banner
+    localStorage.setItem(storage.reviewBannerClosed, "false");
+    localStorage.setItem(storage.openedCount, "0");
   }
 }
 
-function newVersion(): void {
-  localStorage.setItem(storage.version, latestVersion);
-
-  // reset review banner
-  localStorage.setItem(storage.reviewBannerClosed, "false");
-  localStorage.setItem(storage.openedCount, "0");
-}
-
-function disableOpera(): void {
-  eyeDropperButton.classList.add("disable");
-
-  document.querySelector(".feedback").classList.add("hide");
-  reviewBanner.classList.add("hide");
-}
-
-// validate localStorage values
 function validateStorage(): void {
   let localStorageTheme = localStorage.getItem(storage.theme);
 
@@ -249,6 +242,7 @@ function validateStorage(): void {
   validateTrueOrFalse(storage.showMessages, "true");
 
   validateTrueOrFalse(storage.collapsedColorTools, "false");
+
   setCollapsedColorTools(
     JSON.parse(localStorage.getItem(storage.collapsedColorTools))
   );
@@ -289,12 +283,21 @@ function validateStorage(): void {
     localStorage.getItem(storage.showMessages)
   );
 
+  // opera browser, disable eyedropper, hide feedback button and disable review banner
+  navigator.userAgent.indexOf("OP") > -1 && disableOpera();
+
   function validateTrueOrFalse(storageKey: string, defaultValue: string): void {
     if (
       localStorage.getItem(storageKey) !== "true" &&
       localStorage.getItem(storageKey) !== "false"
     )
       localStorage.setItem(storageKey, defaultValue);
+  }
+
+  function disableOpera(): void {
+    eyeDropperButton.classList.add("disable");
+    document.querySelector(".feedback").classList.add("hide");
+    localStorage.setItem(storage.reviewBannerClosed, "true");
   }
 }
 
@@ -443,16 +446,14 @@ function setPage(page: string): void {
     selectedColorRect.classList.remove("hide");
     codesNameMessages.classList.remove("hide");
 
-    // review banner
+    // show review banner if not clicked, opened > 20
     if (
       !JSON.parse(localStorage.getItem(storage.reviewBannerClosed)) &&
-      Number(localStorage.getItem(storage.openedCount)) > 25
+      Number(localStorage.getItem(storage.openedCount)) > 20
     ) {
       setTimeout(function () {
         reviewBanner.classList.remove("hide");
       }, 5000);
-    } else {
-      reviewBanner.classList.add("hide");
     }
 
     clearTimeout(hideAnimationsTimeout);
@@ -1298,10 +1299,9 @@ showMessagesOption.addEventListener("change", function () {
 
 reviewBanner.addEventListener("click", function () {
   localStorage.setItem(storage.reviewBannerClosed, "true");
+  reviewBanner.classList.add("hide");
 
   window.open(
     "https://chrome.google.com/webstore/detail/mbnpegpimodgjmlbfhkkdgbcfjmgpoad/reviews"
   );
-
-  reviewBanner.classList.add("hide");
 });
