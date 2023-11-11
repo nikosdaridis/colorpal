@@ -925,7 +925,9 @@ function downloadImage(): void {
   watermarkDiv.style.marginBottom = "-60px";
   watermarkDiv.style.position = "relative";
   watermarkDiv.style.zIndex = "10";
-  watermarkDiv.style.marginLeft = `${(columnsInImage / 2) * cardWidth - 87}px`;
+  watermarkDiv.style.marginLeft = `${
+    (columnsInImage / 2) * cardWidth - 87.5
+  }px`;
 
   let watermarkText = document.createElement("h1");
   watermarkText.textContent = "ColorPal";
@@ -939,9 +941,7 @@ function downloadImage(): void {
 
   let colorsContainer = document.createElement("div");
   colorsContainer.append(watermarkDiv);
-  colorsContainer.append(
-    drawColors(JSON.parse(localStorage.getItem(storage.savedColorsArray)))
-  );
+  colorsContainer.append(drawColors());
 
   let node = document.body.appendChild(colorsContainer);
 
@@ -964,7 +964,7 @@ function downloadImage(): void {
     })
     .finally(() => node.remove());
 
-  function drawColors(colors: string[]): HTMLElement {
+  function drawColors(): HTMLElement {
     let colorsContainer = document.createElement("div");
     colorsContainer.style.display = "grid";
     colorsContainer.style.gridTemplateColumns = `repeat(${localStorage.getItem(
@@ -996,7 +996,9 @@ function downloadImage(): void {
     indexTextTemplate.style.marginTop = "5px";
     indexTextTemplate.style.fontSize = "12px";
 
-    colors.map((color: string, index: number) => {
+    let index = 1;
+
+    for (let color of savedColorsArray) {
       let colorRect = colorRectTemplate.cloneNode(false) as HTMLElement;
       colorRect.style.backgroundColor = color;
 
@@ -1043,12 +1045,12 @@ function downloadImage(): void {
 
       // index
       let indexText = indexTextTemplate.cloneNode(false) as HTMLElement;
-      indexText.textContent = String(index + 1);
+      indexText.textContent = String(index++);
 
       colorRect.appendChild(colorsText);
       colorRect.appendChild(indexText);
       colorsContainer.appendChild(colorRect);
-    });
+    }
 
     return colorsContainer;
   }
@@ -1059,7 +1061,7 @@ function downloadData(): void {
 
   let dataString = `"Name","Name%","RGB","#HEX","HEX","HSL","HSV"\r\n`;
 
-  savedColorsArray.map((color: string) => {
+  for (let color of savedColorsArray) {
     let rgbColor = hexToRgb(color, false) as ColorRGB;
 
     let closestNamedColor = findClosestNamedColor(rgbColor);
@@ -1073,7 +1075,7 @@ function downloadData(): void {
     dataString += `"${color.slice(1)}",`;
     dataString += `"${rgbToHsl(rgbColor)}",`;
     dataString += `"${rgbToHsv(rgbColor)}"\r\n`;
-  });
+  }
 
   // encode data string as UTF-8 and convert it to Base64
   let dataUTF8 = new TextEncoder().encode(dataString);
