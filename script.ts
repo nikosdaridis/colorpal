@@ -145,7 +145,8 @@ var movingColor = false,
   deletingColor = false;
 
 var messageTimeout = 0,
-  hideAnimationsTimeout = 0;
+  hideAnimationsTimeout = 0,
+  colorPaletteTimeout = 0;
 
 initialize();
 validateStorage();
@@ -1180,13 +1181,17 @@ eyeDropperButton.addEventListener("click", function () {
 });
 
 colorPalette.addEventListener("input", function () {
-  setSelectedColor(colorPalette.value);
+  clearTimeout(colorPaletteTimeout);
 
-  showMessage(
-    "Selected",
-    colorPalette.value,
-    localStorage.getItem(storage.colorCodeFormat)
-  );
+  colorPaletteTimeout = setTimeout(function () {
+    setSelectedColor(colorPalette.value);
+
+    showMessage(
+      "Selected",
+      colorPalette.value,
+      localStorage.getItem(storage.colorCodeFormat)
+    );
+  }, 2);
 });
 
 colorPalette.addEventListener("click", function () {
