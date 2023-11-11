@@ -134,7 +134,7 @@ const latestVersion = "1.3.4";
 
 var savedColorsArray: string[];
 
-var colorsNames: {
+var namedColors: {
   name: string;
   rgb: ColorRGB;
 }[];
@@ -164,10 +164,10 @@ function initialize(): void {
   );
 
   // fetch colors names array and set selected color name
-  fetch("/data/colorsNames.json")
+  fetch("/data/named-colors.json")
     .then((res) => res.json())
     .then((data) => {
-      colorsNames = data;
+      namedColors = data;
 
       setColorName(localStorage.getItem(storage.selectedColor));
     });
@@ -367,7 +367,7 @@ function setSelectedColorCodes(color: string): void {
 }
 
 function setColorName(color: string): void {
-  if (!colorsNames || !color) return;
+  if (!namedColors || !color) return;
 
   if (localStorage.getItem(storage.showColorNames) === "No") {
     colorNameText.textContent = "";
@@ -375,18 +375,20 @@ function setColorName(color: string): void {
     return;
   }
 
-  let closestColor = findClosestColorName(hexToRgb(color, false) as ColorRGB);
+  let closestNamedColor = findClosestNamedColor(
+    hexToRgb(color, false) as ColorRGB
+  );
 
-  colorNameText.textContent = colorsNames[closestColor[0]].name;
+  colorNameText.textContent = closestNamedColor.name;
 
   if (
     localStorage.getItem(storage.showColorNames) === "Yes%" &&
-    closestColor[1] > 0
+    closestNamedColor.distance > 0
   ) {
     colorNamePercentage.style.display = "block";
 
     colorNamePercentage.textContent =
-      (((765 - closestColor[1]) / 765) * 100)
+      (((765 - closestNamedColor.distance) / 765) * 100)
         .toFixed(1)
         .replace(/[.,]0+$/, "") + "%";
   } else {
@@ -654,25 +656,26 @@ function swapColors(
   renderColors();
 }
 
-function findClosestColorName(
-  color: ColorRGB
-): [index: number, distance: number] {
-  let closestIndex = -1;
-  let closestDistance = Number.MAX_VALUE;
-  let distance = Number.MAX_VALUE;
+function findClosestNamedColor(color: ColorRGB): {
+  name: string;
+  distance: number;
+} {
+  let name = "";
+  let closestDistance = 765;
+  let dist = 765;
 
-  for (let i = 0; i < colorsNames.length; i++) {
-    distance = getColorsDistance(color, colorsNames[i].rgb);
+  for (let namedColor of namedColors) {
+    dist = getColorsDistance(color, namedColor.rgb);
 
-    if (distance < closestDistance) {
-      closestIndex = i;
-      closestDistance = distance;
+    if (dist < closestDistance) {
+      name = namedColor.name;
+      closestDistance = dist;
+
+      if (closestDistance === 0) break;
     }
-
-    if (closestDistance === 0) return [closestIndex, closestDistance];
   }
 
-  return [closestIndex, closestDistance];
+  return { name, distance: closestDistance };
 
   function getColorsDistance(color: ColorRGB, match: ColorRGB): number {
     return (
@@ -1005,9 +1008,9 @@ function downloadImage(): void {
       ) {
         let nameText = nameTextTemplate.cloneNode(false) as HTMLElement;
 
-        let closestColor = findClosestColorName(rgbColor);
+        let closestNamedColor = findClosestNamedColor(rgbColor);
 
-        nameText.textContent = colorsNames[closestColor[0]].name;
+        nameText.textContent = closestNamedColor.name;
 
         if (nameText.textContent.length > 33) nameText.style.fontSize = "10px";
         else if (nameText.textContent.length > 30)
@@ -1058,10 +1061,10 @@ function downloadData(): void {
   savedColorsArray.map((color: string) => {
     let rgbColor = hexToRgb(color, false) as ColorRGB;
 
-    let closestColor = findClosestColorName(rgbColor);
+    let closestNamedColor = findClosestNamedColor(rgbColor);
 
-    dataString += `"${colorsNames[closestColor[0]].name}",`;
-    dataString += `"${(((765 - closestColor[1]) / 765) * 100)
+    dataString += `"${closestNamedColor.name}",`;
+    dataString += `"${(((765 - closestNamedColor.distance) / 765) * 100)
       .toFixed(2)
       .replace(/[.,]0+$/, "")}",`;
     dataString += `"${hexToRgb(color, true)}",`;
