@@ -2,9 +2,16 @@
   <a href="https://chrome.google.com/webstore/detail/mbnpegpimodgjmlbfhkkdgbcfjmgpoad" target="_blank"><img alt="Logo" src="https://raw.githubusercontent.com/nikosdaridis/colorpal/main/icons/logo128.png" width="100" /></a>
 </div>
 <h1 align="center">ColorPal - Advanced color tools</h1>
-<p align="center">Free and powerful browser extension that helps you pick colors from the screen, make tints and shades and download your palette!<br><a href="https://chrome.google.com/webstore/detail/mbnpegpimodgjmlbfhkkdgbcfjmgpoad" target="_blank">
-  Add</a> the extension to Chrome and Edge. Built with <a href="https://www.typescriptlang.org" target="_blank">TypeScript</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank">HTML</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank">CSS</a>
+<p align="center">Browser extension to pick colors from the screen, make tints and shades and download your palette!<br>Built with <a href="https://www.typescriptlang.org" target="_blank">TypeScript</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank">HTML</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank">CSS</a>
 </p>
+<div align="center">
+   <a href="https://chrome.google.com/webstore/detail/mbnpegpimodgjmlbfhkkdgbcfjmgpoad">
+   <picture>
+   <source srcset="https://i.imgur.com/XBIE9pk.png" media="(prefers-color-scheme: dark)">
+   <img height="75" src="https://i.imgur.com/oGxig2F.png" alt="Chrome Web Store">
+   </picture>
+   </a>
+</div>
 <h2 align="center">
 Features
 </h2>
