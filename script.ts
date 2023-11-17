@@ -1312,6 +1312,6 @@ reviewBanner.addEventListener("click", function () {
   reviewBanner.classList.add("hide");
 
   window.open(
-    "https://chrome.google.com/webstore/detail/mbnpegpimodgjmlbfhkkdgbcfjmgpoad/reviews"
+    "https://chromewebstore.google.com/detail/colorpal-color-picker-eye/mbnpegpimodgjmlbfhkkdgbcfjmgpoad/reviews"
   );
 });
