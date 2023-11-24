@@ -130,7 +130,7 @@ const storage = {
   reviewBannerClosed: "colorpal-review-banner-closed",
 };
 
-const latestVersion = "1.3.4";
+const latestVersion = "1.3.5";
 
 var savedColorsArray: string[];
 
@@ -153,18 +153,6 @@ validateStorage();
 setPage("colors");
 
 function initialize(): void {
-  // validate json and remove non 6 digit #hex color code
-  savedColorsArray = validateJson(storage.savedColorsArray, "[]").filter(
-    (color: string) => color.match(/^#[\dabcdef]{6}$/i)
-  );
-
-  // update localStorage saved colors array in case any removed invalid hex code
-  localStorage.setItem(
-    storage.savedColorsArray,
-    JSON.stringify(savedColorsArray)
-  );
-
-  // fetch colors names array and set selected color name
   fetch("/data/named-colors.json")
     .then((res) => res.json())
     .then((data) => {
@@ -176,22 +164,9 @@ function initialize(): void {
   latestVersion !== localStorage.getItem(storage.version) && newVersion();
   document.querySelector("#version").textContent = `v${latestVersion}`;
 
-  function validateJson(storageKey: string, fallbackValue: string): string[] {
-    localStorage.getItem(storageKey) ??
-      localStorage.setItem(storageKey, fallbackValue);
-
-    try {
-      return JSON.parse(localStorage.getItem(storageKey));
-    } catch {
-      localStorage.setItem(storageKey, fallbackValue);
-      return JSON.parse(localStorage.getItem(storageKey));
-    }
-  }
-
   function newVersion(): void {
     localStorage.setItem(storage.version, latestVersion);
 
-    // reset review banner
     localStorage.setItem(storage.reviewBannerClosed, "false");
     localStorage.setItem(storage.openedCount, "0");
   }
@@ -208,6 +183,16 @@ function validateStorage(): void {
   )
     setTheme("dark");
   else setTheme("light");
+
+  // validate json and remove non 6 digit #hex color code
+  savedColorsArray = validateJson(storage.savedColorsArray, "[]").filter(
+    (color: string) => color.match(/^#[\dabcdef]{6}$/i)
+  );
+
+  localStorage.setItem(
+    storage.savedColorsArray,
+    JSON.stringify(savedColorsArray)
+  );
 
   validateTrueOrFalse(storage.autoSaveEyedropper, "true");
   validateTrueOrFalse(storage.autoCopyCode, "true");
@@ -236,7 +221,7 @@ function validateStorage(): void {
     localStorage.getItem(storage.showColorNames) !== "Yes" &&
     localStorage.getItem(storage.showColorNames) !== "Yes%"
   )
-    localStorage.setItem(storage.showColorNames, "Yes%");
+    localStorage.setItem(storage.showColorNames, "Yes");
 
   showColorName.value = localStorage.getItem(storage.showColorNames);
 
@@ -286,6 +271,18 @@ function validateStorage(): void {
 
   // opera browser, disable eyedropper, hide feedback button and disable review banner
   navigator.userAgent.indexOf("OP") > -1 && disableOpera();
+
+  function validateJson(storageKey: string, fallbackValue: string): string[] {
+    localStorage.getItem(storageKey) ??
+      localStorage.setItem(storageKey, fallbackValue);
+
+    try {
+      return JSON.parse(localStorage.getItem(storageKey));
+    } catch {
+      localStorage.setItem(storageKey, fallbackValue);
+      return JSON.parse(localStorage.getItem(storageKey));
+    }
+  }
 
   function validateTrueOrFalse(storageKey: string, defaultValue: string): void {
     if (
@@ -449,10 +446,10 @@ function setPage(page: string): void {
     selectedColorRect.classList.remove("hide");
     codesNameMessages.classList.remove("hide");
 
-    // show review banner if not clicked, opened > 20
+    // review banner
     if (
       !JSON.parse(localStorage.getItem(storage.reviewBannerClosed)) &&
-      Number(localStorage.getItem(storage.openedCount)) > 20
+      Number(localStorage.getItem(storage.openedCount)) > 25
     ) {
       setTimeout(function () {
         reviewBanner.classList.remove("hide");
@@ -513,7 +510,6 @@ function renderColors(): void {
 
 function addColorsListeners(): void {
   document.querySelectorAll(".color .rect").forEach((color) => {
-    // click listener
     color.addEventListener("click", (elem) => {
       savedColorClicked((elem.currentTarget! as HTMLElement).dataset.color);
     });
@@ -521,7 +517,6 @@ function addColorsListeners(): void {
     // color tools listeners
     if (!movingColor && !selectingTintsShades && !deletingColor) return;
 
-    // mouse enter listener
     color.addEventListener("mouseenter", (elem) => {
       (elem.target as HTMLElement).lastElementChild?.setAttribute(
         "src",
@@ -548,13 +543,11 @@ function addColorsListeners(): void {
       );
     });
 
-    // mouse leave listener
     color.addEventListener("mouseleave", (elem) => {
       (elem.target as HTMLElement).lastElementChild?.setAttribute("src", "");
     });
   });
 
-  // moving listeners
   if (!movingColor) return;
 
   let draggables = document.querySelectorAll(".draggable");
@@ -562,32 +555,27 @@ function addColorsListeners(): void {
   let mouseOverColor = false;
 
   draggables.forEach((draggable) => {
-    // drag enter listener
     draggable.addEventListener("dragenter", function () {
       mouseOverColor = true;
     });
 
-    // drag leave listener
     draggable.addEventListener("dragleave", function () {
       mouseOverColor = false;
       draggable.classList.remove("replacing");
     });
 
-    // dragging listener
     draggable.addEventListener("dragover", (elem) => {
       elem.preventDefault(); // prevent dragging blocked icon
       replacingColorElement = draggable as HTMLElement;
       replacingColorElement.classList.add("replacing");
     });
 
-    // drag start listener
     draggable.addEventListener("dragstart", function () {
       draggingColorElement = draggable as HTMLElement;
       draggingColorElement.classList.add("dragging");
       draggingColorElement.lastElementChild.setAttribute("src", "");
     });
 
-    // drag end listener
     draggable.addEventListener("dragend", function () {
       draggingColorElement.lastElementChild.setAttribute(
         "src",
@@ -948,11 +936,10 @@ function downloadImage(): void {
   domtoimage
     .toBlob(node)
     .then((blob: Blob) => {
-      // download image
       let blobUrl = URL.createObjectURL(blob);
       let link = window.document.createElement("a");
       link.href = blobUrl;
-      link.download = "ColorPalPalette.png";
+      link.download = "ColorPal-Palette.png";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -1004,7 +991,6 @@ function downloadImage(): void {
 
       let rgbColor = hexToRgb(color, false) as ColorRGB;
 
-      // name
       if (
         localStorage.getItem(storage.showColorNames) === "Yes" ||
         localStorage.getItem(storage.showColorNames) === "Yes%"
@@ -1031,7 +1017,6 @@ function downloadImage(): void {
         colorRect.appendChild(nameText);
       }
 
-      // color codes
       let colorsText = colorsTextTemplate.cloneNode(false) as HTMLElement;
 
       colorsText.textContent += `${hexToRgb(color, true)}\r\n`;
@@ -1043,7 +1028,6 @@ function downloadImage(): void {
       colorsText.textContent += `${rgbToHsl(rgbColor)}\r\n`;
       colorsText.textContent += `${rgbToHsv(rgbColor)}`;
 
-      // index
       let indexText = indexTextTemplate.cloneNode(false) as HTMLElement;
       indexText.textContent = String(index++);
 
@@ -1068,7 +1052,7 @@ function downloadData(): void {
 
     dataString += `"${closestNamedColor.name}",`;
     dataString += `"${(((765 - closestNamedColor.distance) / 765) * 100)
-      .toFixed(2)
+      .toFixed(1)
       .replace(/[.,]0+$/, "")}",`;
     dataString += `"${hexToRgb(color, true)}",`;
     dataString += `"${color}",`;
@@ -1084,7 +1068,7 @@ function downloadData(): void {
 
   let link = document.createElement("a");
   link.href = dataBase64;
-  link.download = "ColorPalData.csv";
+  link.download = "ColorPal-Data.csv";
   link.click();
   link.remove;
 
@@ -1193,7 +1177,7 @@ colorPalette.addEventListener("input", function () {
       colorPalette.value,
       localStorage.getItem(storage.colorCodeFormat)
     );
-  }, 2);
+  }, 1);
 });
 
 colorPalette.addEventListener("click", function () {
