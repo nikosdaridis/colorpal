@@ -100,7 +100,7 @@ const colorCodeFormat = document.querySelector(
   "#color-code-format"
 ) as HTMLInputElement;
 const colorsPerLine = document.querySelector(
-  "#colors-per-line"
+  ".colors-per-line"
 ) as HTMLInputElement;
 const addHexCharacterOption = document.querySelector(
   "#add-hex-character-option"
@@ -146,7 +146,8 @@ var movingColor = false,
 
 var messageTimeout = 0,
   hideAnimationsTimeout = 0,
-  colorPaletteTimeout = 0;
+  colorPaletteTimeout = 0,
+  colorsPerLineTimeout = 0;
 
 initialize();
 validateStorage();
@@ -410,7 +411,7 @@ function setColorsPerLine(clrPerLine: string | number): void {
   root.style.setProperty(
     "--rect-size",
     `${
-      (clrPerLine === 5 && "56.8px") ||
+      (clrPerLine === 5 && "56.7px") ||
       (clrPerLine === 6 && "47.2px") ||
       (clrPerLine === 7 && "40.5px") ||
       (clrPerLine === 8 && "35.4px") ||
@@ -842,6 +843,7 @@ function renderTintsShades(): void {
   // set temporary colors per line to 10
   savedColors.style.setProperty("grid-template-columns", "repeat(10, 1fr)");
   root.style.setProperty("--rect-size", "28.3px");
+  colorsPerLine.value = "10";
 
   let baseColorHSL = hexToHsl(localStorage.getItem(storage.selectedColor));
   let tintsShades = [];
@@ -1272,7 +1274,14 @@ colorCodeFormat.addEventListener("change", function () {
 });
 
 colorsPerLine.addEventListener("change", function () {
+  root.style.setProperty("--rect-transition-time", "0s");
+
   setColorsPerLine(colorsPerLine.value);
+
+  clearTimeout(colorsPerLineTimeout);
+  colorsPerLineTimeout = setTimeout(function () {
+    root.style.setProperty("--rect-transition-time", "0.3s");
+  }, 300);
 });
 
 addHexCharacterOption.addEventListener("change", function () {
