@@ -56,7 +56,7 @@ img[src=""] {
   --check-tool-filter: invert(85%) sepia(6%) saturate(6698%) hue-rotate(73deg)
     brightness(99%) contrast(100%);
 
-  --rect-size: 40.5px;
+  --rect-size: 47px;
   --rect-margin: calc(var(--rect-size) * 0.1);
   --rect-transition-time: 0.3s;
 }
@@ -367,6 +367,7 @@ select {
 }
 
 .saved-colors-panel {
+  width: 100%;
   margin-top: 2px;
   background-color: var(--secondary-color);
 }
@@ -400,10 +401,8 @@ select {
 
 .saved-colors-tools {
   display: flex;
-  gap: 20px;
-  margin-top: -14px;
-  margin-bottom: -24px;
-  margin-left: 35px;
+  justify-content: space-around;
+  margin: -15px 0px -24px 30px;
   align-items: center;
   animation: collapseShow 0.3s ease-out forwards;
 }
@@ -491,21 +490,21 @@ select {
 
 .review-banner {
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
   cursor: pointer;
-  padding: 2px;
-  gap: 20px;
-  font-size: 15px;
-  font-weight: 800;
+  padding: 3px;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 900;
   color: white;
-  background-color: #610596;
-  animation: bannerScale 0.4s ease-out forwards;
+  background-color: #7f0fca;
+  animation: bannerScale 1s ease-out;
   transition: 0.3s ease;
 }
 
 .review-banner:hover {
-  background-color: #910fdd;
+  background-color: #9d11ee;
 }
 
 .review-banner.hide {
@@ -518,11 +517,11 @@ select {
 }
 
 .review-banner:hover p {
-  font-size: 16px;
+  font-size: 17px;
 }
 
 .review-banner img {
-  margin-left: 3px;
+  margin-left: 5px;
   scale: 0.7;
   filter: invert(15%) sepia(84%) saturate(7450%) hue-rotate(2deg)
     brightness(116%) contrast(118%) drop-shadow(0 0 2px black);
@@ -545,7 +544,7 @@ select {
 
 .saved-colors {
   display: grid;
-  padding: 0.3rem;
+  justify-items: center;
   margin-top: 25px;
   grid-template-columns: repeat(6, 1fr);
   list-style-type: none;

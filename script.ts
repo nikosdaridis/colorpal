@@ -411,12 +411,12 @@ function setColorsPerLine(clrPerLine: string | number): void {
   root.style.setProperty(
     "--rect-size",
     `${
-      (clrPerLine === 5 && "56.7px") ||
-      (clrPerLine === 6 && "47.2px") ||
-      (clrPerLine === 7 && "40.5px") ||
-      (clrPerLine === 8 && "35.4px") ||
-      (clrPerLine === 9 && "31.5px") ||
-      (clrPerLine === 10 && "28.3px")
+      (clrPerLine === 5 && "57px") ||
+      (clrPerLine === 6 && "47px") ||
+      (clrPerLine === 7 && "40px") ||
+      (clrPerLine === 8 && "35px") ||
+      (clrPerLine === 9 && "31px") ||
+      (clrPerLine === 10 && "28px")
     }`
   );
 }
@@ -567,6 +567,7 @@ function addColorsListeners(): void {
 
     draggable.addEventListener("dragover", (elem) => {
       elem.preventDefault(); // prevent dragging blocked icon
+
       replacingColorElement = draggable as HTMLElement;
       replacingColorElement.classList.add("replacing");
     });
@@ -1280,7 +1281,7 @@ colorsPerLine.addEventListener("change", function () {
 
   clearTimeout(colorsPerLineTimeout);
   colorsPerLineTimeout = setTimeout(function () {
-    root.style.setProperty("--rect-transition-time", "0.3s");
+    root.style.setProperty("--rect-transition-time", "0.2s");
   }, 300);
 });
 
