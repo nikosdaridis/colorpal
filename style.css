@@ -368,6 +368,7 @@ select {
 
 .saved-colors-panel {
   width: 100%;
+  max-width: 350px;
   margin-top: 2px;
   background-color: var(--secondary-color);
 }
@@ -445,7 +446,7 @@ select {
 
 .saved-colors-count {
   margin-right: -10px;
-  font-size: 0.8rem;
+  font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;

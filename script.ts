@@ -378,18 +378,17 @@ function setColorName(color: string): void {
     hexToRgb(color, false) as ColorRGB
   );
 
-  colorNameText.textContent = closestNamedColor.name;
+  colorNameText.textContent = closestNamedColor.namedColor.name;
 
   if (
     localStorage.getItem(storage.showColorNames) === "Yes%" &&
-    closestNamedColor.distance > 0
+    closestNamedColor.distancePercentage < 99.9
   ) {
     colorNamePercentage.style.display = "block";
 
     colorNamePercentage.textContent =
-      (((765 - closestNamedColor.distance) / 765) * 100)
-        .toFixed(1)
-        .replace(/[.,]0+$/, "") + "%";
+      closestNamedColor.distancePercentage.toFixed(2).replace(/[.,]0+$/, "") +
+      "%";
   } else {
     colorNamePercentage.style.display = "none";
   }
@@ -648,27 +647,42 @@ function swapColors(
 }
 
 function findClosestNamedColor(color: ColorRGB): {
-  name: string;
-  distance: number;
+  namedColor: { name: string; rgb: ColorRGB };
+  distancePercentage: number;
 } {
-  let name = "";
+  let namedColor: { name: string; rgb: ColorRGB };
   let closestDistance = 765;
   let dist = 765;
 
-  for (let namedColor of namedColors) {
-    dist = getColorsDistance(color, namedColor.rgb);
+  for (let match of namedColors) {
+    dist = getRGBSumDistance(color, match.rgb);
 
     if (dist < closestDistance) {
-      name = namedColor.name;
+      namedColor = match;
       closestDistance = dist;
 
       if (closestDistance === 0) break;
     }
   }
 
-  return { name, distance: closestDistance };
+  return {
+    namedColor,
+    distancePercentage: getEuclideanDistancePercentage(color, namedColor.rgb),
+  };
 
-  function getColorsDistance(color: ColorRGB, match: ColorRGB): number {
+  function getEuclideanDistancePercentage(
+    color: ColorRGB,
+    match: ColorRGB
+  ): number {
+    let squaredDistance =
+      Math.pow(color.r - match.r, 2) +
+      Math.pow(color.g - match.g, 2) +
+      Math.pow(color.b - match.b, 2);
+
+    return ((441.67 - Math.sqrt(squaredDistance)) / 441.67) * 100;
+  }
+
+  function getRGBSumDistance(color: ColorRGB, match: ColorRGB): number {
     return (
       Math.abs(color.r - match.r) +
       Math.abs(color.g - match.g) +
@@ -1002,7 +1016,7 @@ function downloadImage(): void {
 
         let closestNamedColor = findClosestNamedColor(rgbColor);
 
-        nameText.textContent = closestNamedColor.name;
+        nameText.textContent = closestNamedColor.namedColor.name;
 
         if (nameText.textContent.length > 33) nameText.style.fontSize = "10px";
         else if (nameText.textContent.length > 30)
@@ -1046,17 +1060,14 @@ function downloadImage(): void {
 function downloadData(): void {
   if (!savedColorsArray.length) return;
 
-  let dataString = `"Name","Name%","RGB","#HEX","HEX","HSL","HSV"\r\n`;
+  let dataString = `"Name","RGB","#HEX","HEX","HSL","HSV"\r\n`;
 
   for (let color of savedColorsArray) {
     let rgbColor = hexToRgb(color, false) as ColorRGB;
 
     let closestNamedColor = findClosestNamedColor(rgbColor);
 
-    dataString += `"${closestNamedColor.name}",`;
-    dataString += `"${(((765 - closestNamedColor.distance) / 765) * 100)
-      .toFixed(1)
-      .replace(/[.,]0+$/, "")}",`;
+    dataString += `"${closestNamedColor.namedColor.name}",`;
     dataString += `"${hexToRgb(color, true)}",`;
     dataString += `"${color}",`;
     dataString += `"${color.slice(1)}",`;
@@ -1180,7 +1191,7 @@ colorPalette.addEventListener("input", function () {
       colorPalette.value,
       localStorage.getItem(storage.colorCodeFormat)
     );
-  }, 1);
+  }, 2);
 });
 
 colorPalette.addEventListener("click", function () {
@@ -1275,14 +1286,14 @@ colorCodeFormat.addEventListener("change", function () {
 });
 
 colorsPerLine.addEventListener("change", function () {
-  root.style.setProperty("--rect-transition-time", "0s");
+  root.style.setProperty("--rect-transition-time", "0.6s");
 
   setColorsPerLine(colorsPerLine.value);
 
   clearTimeout(colorsPerLineTimeout);
   colorsPerLineTimeout = setTimeout(function () {
-    root.style.setProperty("--rect-transition-time", "0.2s");
-  }, 300);
+    root.style.setProperty("--rect-transition-time", "0.3s");
+  }, 600);
 });
 
 addHexCharacterOption.addEventListener("change", function () {
