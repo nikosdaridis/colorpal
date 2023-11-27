@@ -1320,3 +1320,18 @@ reviewBanner.addEventListener("click", function () {
     "https://chromewebstore.google.com/detail/colorpal-color-picker-eye/mbnpegpimodgjmlbfhkkdgbcfjmgpoad/reviews"
   );
 });
+
+colorNamePercentage.addEventListener("click", function () {
+  let closestNamedColor = findClosestNamedColor(
+    hexToRgb(localStorage.getItem(storage.selectedColor), false) as ColorRGB
+  );
+  let hexColor = rgbToHex(closestNamedColor.namedColor.rgb);
+
+  setSelectedColor(hexColor);
+
+  showMessage(
+    "Selected",
+    hexColor,
+    localStorage.getItem(storage.colorCodeFormat)
+  );
+});

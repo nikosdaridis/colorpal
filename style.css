@@ -302,12 +302,32 @@ select {
 
 #color-name-text {
   user-select: all !important;
-  font-size: 0.65rem;
+  font-size: 11px;
+  transition: 0.3s ease;
+}
+
+#color-name-text:hover {
+  font-size: 12px;
 }
 
 #color-name-percentage {
+  cursor: pointer;
   margin-left: 4px;
-  font-size: 0.6rem;
+  font-size: 11px;
+  transition: 0.3s ease;
+  color: var(--highlight-color);
+}
+
+#color-name-percentage:hover {
+  font-size: 12px;
+  color: var(--highlight-hover-color);
+}
+
+.color-name img {
+  height: 20px;
+  width: 20px;
+  margin-left: 4px;
+  filter: var(--theme-filter);
 }
 
 .show-messages {

@@ -11,6 +11,15 @@ function hexToRgb(hex: string, returnString: boolean): string | ColorRGB {
   else return { r, g, b };
 }
 
+function rgbToHex(rgb: ColorRGB): string {
+  return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`.toLowerCase();
+
+  function toHex(num: number): string {
+    let hex = num.toString(16);
+    return hex.length === 1 ? "0" + hex : hex;
+  }
+}
+
 function rgbToHsl(rbg: ColorRGB): string {
   let r = rbg.r / 255;
   let g = rbg.g / 255;
@@ -171,5 +180,5 @@ function hslToHex(h: number, s: number, l: number): string {
     return hex.length === 1 ? "0" + hex : hex;
   }
 
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toLowerCase();
 }
