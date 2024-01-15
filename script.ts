@@ -130,7 +130,9 @@ const storage = {
   reviewBannerClosed: "colorpal-review-banner-closed",
 };
 
-const latestVersion = "1.3.5";
+const latestVersion = "1.3.6";
+const isChromeOS = navigator.userAgent.indexOf("CrOS") > -1;
+const isOpera = navigator.userAgent.indexOf("OP") > -1;
 
 var savedColorsArray: string[];
 
@@ -270,8 +272,9 @@ function validateStorage(): void {
     localStorage.getItem(storage.showMessages)
   );
 
-  // opera browser, disable eyedropper, hide feedback button and disable review banner
-  navigator.userAgent.indexOf("OP") > -1 && disableOpera();
+  // ChromeOS or Opera, disable eyedropper, hide feedback button and disable review banner
+  isChromeOS && disableEyeDropper("ChromeOS");
+  isOpera && disableEyeDropper("Opera");
 
   function validateJson(storageKey: string, fallbackValue: string): string[] {
     localStorage.getItem(storageKey) ??
@@ -293,8 +296,9 @@ function validateStorage(): void {
       localStorage.setItem(storageKey, defaultValue);
   }
 
-  function disableOpera(): void {
+  function disableEyeDropper(userAgent: string): void {
     eyeDropperButton.classList.add("disable");
+    eyeDropperButton.classList.add(userAgent);
     document.querySelector(".feedback").classList.add("hide");
     localStorage.setItem(storage.reviewBannerClosed, "true");
   }
@@ -1176,7 +1180,13 @@ function disableColorTools(tools: string | string[]): void {
 
 eyeDropperButton.addEventListener("click", function () {
   eyeDropperButton.classList.contains("disable")
-    ? showMessage("Not supported in Opera\r\nuse Chrome or Edge", null, null)
+    ? showMessage(
+        `Not supported in\r\n${isChromeOS ? "ChromeOS" : "Opera"}, use\r\n${
+          isChromeOS ? "Windows, Mac or Linux" : "Chrome or Edge"
+        }`,
+        null,
+        null
+      )
     : activateEyeDropper();
 });
 

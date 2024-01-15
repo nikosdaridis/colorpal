@@ -335,6 +335,7 @@ select {
   opacity: 100;
   position: absolute;
   justify-items: center;
+  text-align: center;
   margin-top: 51px;
   margin-left: 230px;
   color: var(--text-color);
@@ -347,7 +348,7 @@ select {
 
 #show-message-text,
 #show-message-color-code {
-  font-size: 0.6rem;
+  font-size: 10px;
   white-space: pre;
   overflow: hidden;
 }
@@ -520,7 +521,7 @@ select {
   font-weight: 900;
   color: white;
   background-color: #7f0fca;
-  animation: bannerScale 1s ease-out;
+  animation: bannerScale 0.4s ease-out;
   transition: 0.3s ease;
 }
 
