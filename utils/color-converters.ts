@@ -1,33 +1,46 @@
-function hexToRgb(hex: string, returnString: boolean): string | ColorRGB {
-  let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(
-    hex
-  ) as RegExpExecArray;
+interface ColorRGB {
+  r: number;
+  g: number;
+  b: number;
+}
 
-  let r = parseInt(result[1], 16);
-  let g = parseInt(result[2], 16);
-  let b = parseInt(result[3], 16);
+interface ColorHSL {
+  h: number;
+  s: number;
+  l: number;
+}
 
-  if (returnString) return `rgb(${r}, ${g}, ${b})`;
-  else return { r, g, b };
+function hexToRgb(hex: string): ColorRGB;
+function hexToRgb(hex: string, returnType: "string"): string;
+function hexToRgb(
+  hex: string,
+  returnType?: "string" | "ColorRGB"
+): string | ColorRGB {
+  const [, r, g, b] = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
+    .exec(hex)
+    ?.map((val) => parseInt(val, 16)) || [0, 0, 0];
+
+  return returnType === "string" ? `rgb(${r}, ${g}, ${b})` : { r, g, b };
+}
+
+function hexToHsl(hex: string): ColorHSL {
+  return rgbToHsl(hexToRgb(hex), "ColorHSL");
 }
 
 function rgbToHex(rgb: ColorRGB): string {
+  const toHex = (num: number) => Math.round(num).toString(16).padStart(2, "0");
   return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`.toLowerCase();
-
-  function toHex(num: number): string {
-    let hex = num.toString(16);
-    return hex.length === 1 ? "0" + hex : hex;
-  }
 }
 
-function rgbToHsl(rbg: ColorRGB): string {
-  let r = rbg.r / 255;
-  let g = rbg.g / 255;
-  let b = rbg.b / 255;
-
-  let max = Math.max(r, g, b),
-    min = Math.min(r, g, b);
-
+function rgbToHsl(rgb: ColorRGB): string;
+function rgbToHsl(rgb: ColorRGB, returnType: "ColorHSL"): ColorHSL;
+function rgbToHsl(
+  rgb: ColorRGB,
+  returnType?: "ColorHSL" | "string"
+): string | ColorHSL {
+  const normalizedRgb = normalizeRgb(rgb);
+  const max = Math.max(normalizedRgb.r, normalizedRgb.g, normalizedRgb.b);
+  const min = Math.min(normalizedRgb.r, normalizedRgb.g, normalizedRgb.b);
   let h,
     s,
     l = (max + min) / 2;
@@ -35,17 +48,20 @@ function rgbToHsl(rbg: ColorRGB): string {
   if (max === min) {
     h = s = 0;
   } else {
-    let d = max - min;
+    const d = max - min;
     s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
     switch (max) {
-      case r:
-        h = (g - b) / d + (g < b ? 6 : 0);
+      case normalizedRgb.r:
+        h =
+          (normalizedRgb.g - normalizedRgb.b) / d +
+          (normalizedRgb.g < normalizedRgb.b ? 6 : 0);
         break;
-      case g:
-        h = (b - r) / d + 2;
+      case normalizedRgb.g:
+        h = (normalizedRgb.b - normalizedRgb.r) / d + 2;
         break;
-      case b:
-        h = (r - g) / d + 4;
+      case normalizedRgb.b:
+        h = (normalizedRgb.r - normalizedRgb.g) / d + 4;
         break;
     }
     h /= 6;
@@ -55,99 +71,42 @@ function rgbToHsl(rbg: ColorRGB): string {
   s = Math.round(s * 100);
   l = Math.round(l * 100);
 
-  return `hsl(${h}, ${s}%, ${l}%)`;
+  return returnType === "ColorHSL" ? { h, s, l } : `hsl(${h}, ${s}%, ${l}%)`;
 }
 
-function rgbToHsv(rbg: ColorRGB): string {
-  let rabs,
-    gabs,
-    babs,
-    rr,
-    gg,
-    bb,
-    h,
-    s,
-    v: number,
-    diff: number,
-    diffc,
-    percentRoundFn;
+function rgbToHsv(rgb: ColorRGB): string {
+  const normalizedRgb = normalizeRgb(rgb);
+  let v = Math.max(normalizedRgb.r, normalizedRgb.g, normalizedRgb.b);
+  const diff = v - Math.min(normalizedRgb.r, normalizedRgb.g, normalizedRgb.b);
 
-  rabs = rbg.r / 255;
-  gabs = rbg.g / 255;
-  babs = rbg.b / 255;
+  const diffc = (c: number) => (v - c) / 6 / diff + 1 / 2;
+  const rr = diffc(normalizedRgb.r),
+    gg = diffc(normalizedRgb.g),
+    bb = diffc(normalizedRgb.b);
 
-  (v = Math.max(rabs, gabs, babs)), (diff = v - Math.min(rabs, gabs, babs));
-  diffc = (c: number) => (v - c) / 6 / diff + 1 / 2;
-  percentRoundFn = (num: number) => Math.round(num * 100) / 100;
-  if (diff === 0) {
+  let h, s;
+
+  if (v === 0) {
     h = s = 0;
   } else {
-    s = diff / v;
-    rr = diffc(rabs);
-    gg = diffc(gabs);
-    bb = diffc(babs);
+    if (diff === 0) {
+      h = 0;
+    } else {
+      if (normalizedRgb.r === v) h = bb - gg;
+      else if (normalizedRgb.g === v) h = 1 / 3 + rr - bb;
+      else if (normalizedRgb.b === v) h = 2 / 3 + gg - rr;
 
-    if (rabs === v) {
-      h = bb - gg;
-    } else if (gabs === v) {
-      h = 1 / 3 + rr - bb;
-    } else if (babs === v) {
-      h = 2 / 3 + gg - rr;
+      h = h < 0 ? h + 1 : h > 1 ? h - 1 : h;
     }
-    if (h < 0) {
-      h += 1;
-    } else if (h > 1) {
-      h -= 1;
-    }
+
+    s = diff === 0 ? 0 : Math.round((diff / v) * 100);
   }
 
   h = Math.round(h * 360);
-  s = Math.round(s * 100);
+  s = Math.round(s);
   v = Math.round(v * 100);
 
   return `hsv(${h}, ${s}%, ${v}%)`;
-}
-
-function hexToHsl(hex: string): ColorHSL {
-  let r: number, g: number, b: number;
-  let rgb = hexToRgb(hex, false) as ColorRGB;
-
-  (r = rgb.r / 255), (g = rgb.g / 255), (b = rgb.b / 255);
-
-  let max = Math.max(r, g, b),
-    min = Math.min(r, g, b);
-
-  let h,
-    s,
-    l = (max + min) / 2;
-
-  if (max == min) {
-    h = s = 0;
-  } else {
-    let d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case r:
-        h = (g - b) / d + (g < b ? 6 : 0);
-        break;
-      case g:
-        h = (b - r) / d + 2;
-        break;
-      case b:
-        h = (r - g) / d + 4;
-        break;
-    }
-
-    h /= 6;
-  }
-
-  s = s * 100;
-  s = Math.round(s);
-  l = l * 100;
-  l = Math.round(l);
-  h = Math.round(360 * h);
-
-  return { h, s, l };
 }
 
 function hslToHex(h: number, s: number, l: number): string {
@@ -163,10 +122,13 @@ function hslToHex(h: number, s: number, l: number): string {
     function hueToRgb(p: number, q: number, t: number): number {
       if (t < 0) t += 1;
       if (t > 1) t -= 1;
-      if (t < 1 / 6) return p + (q - p) * 6 * t;
-      if (t < 1 / 2) return q;
-      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-      return p;
+      return t < 1 / 6
+        ? p + (q - p) * 6 * t
+        : t < 1 / 2
+        ? q
+        : t < 2 / 3
+        ? p + (q - p) * (2 / 3 - t) * 6
+        : p;
     }
     const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
     const p = 2 * l - q;
@@ -175,10 +137,15 @@ function hslToHex(h: number, s: number, l: number): string {
     b = hueToRgb(p, q, h - 1 / 3);
   }
 
-  function toHex(x: number): string {
-    const hex = Math.round(x * 255).toString(16);
-    return hex.length === 1 ? "0" + hex : hex;
-  }
+  return `#${Math.round(r * 255)
+    .toString(16)
+    .padStart(2, "0")}${Math.round(g * 255)
+    .toString(16)
+    .padStart(2, "0")}${Math.round(b * 255)
+    .toString(16)
+    .padStart(2, "0")}`;
+}
 
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toLowerCase();
+function normalizeRgb(rgb: ColorRGB) {
+  return { r: rgb.r / 255, g: rgb.g / 255, b: rgb.b / 255 };
 }

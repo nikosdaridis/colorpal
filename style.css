@@ -47,7 +47,7 @@ img[src=""] {
     brightness(98%) contrast(95%);
   --move-tool-filter: invert(44%) sepia(28%) saturate(4405%) hue-rotate(178deg)
     brightness(98%) contrast(95%);
-  --tint-shades-tool-filter: invert(43%) sepia(97%) saturate(2220%)
+  --tintsShades-tool-filter: invert(43%) sepia(97%) saturate(2220%)
     hue-rotate(5deg) brightness(101%) contrast(93%);
   --delete-tool-filter: invert(11%) sepia(83%) saturate(5622%)
     hue-rotate(356deg) brightness(105%) contrast(100%);
@@ -56,8 +56,8 @@ img[src=""] {
   --check-tool-filter: invert(85%) sepia(6%) saturate(6698%) hue-rotate(73deg)
     brightness(99%) contrast(100%);
 
-  --rect-size: 47px;
-  --rect-margin: calc(var(--rect-size) * 0.1);
+  --color-rect-size: 47px;
+  --rect-margin: calc(var(--color-rect-size) * 0.1);
   --rect-transition-time: 0.3s;
 }
 
@@ -494,7 +494,7 @@ select {
 }
 
 .saved-colors-tools #tints-shades-tool {
-  filter: var(--tint-shades-tool-filter);
+  filter: var(--tintsShades-tool-filter);
 }
 
 .saved-colors-tools #delete-color-tool {
@@ -575,8 +575,8 @@ select {
 .saved-colors .color .rect {
   cursor: pointer;
   display: block;
-  height: var(--rect-size);
-  width: var(--rect-size);
+  height: var(--color-rect-size);
+  width: var(--color-rect-size);
   margin: var(--rect-margin);
   border-radius: 15%;
   border: 1px solid var(--text-color);
@@ -587,6 +587,11 @@ select {
   scale: 1.15;
   border-radius: 5%;
   border: 1px solid var(--highlight-color);
+}
+
+.saved-colors .color .rect.selected {
+  border-radius: 40% !important;
+  border: 1px solid var(--highlight-color) !important;
 }
 
 .saved-colors .color .rect.draggable {
@@ -652,9 +657,9 @@ select {
 
 .saved-colors .color img {
   display: block;
-  height: calc(var(--rect-size) * 0.5);
-  width: calc(var(--rect-size) * 0.5);
+  height: calc(var(--color-rect-size) * 0.5);
+  width: calc(var(--color-rect-size) * 0.5);
   margin: auto;
-  margin-top: calc(var(--rect-size) * 0.25);
+  margin-top: calc(var(--color-rect-size) * 0.25);
   filter: var(--tool-icon-filter) drop-shadow(0 0 2px black);
 }
