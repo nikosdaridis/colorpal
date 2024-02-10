@@ -73,8 +73,8 @@ const storageKeys = {
 };
 
 const latestVersion = "1.3.6";
-const isChromeOS = navigator.userAgent.indexOf("CrOS") > -1;
-const isOpera = navigator.userAgent.indexOf("OP") > -1;
+const isChromeOS = navigator.userAgent.includes("CrOS");
+const isOpera = navigator.userAgent.includes("OP");
 
 var savedColorsArray: string[];
 var namedColors: { name: string; rgb: ColorRGB }[];
@@ -199,7 +199,7 @@ function validateStorage(): void {
   isOpera && disableEyeDropper("Opera");
 
   function validateJson(storageKey: string, fallbackValue: string): string[] {
-    const storedValue = localStorage.getItem(storageKey) || fallbackValue;
+    const storedValue = localStorage.getItem(storageKey);
 
     try {
       return JSON.parse(storedValue);
@@ -368,12 +368,12 @@ function setCollapsedColorTools(isCollapsed: boolean): void {
 }
 
 function setPage(page: string): void {
-  document.body.className = "hide-animations";
+  document.body.classList.add("hide-animations");
   collapseColorToolsIcon.classList.add("hide-transitions");
 
   if (page === "colors") {
-    hideElements(settingsButtons, settingsPanel);
-    showElements(colorsButtons, selectedColorRect, codesNameMessages);
+    elementsHide("add", settingsButtons, settingsPanel);
+    elementsHide("remove", colorsButtons, selectedColorRect, codesNameMessages);
 
     // Check if review banner should be displayed
     if (
@@ -388,29 +388,29 @@ function setPage(page: string): void {
     // Disable animations and transitions temporarily
     clearTimeout(disableAnimationsAndTransitionsTimeout);
     disableAnimationsAndTransitionsTimeout = setTimeout(function () {
-      document.body.className = "";
+      document.body.classList.remove("hide-animations");
       collapseColorToolsIcon.classList.remove("hide-transitions");
     }, 400);
 
     updateSavedColorsCount();
     renderColors();
   } else if (page === "settings") {
-    hideElements(
+    elementsHide(
+      "add",
       colorsButtons,
       selectedColorRect,
       codesNameMessages,
       savedColorsPanel
     );
-    showElements(settingsButtons, settingsPanel);
+    elementsHide("remove", settingsButtons, settingsPanel);
     disableColorTools("all");
   }
 
-  function hideElements(...elements: HTMLElement[]): void {
-    elements.forEach((element) => element.classList.add("hide"));
-  }
-
-  function showElements(...elements: HTMLElement[]): void {
-    elements.forEach((element) => element.classList.remove("hide"));
+  function elementsHide(
+    action: "add" | "remove",
+    ...elements: HTMLElement[]
+  ): void {
+    elements.forEach((element) => element.classList[action]("hide"));
   }
 }
 
@@ -779,10 +779,10 @@ function activateEyeDropper(): void {
     }
 
     document.body.style.display = "block";
-    document.body.className = "hide-animations";
+    document.body.classList.add("hide-animations");
 
     setTimeout(function () {
-      document.body.className = "";
+      document.body.classList.remove("hide-animations");
     }, 400);
   }, 100);
 }
