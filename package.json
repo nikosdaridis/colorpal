@@ -4,7 +4,7 @@
     "build": "tsc && npm run minify"
   },
   "dependencies": {
-    "@types/chrome": "^0.0.260"
+    "@types/chrome": "^0.0.268"
   },
   "devDependencies": {
     "uglify-js": "^3.17.4"

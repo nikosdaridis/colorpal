@@ -72,7 +72,7 @@ const storageKeys = {
   reviewBannerClosed: "colorpal-review-banner-closed",
 };
 
-const latestVersion = "1.3.6";
+const latestVersion = "1.3.7";
 const isChromeOS = navigator.userAgent.includes("CrOS");
 const isOpera = navigator.userAgent.includes("OP");
 
@@ -202,7 +202,9 @@ function validateStorage(): void {
     const storedValue = localStorage.getItem(storageKey);
 
     try {
-      return JSON.parse(storedValue);
+      const parsedValue = JSON.parse(storedValue);
+      if (Array.isArray(parsedValue)) return parsedValue;
+      else return JSON.parse(fallbackValue);
     } catch {
       localStorage.setItem(storageKey, fallbackValue);
       return JSON.parse(fallbackValue);
@@ -799,7 +801,7 @@ function renderTintsShades(): void {
 
   // Generate an array of tints and shades
   const tintsShades = Array.from({ length: 99 }, (_, i) =>
-    hslToHex(baseColorHSL.h, baseColorHSL.s, i++)
+    hslToHex(baseColorHSL.h, baseColorHSL.s, ++i)
   );
 
   // Render li for each tint and shade
@@ -1026,7 +1028,7 @@ function resetEmptyColorsArray(): void {
 
 function setMoveColor(moving: boolean): void {
   movingColor = moving;
-  setToolState(moveColorTool, movingColor, "move");
+  setToolState(moveColorTool, movingColor);
 }
 
 function setTintsShades(selecting: boolean): void {
@@ -1037,22 +1039,22 @@ function setTintsShades(selecting: boolean): void {
     setColorsPerLine(localStorage.getItem(storageKeys.colorsPerLine));
   }
 
-  setToolState(tintsShadesTool, selectingTintsShades, "tintsShades");
+  setToolState(tintsShadesTool, selectingTintsShades);
 }
 
 function setDeleteColor(deleting: boolean): void {
   deletingColor = deleting;
-  setToolState(deleteColorTool, deletingColor, "delete");
+  setToolState(deleteColorTool, deletingColor);
 }
 
-function setToolState(tool: HTMLElement, state: boolean, name: string): void {
-  tool.setAttribute("src", `icons/${state ? "check" : name}.svg`);
-  tool.style.setProperty(
-    "filter",
-    getComputedStyle(root).getPropertyValue(
-      `--${state ? "check" : name}-tool-filter`
-    )
-  );
+function setToolState(tool: HTMLElement, state: boolean): void {
+  const parentElement = tool.parentElement;
+  if (!parentElement) return;
+
+  parentElement.classList.toggle("active", state);
+  const color = state ? "var(--primary-color)" : "transparent";
+  parentElement.style.borderColor = color;
+  parentElement.style.backgroundColor = color;
 }
 
 function disableColorTools(tools: string | string[]): void {

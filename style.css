@@ -29,7 +29,6 @@ img[src=""] {
   --tints-shades-tool-color: #ec6f09;
   --delete-tool-color: #e70b0b;
   --delete-all-color: #b50707;
-  --check-tool-color: #5bf55e;
 
   --theme-filter: invert(89%) sepia(7%) saturate(1464%) hue-rotate(196deg)
     brightness(103%) contrast(121%);
@@ -53,8 +52,6 @@ img[src=""] {
     hue-rotate(356deg) brightness(105%) contrast(100%);
   --delete-all-tool-filter: invert(11%) sepia(53%) saturate(6817%)
     hue-rotate(358deg) brightness(104%) contrast(98%);
-  --check-tool-filter: invert(85%) sepia(6%) saturate(6698%) hue-rotate(73deg)
-    brightness(99%) contrast(100%);
 
   --color-rect-size: 47px;
   --rect-margin: calc(var(--color-rect-size) * 0.1);
@@ -424,7 +421,7 @@ select {
 .saved-colors-tools {
   display: flex;
   justify-content: space-around;
-  margin: -15px 0px -24px 30px;
+  margin: -18px 0px -24px 30px;
   align-items: center;
   animation: collapseShow 0.3s ease-out forwards;
 }
@@ -476,11 +473,22 @@ select {
 
 .color-tool {
   display: flex;
+  border: 3px solid transparent;
+  border-radius: 25%;
   transition: 0.3s ease;
 }
 
 .color-tool:hover {
   scale: 1.2;
+  animation: 1.5s infinite normal shake;
+}
+
+.color-tool.active {
+  animation: 1.5s infinite normal shake;
+}
+
+.color-tool.active:hover {
+  animation-duration: 0.3s;
 }
 
 .saved-colors-tools img {
