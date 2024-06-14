@@ -421,7 +421,7 @@ select {
 .saved-colors-tools {
   display: flex;
   justify-content: space-around;
-  margin: -18px 0px -24px 30px;
+  margin: -15px 0px -24px 30px;
   align-items: center;
   animation: collapseShow 0.3s ease-out forwards;
 }
