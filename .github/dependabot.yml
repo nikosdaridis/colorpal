@@ -7,3 +7,5 @@ updates:
       interval: "daily"
     labels:
       - "automerge"
+      - "dependencies"
+      - "javascript"
