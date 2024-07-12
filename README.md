@@ -50,10 +50,18 @@ Light and Dark theme<br>
    tsc --watch
    ```
 
-## 🚀 Build For Production
+## 🚀 Build For Production (Windows)
 
-1. Compile TypeScript to JavaScript
+1. Build and zip project
 
    ```sh
-   npm run build
+   npm run build-zip-windows
+   ```
+
+## 🚀 Build For Production (Unix)
+
+1. Build and zip project
+
+   ```sh
+   npm run build-zip-unix
    ```

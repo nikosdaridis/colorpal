@@ -1,7 +1,9 @@
 {
   "scripts": {
     "minify": "uglifyjs script.js -o script.js -c -m && uglifyjs utils/color-converters.js -o utils/color-converters.js -c -m && uglifyjs service-worker.js -o service-worker.js -c -m",
-    "build": "tsc && npm run minify"
+    "build": "tsc && npm run minify",
+    "build-zip-windows": "del colorpal.zip && npm run build && powershell -Command \"& {New-Item -ItemType Directory -Force -Path ..\\temp; Copy-Item -Path * -Destination ..\\temp -Recurse -Exclude node_modules, .git, .github, images, .gitignore, package.json, package-lock.json, readme.md, *.js.map, *.ts, tsconfig.json; Compress-Archive -Path ..\\temp\\* -DestinationPath colorpal.zip -Force; Remove-Item -Recurse -Force ..\\temp}\"",
+    "build-zip-unix": "rm colorpal.zip; npm run build && zip -r colorpal.zip . -x 'node_modules/*' '.git/*' '*.zip' 'images/*'"
   },
   "dependencies": {
     "@types/chrome": "^0.0.268"
