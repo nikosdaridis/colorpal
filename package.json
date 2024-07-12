@@ -1,7 +1,8 @@
 {
   "scripts": {
     "minify": "uglifyjs script.js -o script.js -c -m && uglifyjs utils/color-converters.js -o utils/color-converters.js -c -m && uglifyjs service-worker.js -o service-worker.js -c -m",
-    "build": "tsc && npm run minify"
+    "build": "tsc && npm run minify",
+    "build-and-zip": "rm dist.zip; npm run build && zip -r dist.zip . -x 'node_modules/*' '.git/*' '*.zip' 'images/*'"
   },
   "dependencies": {
     "@types/chrome": "^0.0.268"
