@@ -9,7 +9,7 @@
     "@types/chrome": "^0.0.268"
   },
   "devDependencies": {
-    "typescript": "^5.5.3",
+    "typescript": "^5.5.4",
     "uglify-js": "^3.19.0"
   }
 }
