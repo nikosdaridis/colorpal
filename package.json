@@ -6,7 +6,7 @@
     "build-zip-unix": "rm colorpal.zip; npm run build && zip -r colorpal.zip . -x 'node_modules/*' '.git/*' '*.zip' 'images/*'"
   },
   "dependencies": {
-    "@types/chrome": "^0.0.271"
+    "@types/chrome": "^0.0.272"
   },
   "devDependencies": {
     "typescript": "^5.6.2",
