@@ -1,0 +1,30 @@
+{
+  "default_locale": "en",
+  "name": "__MSG_name__",
+  "description": "__MSG_description__",
+  "version": "2.0.0",
+  "manifest_version": 3,
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
+  },
+  "action": {
+    "default_icon": {
+      "16": "Icons/icon16.png",
+      "32": "Icons/icon32.png",
+      "48": "Icons/icon48.png",
+      "128": "Icons/icon128.png"
+    },
+    "default_popup": "index.html",
+    "default_title": "__MSG_defaultTitle__"
+  },
+  "icons": {
+    "16": "Icons/logo16.png",
+    "32": "Icons/logo32.png",
+    "48": "Icons/logo48.png",
+    "128": "Icons/logo128.png"
+  },
+  "background": {
+    "service_worker": "JavaScript/service-worker.js",
+    "type": "module"
+  }
+}

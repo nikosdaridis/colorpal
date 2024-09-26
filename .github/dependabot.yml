@@ -1,0 +1,21 @@
+version: 2
+updates:
+  # Configuration for NuGet
+  - package-ecosystem: "nuget"
+    directory: "/ColorPal"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependencies"
+      - ".NET"
+      - "automerge"
+
+  # Configuration for npm
+  - package-ecosystem: "npm"
+    directory: "/ColorPal"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependencies"
+      - "javascript"
+      - "automerge"
