@@ -1,0 +1,43 @@
+﻿<div class="h-9 bg-gray-100 items-center justify-center rounded-lg p-1 grid grid-cols-5">
+    @foreach (string colorFormat in _colorFormats)
+    {
+        <ColorCodeTab Name=@colorFormat
+                      IsActive=@(_currentColorCodeFormat == colorFormat)
+                      HandleClick=@(() => HandleOnClickAsync(colorFormat))
+                      EventAggregator=EventAggregator />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public LocalStorageService? LocalStorageService { get; set; }
+
+    [Parameter]
+    public EventAggregator<string>? EventAggregator { get; set; }
+
+    private List<string> _colorFormats = new() { "HEX", "RGB", "HSL", "HSV", "Filter" };
+    private string _currentColorCodeFormat = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (LocalStorageService is not null)
+            _currentColorCodeFormat = await LocalStorageService.GetKeyAsync<string>(StorageKeys.ColorCodeFormat) ?? _colorFormats[0];
+    }
+
+    /// <summary>
+    /// Handles tab click event
+    /// </summary>
+    private async Task HandleOnClickAsync(string colorCodeFormat)
+    {
+        if (LocalStorageService is null)
+            return;
+
+        await LocalStorageService.SetKeyAsync<string>(StorageKeys.ColorCodeFormat, colorCodeFormat);
+        _currentColorCodeFormat = colorCodeFormat;
+
+        if (EventAggregator is null)
+            return;
+
+        await EventAggregator.GetEventService(EventServiceType.ColorCodeActiveTab).PublishAsync(_currentColorCodeFormat);
+    }
+}

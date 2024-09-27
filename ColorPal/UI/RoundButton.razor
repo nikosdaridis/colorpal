@@ -1,0 +1,26 @@
+﻿﻿@if (string.IsNullOrWhiteSpace(IconPath))
+    return;
+
+<button class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-white bg-opacity-50 hover:bg-opacity-75 backdrop-blur-xl shadow-xl transition-all duration-200 hover:scale-105" @ref=_button @onclick=HandleOnClickAsync>
+    <img class="h-[18px] w-[18px]" src=@IconPath />
+</button>
+
+@code {
+
+    [Parameter]
+    public string? IconPath { get; set; }
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> HandleClick { get; set; }
+
+    private ElementReference _button;
+
+    /// <summary>
+    /// Invokes callback
+    /// </summary>
+    private async Task HandleOnClickAsync(MouseEventArgs args)
+    {
+        if (HandleClick.HasDelegate)
+            await HandleClick.InvokeAsync(args);
+    }
+}

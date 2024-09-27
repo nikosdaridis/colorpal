@@ -1,3 +1,5 @@
+using Blazored.LocalStorage;
+using ColorPal.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -12,6 +14,9 @@ namespace ColorPal
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddBlazoredLocalStorageAsSingleton();
+            builder.Services.AddSingleton<LocalStorageService>();
+            builder.Services.AddSingleton<EventAggregator<string>>();
 
             await builder.Build().RunAsync();
         }

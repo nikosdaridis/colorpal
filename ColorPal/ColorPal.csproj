@@ -9,6 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.8" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.8" PrivateAssets="all" />
 	</ItemGroup>
@@ -42,7 +43,7 @@
 		<Exec Command="npm run tailwind-release" Condition="'$(Configuration)' == 'Release'" />
 	</Target>
 
-	<Target Name="Rename_framework" BeforeTargets="PostPublishCleanup">
+	<Target Name="Rename_framework" BeforeTargets="CleanupPublish">
 		<Exec Command="powershell -Command &quot;Remove-Item '$(PublishDir)wwwroot\framework\' -Recurse -ErrorAction Ignore; Rename-Item -Path '$(PublishDir)wwwroot\_framework' -NewName framework;&quot;" />
 
 		<Exec Command="powershell -Command &quot;(gc '$(PublishDir)wwwroot\framework\blazor.webassembly.js') -replace '_framework', 'framework' | sc '$(PublishDir)wwwroot\framework\blazor.webassembly.js'&quot;" />

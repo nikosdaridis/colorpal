@@ -1,0 +1,43 @@
+﻿<div class="mt-2 space-y-2">
+    <div class="flex items-center space-x-2">
+        <input type="text" class="flex h-10 w-full rounded-md border border-input px-3 py-2 text-sm" value="@_inputValue" readonly>
+        <button class="inline-flex items-center justify-center rounded-md text-sm font-medium border border-input h-10 w-10 transition-all duration-200 hover:bg-gray-100">
+            <img class="h-[15px] w-[15px]" src="Icons/copyClipboard.svg" />
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public LocalStorageService? LocalStorageService { get; set; }
+
+    [Parameter]
+    public EventAggregator<string>? EventAggregator { get; set; }
+
+    private string _inputValue = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (LocalStorageService is not null)
+            await HandleActiveTabChange(await LocalStorageService.GetKeyAsync<string>(StorageKeys.ColorCodeFormat));
+
+        EventAggregator?.GetEventService(EventServiceType.ColorCodeActiveTab).Subscribe(HandleActiveTabChange);
+    }
+
+    /// <summary>
+    /// Handles active tab change event
+    /// </summary>
+    private async Task HandleActiveTabChange(string? activeTabName)
+    {
+        _inputValue = $"Value for {activeTabName}";
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        EventAggregator?.GetEventService(EventServiceType.ColorCodeActiveTab).Unsubscribe(HandleActiveTabChange);
+    }
+}

@@ -1,5 +1,5 @@
 <div align="center">
-  <a href="https://chromewebstore.google.com/detail/colorpal-color-picker-eye/mbnpegpimodgjmlbfhkkdgbcfjmgpoad" target="_blank"><img alt="Logo" src="https://raw.githubusercontent.com/nikosdaridis/colorpal/main/icons/logo128.png" width="100" /></a>
+  <a href="https://chromewebstore.google.com/detail/colorpal-color-picker-eye/mbnpegpimodgjmlbfhkkdgbcfjmgpoad" target="_blank"><img alt="Logo" src="https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Logo.png" width="100" /></a>
 </div>
 <h1 align="center">ColorPal - Advanced color tools</h1>
 <p align="center">Browser extension to pick colors from the screen, make tints and shades and download your palette!</p>

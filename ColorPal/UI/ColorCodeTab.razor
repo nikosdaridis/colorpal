@@ -1,0 +1,58 @@
+﻿<button class="@HighlightActiveTabClass() inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium transition-color"
+        @ref="_button"
+        @onclick=HandleOnClickAsync>
+    @Name
+</button>
+
+@code {
+    [Parameter]
+    public string? Name { get; set; }
+
+    [Parameter]
+    public bool IsActive { get; set; }
+
+    [Parameter]
+    public EventCallback HandleClick { get; set; }
+
+    [Parameter]
+    public EventAggregator<string>? EventAggregator { get; set; }
+
+    private ElementReference _button;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        EventAggregator?.GetEventService(EventServiceType.ColorCodeActiveTab).Subscribe(HandleTabChange);
+    }
+
+    /// <summary>
+    /// Handles tab change event
+    /// </summary>
+    private async Task HandleTabChange(string activeTabName)
+    {
+        IsActive = Name == activeTabName;
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>
+    /// Invokes the button click callback
+    /// </summary>
+    private async Task HandleOnClickAsync()
+    {
+        if (HandleClick.HasDelegate)
+            await HandleClick.InvokeAsync();
+    }
+
+    /// <summary>
+    /// Highlights active tab
+    /// </summary>
+    private string HighlightActiveTabClass() =>
+        IsActive ? "bg-white font-semibold" : string.Empty;
+
+    public void Dispose()
+    {
+        EventAggregator?.GetEventService(EventServiceType.ColorCodeActiveTab).Unsubscribe(HandleTabChange);
+    }
+}

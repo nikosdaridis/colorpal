@@ -1,0 +1,15 @@
+﻿@inherits ComponentBase
+
+@code {
+    [Inject]
+    protected NavigationManager? NavigationManager { get; set; }
+
+    [Inject]
+    protected IJSRuntime? JSRuntime { get; set; }
+
+    [Inject]
+    protected LocalStorageService? LocalStorageService { get; set; }
+
+    [Inject]
+    protected EventAggregator<string>? EventAggregator { get; set; }
+}

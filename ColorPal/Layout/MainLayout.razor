@@ -2,11 +2,14 @@
 
 @inject NavigationManager NavigationManager
 
-<main>
+<main class="min-w-[350px] max-w-[350px]">
     @Body
 </main>
 
 @code {
-    protected override void OnInitialized() =>
-        NavigationManager?.NavigateTo("/");
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+            NavigationManager.NavigateTo("/");
+    }
 }

@@ -14,7 +14,7 @@
       "48": "Icons/icon48.png",
       "128": "Icons/icon128.png"
     },
-    "default_popup": "index.html",
+    "default_popup": "index.html#/",
     "default_title": "__MSG_defaultTitle__"
   },
   "icons": {
