@@ -1,4 +1,4 @@
-﻿<button class="@HighlightActiveTabClass() inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium transition-color"
+﻿<button class="@GetTabHighlightClass() inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium"
         @ref="_button"
         @onclick=HandleOnClickAsync>
     @Name
@@ -23,7 +23,7 @@
     {
         base.OnInitialized();
 
-        EventAggregator?.GetEventService(EventServiceType.ColorCodeActiveTab).Subscribe(HandleTabChange);
+        EventAggregator?.GetService(Events.ColorCodeActiveTab).Subscribe(HandleTabChange);
     }
 
     /// <summary>
@@ -46,13 +46,13 @@
     }
 
     /// <summary>
-    /// Highlights active tab
+    /// Gets CSS classes for active and inactive tab states
     /// </summary>
-    private string HighlightActiveTabClass() =>
-        IsActive ? "bg-white font-semibold" : string.Empty;
+    private string GetTabHighlightClass() =>
+        IsActive ? "bg-[var(--primary-color)] text-[var(--theme-invert-color)] font-semibold" : "hover:text-[var(--theme-invert-color)] transition-colors duration-200";
 
     public void Dispose()
     {
-        EventAggregator?.GetEventService(EventServiceType.ColorCodeActiveTab).Unsubscribe(HandleTabChange);
+        EventAggregator?.GetService(Events.ColorCodeActiveTab).Unsubscribe(HandleTabChange);
     }
 }

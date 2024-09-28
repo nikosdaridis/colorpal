@@ -1,0 +1,76 @@
+﻿<div class="flex items-center justify-between">
+    <label class="font-semibold">@Label</label>
+
+    <button class="relative scale-[20%] peer absolute right-8 inline-flex items-center justify-end" @onclick="ToggleTheme">
+        <div id="themeOption" class="@_theme" @ref="_button">
+            <div id="themeOptionWrapper">
+                <div id="circle" />
+                <div id="stars">
+                    <div class="star" />
+                    <div class="star" />
+                    <div class="star" />
+                </div>
+                <div>
+                    <div class="cloud">
+                        <div class="cloudElement" />
+                        <div class="cloudElement" />
+                    </div>
+                    <div class="cloud">
+                        <div class="cloudElement" />
+                        <div class="cloudElement" />
+                    </div>
+                    <div class="cloud">
+                        <div class="cloudElement" />
+                        <div class="cloudElement" />
+                        <div class="cloudElement" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </button>
+</div>
+
+@code {
+    [Parameter]
+    public LocalStorageService? LocalStorageService { get; set; }
+
+    [Parameter]
+    public StateService? StateService { get; set; }
+
+    [Parameter]
+    public string? Label { get; set; }
+
+    private string? _theme;
+    private ElementReference _button;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (LocalStorageService is null)
+            return;
+
+        _theme = await GetLocalStorageTheme();
+    }
+
+    private async Task ToggleTheme()
+    {
+        if (LocalStorageService is null || StateService is null)
+            return;
+
+        _theme = await GetLocalStorageTheme() == "dark" ? "light" : "dark";
+
+        await StateService.SetThemeAsync(_theme);
+    }
+
+    /// <summary>
+    /// Gets theme from local storage
+    /// </summary>
+    private async Task<string> GetLocalStorageTheme()
+    {
+        if (LocalStorageService is null)
+            return "light";
+
+        return await LocalStorageService.GetKeyAsync<string>(StorageKeys.Theme) ?? "light";
+    }
+}

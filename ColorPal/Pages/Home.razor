@@ -3,7 +3,19 @@
 @page "/"
 
 <SelectedColor NavigationManager=NavigationManager />
-<div class="p-4">
+<div class="p-3">
     <ColorCodeTabs LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
     <ColorCodePanel LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
 </div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (StateService is null || LocalStorageService is null)
+            return;
+
+        await StateService.SetThemeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKeys.Theme) ?? "light");
+    }
+}

@@ -1,0 +1,44 @@
+﻿@inherits ComponentBase
+
+<button class="@Class"
+        @ref=button
+        @onclick=HandleOnClickAsync>
+    <img class="@GetIconSizeClass() @(IconThemeFilter ? "theme-filter" : string.Empty)" src="@IconPath" />
+</button>
+
+@code {
+    [Parameter]
+    public string? Class { get; set; }
+
+    [Parameter]
+    public string? IconPath { get; set; }
+
+    [Parameter]
+    public Size IconSize { get; set; } = Size.Medium;
+
+    [Parameter]
+    public bool IconThemeFilter { get; set; } = true;
+
+    [Parameter]
+    public EventCallback<MouseEventArgs> HandleClick { get; set; }
+
+    public ElementReference button;
+
+    /// <summary>
+    /// Gets icon size class
+    /// </summary>
+    public string GetIconSizeClass() =>
+        IconSize switch
+        {
+            Size.Small => "h-[14px] w-[14px]",
+            Size.Medium => "h-[18px] w-[18px]",
+            Size.Large => "h-[22px] w-[22px]",
+            _ => "h-[18px] w-[18px]"
+        };
+
+    /// <summary>
+    /// Invokes callback
+    /// </summary>
+    public async Task HandleOnClickAsync(MouseEventArgs args) =>
+            await HandleClick.InvokeAsync(args);
+}

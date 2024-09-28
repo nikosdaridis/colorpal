@@ -32,16 +32,7 @@
         [Value("colorpal-show-color-names")]
         ShowColorNames,
 
-        [Value("colorpal-show-messages")]
-        ShowMessages,
-
         [Value("colorpal-collapsed-color-tools")]
         CollapsedColorTools,
-
-        [Value("colorpal-opened-count")]
-        OpenedCount,
-
-        [Value("colorpal-review-banner-closed")]
-        ReviewBannerClosed
     }
 }

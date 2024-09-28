@@ -1,6 +1,6 @@
 ﻿namespace ColorPal.Common
 {
-    public enum EventServiceType
+    public enum Events
     {
         [Value("ColorCodeActiveTab")]
         ColorCodeActiveTab,

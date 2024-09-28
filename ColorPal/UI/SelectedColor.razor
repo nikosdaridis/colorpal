@@ -1,13 +1,18 @@
-﻿<div class="w-full h-[125px] flex flex-col items-center justify-center relative bg-green-800 cursor-pointer">
+﻿<div class="w-full h-[125px] flex flex-col items-center text-black justify-center relative bg-green-800 cursor-pointer">
     <div class="absolute top-2 left-4 right-4 flex justify-between items-center">
-        <RoundButton IconPath="Icons\eyedropper.svg" />
+        <RoundButton IconPath="Icons\eyedropper.svg"
+                     IconThemeFilter=false />
+
         <p class="text-center cursor-pointer text-sm font-semibold px-2 py-1 rounded-lg bg-white bg-opacity-50 backdrop-blur-xl shadow-xl transition-all duration-200 hover:scale-105 hover:bg-opacity-75">
             Color Name
         </p>
-        <RoundButton IconPath="Icons\settings.svg" HandleClick=@(() => NavigationManager?.NavigateTo("/settings")) />
+        <RoundButton IconPath="Icons\settings.svg"
+                     IconThemeFilter=false
+                     HandleClick=@(() => NavigationManager?.NavigateTo("/settings")) />
     </div>
     <div class="absolute bottom-2">
-        <RoundButton IconPath="Icons\plus.svg" />
+        <RoundButton IconPath="Icons\plus.svg"
+                     IconThemeFilter=false />
     </div>
 </div>
 

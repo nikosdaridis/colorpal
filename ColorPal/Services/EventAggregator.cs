@@ -10,32 +10,30 @@ namespace ColorPal.Services
         /// <summary>
         /// Gets event service for event type
         /// </summary>
-        public EventService<T> GetEventService(EventServiceType eventType)
+        public EventService<T> GetService(Events eventKey)
         {
-            string eventName = EventAggregator<T>.GetEnumValue(eventType);
+            string value = EventAggregator<T>.GetEnumValue(eventKey);
 
-            if (!_eventServices.TryGetValue(eventName, out EventService<T>? value))
+            if (!_eventServices.TryGetValue(value, out EventService<T>? service))
             {
-                value = new EventService<T>();
-                _eventServices[eventName] = value;
+                service = new EventService<T>();
+                _eventServices[value] = service;
             }
 
-            return value;
+            return service;
         }
 
         /// <summary>
         /// Gets attribute value for enum
         /// </summary>
-        private static string GetEnumValue(EventServiceType eventType)
+        private static string GetEnumValue(Events eventType)
         {
             FieldInfo? fieldInfo = eventType.GetType().GetField(eventType.ToString());
             if (fieldInfo is not null)
             {
                 ValueAttribute? attribute = (ValueAttribute?)Attribute.GetCustomAttribute(fieldInfo, typeof(ValueAttribute));
                 if (attribute is not null)
-                {
                     return attribute.Value;
-                }
             }
 
             return string.Empty;
