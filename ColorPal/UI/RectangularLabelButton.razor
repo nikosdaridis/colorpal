@@ -1,7 +1,12 @@
 ﻿@inherits ButtonBase
 
-<button class=@Class @ref=button @onclick=HandleOnClickAsync>
-    <img class="@GetIconSizeClass() theme-filter" src=@IconPath />
+<button class=@Class
+        @ref=button
+        @onclick=HandleOnClickAsync>
+
+    <img class="@GetIconSizeClass() @(IconThemeFilter ? "theme-filter" : string.Empty)"
+         src=@IconPath />
+
     <h3 class="font-semibold">@Label</h3>
 </button>
 

@@ -16,6 +16,6 @@
         if (StateService is null || LocalStorageService is null)
             return;
 
-        await StateService.SetThemeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKeys.Theme) ?? "light");
+        await StateService.SetThemeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKeys.Theme) ?? Themes.Light.GetValue());
     }
 }

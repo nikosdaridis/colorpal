@@ -3,7 +3,9 @@
 <button class="@Class"
         @ref=button
         @onclick=HandleOnClickAsync>
-    <img class="@GetIconSizeClass() @(IconThemeFilter ? "theme-filter" : string.Empty)" src="@IconPath" />
+
+    <img class="@GetIconSizeClass() @(IconThemeFilter ? "theme-filter" : string.Empty)"
+         src="@IconPath" />
 </button>
 
 @code {
@@ -40,5 +42,5 @@
     /// Invokes callback
     /// </summary>
     public async Task HandleOnClickAsync(MouseEventArgs args) =>
-            await HandleClick.InvokeAsync(args);
+        await HandleClick.InvokeAsync(args);
 }

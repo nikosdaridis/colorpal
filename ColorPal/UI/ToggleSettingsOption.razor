@@ -1,7 +1,9 @@
 ﻿<div class="flex items-center justify-between">
     <label class="font-semibold">@Label</label>
 
-    <button class="toggle-option" active=@(_isActive.ToString().ToLower()) @onclick=ToggleButtonAsync></button>
+    <button class="toggle-option"
+            active=@(_isActive.ToString().ToLower())
+            @onclick=ToggleButtonAsync></button>
 </div>
 
 @code {
@@ -28,6 +30,9 @@
         _isActive = localStorageIsActive == "true";
     }
 
+    /// <summary>
+    /// Toggles button and saves to local storage
+    /// </summary>
     private async Task ToggleButtonAsync()
     {
         _isActive = !_isActive;

@@ -1,5 +1,4 @@
 ﻿using ColorPal.Common;
-using System.Reflection;
 
 namespace ColorPal.Services
 {
@@ -8,35 +7,11 @@ namespace ColorPal.Services
         private readonly Dictionary<string, EventService<T>> _eventServices = [];
 
         /// <summary>
-        /// Gets event service for event type
+        /// Gets event service for given event type
         /// </summary>
-        public EventService<T> GetService(Events eventKey)
-        {
-            string value = EventAggregator<T>.GetEnumValue(eventKey);
-
-            if (!_eventServices.TryGetValue(value, out EventService<T>? service))
-            {
-                service = new EventService<T>();
-                _eventServices[value] = service;
-            }
-
-            return service;
-        }
-
-        /// <summary>
-        /// Gets attribute value for enum
-        /// </summary>
-        private static string GetEnumValue(Events eventType)
-        {
-            FieldInfo? fieldInfo = eventType.GetType().GetField(eventType.ToString());
-            if (fieldInfo is not null)
-            {
-                ValueAttribute? attribute = (ValueAttribute?)Attribute.GetCustomAttribute(fieldInfo, typeof(ValueAttribute));
-                if (attribute is not null)
-                    return attribute.Value;
-            }
-
-            return string.Empty;
-        }
+        public EventService<T> GetService(Events eventType) =>
+            _eventServices.TryGetValue(eventType.ToString(), out EventService<T>? service)
+            ? service
+            : _eventServices[eventType.ToString()] = new();
     }
 }

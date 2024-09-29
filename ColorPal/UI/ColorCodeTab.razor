@@ -1,4 +1,6 @@
-﻿<button class="@GetTabHighlightClass() inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium"
+﻿@implements IDisposable
+
+<button class="@GetTabHighlightClass() inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium"
         @ref="_button"
         @onclick=HandleOnClickAsync>
     @Name
@@ -19,6 +21,9 @@
 
     private ElementReference _button;
 
+    /// <summary>
+    /// Subscribes to events
+    /// </summary>
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -51,6 +56,9 @@
     private string GetTabHighlightClass() =>
         IsActive ? "bg-[var(--primary-color)] text-[var(--theme-invert-color)] font-semibold" : "hover:text-[var(--theme-invert-color)] transition-colors duration-200";
 
+    /// <summary>
+    /// Unsubscribes from events
+    /// </summary>
     public void Dispose()
     {
         EventAggregator?.GetService(Events.ColorCodeActiveTab).Unsubscribe(HandleTabChange);

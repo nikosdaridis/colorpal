@@ -1,8 +1,13 @@
 ﻿<div class="flex items-center justify-between">
     <label class="font-semibold">@Label</label>
 
-    <button class="relative scale-[20%] peer absolute right-8 inline-flex items-center justify-end" @onclick="ToggleTheme">
-        <div id="themeOption" class="@_theme" @ref="_button">
+    <button class="relative scale-[20%] peer absolute right-8 inline-flex items-center justify-end"
+            @onclick="ToggleThemeAsync">
+
+        <div id="themeOption"
+             class="@_theme"
+             @ref="_button">
+
             <div id="themeOptionWrapper">
                 <div id="circle" />
                 <div id="stars">
@@ -53,12 +58,17 @@
         _theme = await GetLocalStorageTheme();
     }
 
-    private async Task ToggleTheme()
+    /// <summary>
+    /// Toggles theme and saves to local storage
+    /// </summary>
+    private async Task ToggleThemeAsync()
     {
         if (LocalStorageService is null || StateService is null)
             return;
 
-        _theme = await GetLocalStorageTheme() == "dark" ? "light" : "dark";
+        _theme = await GetLocalStorageTheme() == Themes.Light.GetValue()
+            ? Themes.Dark.GetValue()
+            : Themes.Light.GetValue();
 
         await StateService.SetThemeAsync(_theme);
     }
@@ -71,6 +81,6 @@
         if (LocalStorageService is null)
             return "light";
 
-        return await LocalStorageService.GetKeyAsync<string>(StorageKeys.Theme) ?? "light";
+        return await LocalStorageService.GetKeyAsync<string>(StorageKeys.Theme) ?? Themes.Light.GetValue();
     }
 }

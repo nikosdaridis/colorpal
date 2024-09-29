@@ -45,19 +45,19 @@
                                     HandleClick=@(async () => await JSRuntime.InvokeVoidAsync("window.open", "https://github.com/nikosdaridis/colorpal", "_blank")) />
         }
     </div>
-    <h4 class="text-center text-md">@($"v{ManifestVersion}")</h4>
+    <h4 class="text-center text-md">@($"v{_manifestVersion}")</h4>
 </div>
 
 @code {
-    private string? ManifestVersion { get; set; }
+    private string? _manifestVersion { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
-        if (StateService is null)
+        if (JSRuntime is null)
             return;
 
-        ManifestVersion = await StateService.GetManifestVersionAsync();
+        _manifestVersion = await JSRuntime.InvokeAsync<string>("getManifestVersionAsync");
     }
 }

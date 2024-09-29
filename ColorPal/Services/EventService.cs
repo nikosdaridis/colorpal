@@ -7,8 +7,8 @@
         /// <summary>
         /// Publishes the event
         /// </summary>
-        public async Task PublishAsync(T eventData) =>
-            await (OnEvent?.Invoke(eventData) ?? Task.CompletedTask);
+        public async Task PublishAsync(T data) =>
+            await (OnEvent?.Invoke(data) ?? Task.CompletedTask);
 
         /// <summary>
         /// Subscribes to the event

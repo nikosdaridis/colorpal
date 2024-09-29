@@ -6,25 +6,29 @@ namespace ColorPal.Services
     public sealed class StateService(IJSRuntime JSRuntime, LocalStorageService LocalStorageService)
     {
         /// <summary>
-        /// Gets version from manifest.json
+        /// Sets localstorage theme and updates css variables
         /// </summary>
-        public async Task<string> GetManifestVersionAsync() =>
-            await JSRuntime.InvokeAsync<string>("getManifestVersionAsync");
+        public async Task SetThemeAsync(Themes theme)
+        {
+            await LocalStorageService.SetKeyAsync(StorageKeys.Theme, theme.GetValue());
+
+            await SetCssVariableAsync(CSSVariables.Primary, Colors.LightPrimary, Colors.DarkPrimary);
+            await SetCssVariableAsync(CSSVariables.Secondary, Colors.LightSecondary, Colors.DarkSecondary);
+            await SetCssVariableAsync(CSSVariables.Text, Colors.LightText, Colors.DarkText);
+            await SetCssVariableAsync(CSSVariables.ThemeInvert, Colors.LightThemeInvert, Colors.DarkThemeInvert);
+
+            // Sets theme filter based on the current theme
+            await JSRuntime.InvokeVoidAsync("document.documentElement.style.setProperty", CSSVariables.ThemeFilter.GetValue(), await JSRuntime.InvokeAsync<string>("getThemeFilter", theme.GetValue()));
+
+            // Sets css variable for theme
+            async Task SetCssVariableAsync(CSSVariables property, Colors light, Colors dark) =>
+                await JSRuntime.InvokeVoidAsync("document.documentElement.style.setProperty", property.GetValue(), theme == Themes.Light ? light.GetValue() : dark.GetValue());
+        }
 
         /// <summary>
         /// Sets localstorage theme and updates css variables
         /// </summary>
-        public async Task SetThemeAsync(string theme)
-        {
-            await LocalStorageService.SetKeyAsync(StorageKeys.Theme, theme);
-
-            await JSRuntime.InvokeVoidAsync("document.documentElement.style.setProperty", "--primary-color", theme == "dark" ? "#09090b" : "#ffffff");
-            await JSRuntime.InvokeVoidAsync("document.documentElement.style.setProperty", "--secondary-color", theme == "dark" ? "#27272a" : "#f4f4f5");
-            await JSRuntime.InvokeVoidAsync("document.documentElement.style.setProperty", "--text-color", theme == "dark" ? "#9f9fa8" : "#787881");
-            await JSRuntime.InvokeVoidAsync("document.documentElement.style.setProperty", "--theme-invert-color", theme == "dark" ? "#fafafa" : "#0a0a0a");
-
-            string themeFilter = await JSRuntime.InvokeAsync<string>("getThemeFilter", theme);
-            await JSRuntime.InvokeVoidAsync("document.documentElement.style.setProperty", "--theme-filter", themeFilter);
-        }
+        public async Task SetThemeAsync(string theme) =>
+            await SetThemeAsync(Enum.Parse<Themes>(theme, true));
     }
 }
