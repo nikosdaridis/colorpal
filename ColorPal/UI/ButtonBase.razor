@@ -1,16 +1,20 @@
 ﻿@inherits ComponentBase
 
 <button class="@Class"
+        id="@Id"
         @ref=button
         @onclick=HandleOnClickAsync>
 
-    <img class="@GetIconSizeClass() @(IconThemeFilter ? "theme-filter" : string.Empty)"
+    <img class="@GetIconSizeClass() @(IconThemeFilter ? "theme-filter" : string.Empty) @(IconTextFilter ? "text-filter" : string.Empty)"
          src="@IconPath" />
 </button>
 
 @code {
     [Parameter]
     public string? Class { get; set; }
+
+    [Parameter]
+    public string? Id { get; set; }
 
     [Parameter]
     public string? IconPath { get; set; }
@@ -20,6 +24,9 @@
 
     [Parameter]
     public bool IconThemeFilter { get; set; } = true;
+
+    [Parameter]
+    public bool IconTextFilter { get; set; } = false;
 
     [Parameter]
     public EventCallback<MouseEventArgs> HandleClick { get; set; }

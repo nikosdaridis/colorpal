@@ -8,13 +8,13 @@ namespace ColorPal.Services
         /// <summary>
         /// Gets localstorage value for enum key
         /// </summary>
-        public async Task<T?> GetKeyAsync<T>(StorageKeys key) =>
+        public async Task<T?> GetKeyAsync<T>(StorageKey key) =>
             await LocalStorageService.GetItemAsync<T>(key.GetValue());
 
         /// <summary>
         /// Sets localstorage value for enum key
         /// </summary>
-        public async Task SetKeyAsync<T>(StorageKeys key, T value) =>
+        public async Task SetKeyAsync<T>(StorageKey key, T value) =>
             await LocalStorageService.SetItemAsync(key.GetValue(), value);
     }
 }

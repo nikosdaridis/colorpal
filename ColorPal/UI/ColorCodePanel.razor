@@ -2,15 +2,15 @@
 
 <div class="mt-2 space-y-2">
     <div class="flex items-center space-x-2">
-        <input type="text"
-               class="flex h-10 w-full text-[var(--theme-invert-color)] rounded-md border border-[var(--secondary-color)] px-3 py-2 text-md bg-[var(--primary-color)]"
-               value="@_inputValue"
-               readonly>
-
-        <button class="inline-flex items-center justify-center rounded-md text-sm font-medium border border-[var(--secondary-color)] h-10 w-10 bg-[var(--primary-color)] hover:bg-[var(--secondary-color)]">
+        <button class="inline-flex items-center justify-center rounded-md font-medium border border-[var(--secondary-color)] h-8 w-10 bg-[var(--primary-color)] hover:bg-[var(--secondary-color)]">
             <img class="h-[15px] w-[15px] theme-filter"
                  src="Icons/copyClipboard.svg" />
         </button>
+
+        <input type="text"
+               class="flex h-8 w-full text-[var(--theme-invert-color)] text-sm rounded-md border border-[var(--secondary-color)] px-3 py-2 text-md bg-[var(--primary-color)]"
+               value="@_inputValue"
+               readonly>
     </div>
 </div>
 
@@ -32,9 +32,9 @@
         await base.OnInitializedAsync();
 
         if (LocalStorageService is not null)
-            await HandleActiveTabChange(await LocalStorageService.GetKeyAsync<string>(StorageKeys.ColorCodeFormat));
+            await HandleActiveTabChange(await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorCodeFormat));
 
-        EventAggregator?.GetService(Events.ColorCodeActiveTab).Subscribe(HandleActiveTabChange);
+        EventAggregator?.GetService(Event.ColorCodeActiveTab).Subscribe(HandleActiveTabChange);
     }
 
     /// <summary>
@@ -52,6 +52,6 @@
     /// </summary>
     public void Dispose()
     {
-        EventAggregator?.GetService(Events.ColorCodeActiveTab).Unsubscribe(HandleActiveTabChange);
+        EventAggregator?.GetService(Event.ColorCodeActiveTab).Unsubscribe(HandleActiveTabChange);
     }
 }

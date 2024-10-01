@@ -1,0 +1,81 @@
+﻿<div class="flex justify-between items-center">
+
+    @foreach (ColorToolType tool in Enum.GetValues(typeof(ColorToolType)))
+    {
+        <ColorTool Id="colorTool" IconPath=@($"Icons/{tool.GetValue()}.svg") IconSize=Size.Small IconTextFilter=true HandleClick=@(e => HandleColorToolClick(tool.GetValue())) />
+    }
+
+    <select class="text-[var(--text-color)] bg-[var(--primary-color)] h-8 w-13 items-center justify-center rounded-md text-sm p-2 focus:ring-0 focus:outline-none"
+            id="colorsPerLine"
+            @onchange=HandleColorsPerLineChangeAsync>
+
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+    </select>
+</div>
+
+@code {
+    [Parameter]
+    public IJSRuntime? JSRuntime { get; set; }
+
+    [Parameter]
+    public LocalStorageService? LocalStorageService { get; set; }
+
+    [Parameter]
+    public EventAggregator<string>? EventAggregator { get; set; }
+
+    private string? _activeColorTool { get; set; }
+
+    private string _colorsPerLine { get; set; } = "5";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Console.WriteLine(typeof(ColorTool).IsEnum);
+
+        if (JSRuntime is null || LocalStorageService is null)
+            return;
+
+        _colorsPerLine = await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorsPerLine) ?? "5";
+
+        await JSRuntime.InvokeVoidAsync("setSelectValue", "colorsPerLine", _colorsPerLine);
+
+    }
+
+    private async Task HandleColorToolClick(string tool)
+    {
+        if (tool == "downloadpng" || tool == "downloadcsv")
+        {
+        }
+        else
+        {
+            if (_activeColorTool == tool)
+                _activeColorTool = null;
+            else
+                _activeColorTool = tool;
+        }
+    }
+
+    /// <summary>
+    /// Sets colors per line to local storage and publishes the event
+    /// </summary>
+    private async Task HandleColorsPerLineChangeAsync(ChangeEventArgs e)
+    {
+        _colorsPerLine = e.Value?.ToString() ?? "5";
+
+        if (LocalStorageService is null)
+            return;
+
+        await LocalStorageService.SetKeyAsync(StorageKey.ColorsPerLine, _colorsPerLine);
+
+        if (EventAggregator is null)
+            return;
+
+        await EventAggregator.GetService(Event.ColorsPerLine).PublishAsync(_colorsPerLine);
+    }
+}

@@ -1,11 +1,33 @@
 namespace ColorPal.Common
 {
-    public enum Events
+    public enum Event
     {
         ColorCodeActiveTab,
+        ColorsPerLine,
     }
 
-    public enum StorageKeys
+    public enum ColorToolType
+    {
+        [Value("move")]
+        Move,
+
+        [Value("tintsShades")]
+        TintsShades,
+
+        [Value("delete")]
+        Delete,
+
+        [Value("deleteall")]
+        DeleteAll,
+
+        [Value("downloadpng")]
+        DownloadPNG,
+
+        [Value("downloadcsv")]
+        DownloadCSV,
+    }
+
+    public enum StorageKey
     {
         [Value("colorpal-version")]
         Version,
@@ -41,7 +63,7 @@ namespace ColorPal.Common
         CollapsedColorTools,
     }
 
-    public enum Themes
+    public enum Theme
     {
         [Value("light")]
         Light,
@@ -50,7 +72,7 @@ namespace ColorPal.Common
         Dark
     }
 
-    public enum CSSVariables
+    public enum CSSVariable
     {
         [Value("--primary-color")]
         Primary,
@@ -68,31 +90,31 @@ namespace ColorPal.Common
         ThemeFilter,
     }
 
-    public enum Colors
+    public enum Color
     {
-        [Value("#09090b")]
-        DarkPrimary,
-
         [Value("#ffffff")]
         LightPrimary,
 
-        [Value("#27272a")]
-        DarkSecondary,
+        [Value("#09090b")]
+        DarkPrimary,
 
         [Value("#f4f4f5")]
         LightSecondary,
 
-        [Value("#9f9fa8")]
-        DarkText,
+        [Value("#27272a")]
+        DarkSecondary,
 
         [Value("#787881")]
         LightText,
 
-        [Value("#fafafa")]
-        DarkThemeInvert,
+        [Value("#9f9fa8")]
+        DarkText,
 
         [Value("#0a0a0a")]
         LightThemeInvert,
+
+        [Value("#fafafa")]
+        DarkThemeInvert,
     }
 
     public enum Size

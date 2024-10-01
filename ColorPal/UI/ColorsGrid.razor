@@ -1,0 +1,61 @@
+﻿@implements IDisposable
+
+<div class="grid gap-2"
+     style="grid-auto-rows: 1fr;"
+     id="colorsGrid">
+
+    @foreach (string color in _colors)
+    {
+        <ColorRectangle HEXColor=@color />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public IJSRuntime? JSRuntime { get; set; }
+
+    [Parameter]
+    public LocalStorageService? LocalStorageService { get; set; }
+
+    [Parameter]
+    public EventAggregator<string>? EventAggregator { get; set; }
+
+    private string[] _colors = new[] { "#ffffff", "#09090b", "#f4f4f5", "#27272a", "#ffffff", "#09090b", "#f4f4f5", "#27272a", "#ffffff", "#09090b", "#f4f4f5", "#27272a", "#ffffff", "#09090b", "#f4f4f5", "#27272a", "#ffffff", "#09090b", "#f4f4f5", "#27272a", "#ffffff", "#09090b", "#f4f4f5", "#27272a", "#ffffff", "#09090b", "#f4f4f5", "#27272a", "#ffffff", "#09090b", "#f4f4f5", "#27272a" };
+
+    /// <summary>
+    /// Subscribes to events
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (JSRuntime is null || LocalStorageService is null || EventAggregator is null)
+            return;
+
+        await SetGridColumns(await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorsPerLine) ?? "5");
+
+        EventAggregator.GetService(Event.ColorsPerLine).Subscribe(HandleColorsPerLineChangeAsync);
+    }
+
+    private async Task HandleColorsPerLineChangeAsync(string colorsPerLine) =>
+        await SetGridColumns(colorsPerLine);
+
+    private async Task SetGridColumns(string colorsPerLine)
+    {
+        if (JSRuntime is null)
+            return;
+
+        await JSRuntime.InvokeVoidAsync("setGridColumns", "colorsGrid", colorsPerLine);
+    }
+
+    /// <summary>
+    /// Unsubscribes from events
+    /// </summary>
+    public void Dispose()
+    {
+        if (EventAggregator is null)
+            return;
+
+        EventAggregator.GetService(Event.ColorsPerLine).Unsubscribe(HandleColorsPerLineChangeAsync);
+    }
+}

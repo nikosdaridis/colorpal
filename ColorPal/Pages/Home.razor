@@ -3,9 +3,14 @@
 @page "/"
 
 <SelectedColor NavigationManager=NavigationManager />
-<div class="p-3">
+<div class="px-3 py-2">
     <ColorCodeTabs LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
     <ColorCodePanel LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
+</div>
+
+<div class="grid px-3 py-1 gap-3 bg-[var(--secondary-color)]">
+    <ColorsToolBar JSRuntime=JSRuntime LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
+    <ColorsGrid JSRuntime=JSRuntime LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
 </div>
 
 @code {
@@ -16,6 +21,6 @@
         if (StateService is null || LocalStorageService is null)
             return;
 
-        await StateService.SetThemeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKeys.Theme) ?? Themes.Light.GetValue());
+        await StateService.SetThemeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKey.Theme) ?? Theme.Light.GetValue());
     }
 }

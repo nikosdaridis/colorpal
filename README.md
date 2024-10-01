@@ -3,7 +3,7 @@
 </div>
 <h1 align="center">ColorPal - Advanced color tools</h1>
 <p align="center">Browser extension to pick colors from the screen, make tints and shades and download your palette!</p>
-<p align="center">v2.0.0 work in progress - Redesign UI and rewrite the extension with Blazor WASM and Tailwind CSS</p>
+<p align="center">v2.0.0 work in progress - Rewrite extension with Blazor WASM and Tailwind CSS</p>
 <p align="center"><a href="https://github.com/nikosdaridis/colorpal/tree/1.3.7" target="_blank">v1.3.7</a> Built with <a href="https://www.typescriptlang.org" target="_blank">TypeScript</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank">HTML</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank">CSS</a></p>
 <div align="center">
    <a href="https://chromewebstore.google.com/detail/colorpal-color-picker-eye/mbnpegpimodgjmlbfhkkdgbcfjmgpoad">

@@ -18,29 +18,23 @@
     --secondary-color: #f4f4f5;
     --text-color: #787881;
     --theme-invert-color: #fafafa;
-    --highlight-color: #1587ff;
-    --highlight-hover-color: #4f9ff5;
-    --selected-color: #000000;
-    --move-tool-color: #0795ed;
-    --tints-shades-tool-color: #ec6f09;
-    --delete-tool-color: #e70b0b;
-    --delete-all-color: #b50707;
     --theme-filter: invert(94%) sepia(99%) saturate(28%) hue-rotate(252deg) brightness(106%) contrast(96%);
     --light-theme-filter: invert(94%) sepia(99%) saturate(28%) hue-rotate(252deg) brightness(106%) contrast(96%);
     --dark-theme-filter: invert(0%) sepia(42%) saturate(16%) hue-rotate(37deg) brightness(101%) contrast(92%);
-    --highlight-filter: invert(47%) sepia(30%) saturate(5460%) hue-rotate(178deg) brightness(97%) contrast(96%);
-    --highlight-hover-filter: invert(53%) sepia(93%) saturate(1514%) hue-rotate(188deg) brightness(101%) contrast(92%);
-    --tool-icon-filter: invert(44%) sepia(28%) saturate(4405%) hue-rotate(178deg) brightness(98%) contrast(95%);
-    --move-tool-filter: invert(44%) sepia(28%) saturate(4405%) hue-rotate(178deg) brightness(98%) contrast(95%);
-    --tintsShades-tool-filter: invert(43%) sepia(97%) saturate(2220%) hue-rotate(5deg) brightness(101%) contrast(93%);
-    --delete-tool-filter: invert(11%) sepia(83%) saturate(5622%) hue-rotate(356deg) brightness(105%) contrast(100%);
-    --delete-all-tool-filter: invert(11%) sepia(53%) saturate(6817%) hue-rotate(358deg) brightness(104%) contrast(98%);
-    --color-rect-size: 47px;
-    --rect-margin: calc(var(--color-rect-size) * 0.1);
-    --rect-transition-time: 0.3s;
+    --text-filter: invert(52%) sepia(8%) saturate(328%) hue-rotate(202deg) brightness(90%) contrast(92%);
+    --light-text-filter: invert(52%) sepia(8%) saturate(328%) hue-rotate(202deg) brightness(90%) contrast(92%);
+    --dark-text-filter: invert(71%) sepia(6%) saturate(308%) hue-rotate(202deg) brightness(91%) contrast(83%);
 }
 
 .theme-filter {
+    filter: var(--theme-filter);
+}
+
+.text-filter {
+    filter: var(--text-filter);
+}
+
+#colorTool:hover img {
     filter: var(--theme-filter);
 }
 

@@ -15,13 +15,13 @@
     [Parameter]
     public EventAggregator<string>? EventAggregator { get; set; }
 
-    private List<string> _colorFormats = new() { "HEX", "RGB", "HSL", "HSV", "Filter" };
+    private string[] _colorFormats = new[] { "HEX", "RGB", "HSL", "HSV", "Filter" };
     private string _currentColorCodeFormat = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         if (LocalStorageService is not null)
-            _currentColorCodeFormat = await LocalStorageService.GetKeyAsync<string>(StorageKeys.ColorCodeFormat) ?? _colorFormats[0];
+            _currentColorCodeFormat = await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorCodeFormat) ?? _colorFormats[0];
     }
 
     /// <summary>
@@ -32,12 +32,12 @@
         if (LocalStorageService is null)
             return;
 
-        await LocalStorageService.SetKeyAsync<string>(StorageKeys.ColorCodeFormat, colorCodeFormat);
+        await LocalStorageService.SetKeyAsync<string>(StorageKey.ColorCodeFormat, colorCodeFormat);
         _currentColorCodeFormat = colorCodeFormat;
 
         if (EventAggregator is null)
             return;
 
-        await EventAggregator.GetService(Events.ColorCodeActiveTab).PublishAsync(_currentColorCodeFormat);
+        await EventAggregator.GetService(Event.ColorCodeActiveTab).PublishAsync(_currentColorCodeFormat);
     }
 }

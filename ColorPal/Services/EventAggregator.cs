@@ -9,7 +9,7 @@ namespace ColorPal.Services
         /// <summary>
         /// Gets event service for given event type
         /// </summary>
-        public EventService<T> GetService(Events eventType) =>
+        public EventService<T> GetService(Event eventType) =>
             _eventServices.TryGetValue(eventType.ToString(), out EventService<T>? service)
             ? service
             : _eventServices[eventType.ToString()] = new();

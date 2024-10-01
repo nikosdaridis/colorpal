@@ -1,0 +1,14 @@
+﻿@inherits ButtonBase
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Class = "inline-flex items-center justify-center h-8 w-8 rounded-md text-sm transition-colors duration-200 hover:bg-[var(--primary-color)]";
+    }
+}

@@ -28,7 +28,7 @@
     {
         base.OnInitialized();
 
-        EventAggregator?.GetService(Events.ColorCodeActiveTab).Subscribe(HandleTabChange);
+        EventAggregator?.GetService(Event.ColorCodeActiveTab).Subscribe(HandleTabChange);
     }
 
     /// <summary>
@@ -61,6 +61,6 @@
     /// </summary>
     public void Dispose()
     {
-        EventAggregator?.GetService(Events.ColorCodeActiveTab).Unsubscribe(HandleTabChange);
+        EventAggregator?.GetService(Event.ColorCodeActiveTab).Unsubscribe(HandleTabChange);
     }
 }
