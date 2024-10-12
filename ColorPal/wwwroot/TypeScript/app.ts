@@ -29,3 +29,23 @@ function setGridColumns(elementId: string, columns: string): void {
 
     gridElement.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
 }
+
+// Activates eye dropper and returns hex color
+function activateEyeDropper(): Promise<string | null> {
+    document.body.style.display = "none";
+
+    return new Promise((resolve) => {
+        setTimeout(async function () {
+            try {
+                const eyeDropper = new (window as any).EyeDropper();
+                const { sRGBHex } = await eyeDropper.open();
+
+                resolve(sRGBHex);
+            } catch {
+                resolve(null);
+            } finally {
+                document.body.style.display = "block";
+            }
+        }, 100);
+    });
+}

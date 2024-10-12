@@ -2,6 +2,8 @@ namespace ColorPal.Common
 {
     public enum Event
     {
+        EyedropperPick,
+        SaveColor,
         ColorCodeActiveTab,
         ColorsPerLine,
     }

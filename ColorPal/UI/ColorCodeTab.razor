@@ -28,13 +28,13 @@
     {
         base.OnInitialized();
 
-        EventAggregator?.GetService(Event.ColorCodeActiveTab).Subscribe(HandleTabChange);
+        EventAggregator?.GetService(Event.ColorCodeActiveTab).Subscribe(HandleTabChangeAsync);
     }
 
     /// <summary>
     /// Handles tab change event
     /// </summary>
-    private async Task HandleTabChange(string activeTabName)
+    private async Task HandleTabChangeAsync(string activeTabName)
     {
         IsActive = Name == activeTabName;
 
@@ -61,6 +61,6 @@
     /// </summary>
     public void Dispose()
     {
-        EventAggregator?.GetService(Event.ColorCodeActiveTab).Unsubscribe(HandleTabChange);
+        EventAggregator?.GetService(Event.ColorCodeActiveTab).Unsubscribe(HandleTabChangeAsync);
     }
 }

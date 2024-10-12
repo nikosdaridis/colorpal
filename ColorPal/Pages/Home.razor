@@ -2,13 +2,13 @@
 
 @page "/"
 
-<SelectedColor NavigationManager=NavigationManager />
+<SelectedColor NavigationManager=NavigationManager JSRuntime=JSRuntime LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
 <div class="px-3 py-2">
     <ColorCodeTabs LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
     <ColorCodePanel LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
 </div>
 
-<div class="grid px-3 py-1 gap-3 bg-[var(--secondary-color)]">
+<div class="grid gap-3 bg-[var(--secondary-color)] px-3 py-1">
     <ColorsToolBar JSRuntime=JSRuntime LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
     <ColorsGrid JSRuntime=JSRuntime LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
 </div>

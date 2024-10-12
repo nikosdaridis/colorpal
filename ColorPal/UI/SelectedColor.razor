@@ -1,23 +1,120 @@
-﻿<div class="w-full h-[125px] flex flex-col items-center text-black justify-center relative bg-green-800 cursor-pointer">
-    <div class="absolute top-2 left-4 right-4 flex justify-between items-center">
-        <RoundButton IconPath="Icons\eyedropper.svg"
-                     IconThemeFilter=false />
+﻿@implements IDisposable
 
-        <p class="text-center cursor-pointer text-sm font-semibold px-2 py-1 rounded-lg bg-white bg-opacity-50 backdrop-blur-xl shadow-xl transition-all duration-200 hover:scale-105 hover:bg-opacity-75">
-            Color Name
-        </p>
+<div class="relative flex h-[125px] w-full cursor-pointer flex-col items-center justify-center text-black"
+     style="background-color: @(_selectedColor)">
+    <div class="absolute left-4 right-4 top-2 flex items-center justify-between">
+        <RoundButton IconPath="Icons\eyedropper.svg"
+                     IconThemeFilter=false
+                     HandleClick=HandleEyeDropperClick />
+        @if (_showColorName)
+        {
+            <p class="cursor-pointer rounded-lg bg-white bg-opacity-50 px-2 py-1 text-center text-xs font-semibold shadow-xl backdrop-blur-xl transition-all duration-200 hover:scale-105 hover:bg-opacity-75">
+                Color Name
+            </p>
+        }
 
         <RoundButton IconPath="Icons\settings.svg"
                      IconThemeFilter=false
                      HandleClick=@(() => NavigationManager?.NavigateTo("/settings")) />
     </div>
-    <div class="absolute bottom-2">
-        <RoundButton IconPath="Icons\plus.svg"
-                     IconThemeFilter=false />
-    </div>
+    @if (!_isSelectedColorSaved)
+    {
+        <div class="absolute bottom-2">
+            <RoundButton IconPath="Icons\plus.svg"
+                         IconThemeFilter=false
+                         HandleClick=@(async () => await SaveColorAsync(_selectedColor, checkSettings: false)) />
+
+        </div>
+    }
 </div>
 
 @code {
     [Parameter]
     public NavigationManager? NavigationManager { get; set; }
+
+    [Parameter]
+    public IJSRuntime? JSRuntime { get; set; }
+
+    [Parameter]
+    public LocalStorageService? LocalStorageService { get; set; }
+
+    [Parameter]
+    public EventAggregator<string>? EventAggregator { get; set; }
+
+    private string _selectedColor = "#000000";
+    private bool _isSelectedColorSaved;
+    private bool _showColorName;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (EventAggregator is null || LocalStorageService is null)
+            return;
+
+        EventAggregator.GetService(Event.EyedropperPick).Subscribe(SetSelectedColorAsync);
+
+        _selectedColor = await LocalStorageService.GetKeyAsync<string>(StorageKey.SelectedColor) ?? "#000000";
+        _isSelectedColorSaved = (await IsColorSaved(_selectedColor)).IsSaved;
+        _showColorName = await LocalStorageService.GetKeyAsync<string>(StorageKey.ShowColorNames) == "true";
+    }
+
+    private async Task HandleEyeDropperClick()
+    {
+        if (JSRuntime is null)
+            return;
+
+        string eyeDropperColor = await JSRuntime.InvokeAsync<string?>("activateEyeDropper") ?? string.Empty;
+
+        EventAggregator?.GetService(Event.EyedropperPick).PublishAsync(eyeDropperColor);
+    }
+
+    private async Task SetSelectedColorAsync(string hexColor)
+    {
+        if (string.IsNullOrWhiteSpace(hexColor) || LocalStorageService is null)
+            return;
+
+        _selectedColor = hexColor;
+        await LocalStorageService.SetKeyAsync(StorageKey.SelectedColor, hexColor);
+
+        (bool isSaved, string[] savedColors) = await IsColorSaved(_selectedColor);
+        _isSelectedColorSaved = isSaved;
+
+        await SaveColorAsync(_selectedColor, savedColors);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task<(bool IsSaved, string[] SavedColors)> IsColorSaved(string color)
+    {
+        if (LocalStorageService is null)
+            return (false, new string[] { });
+
+        string[] savedColors = await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? Array.Empty<string>();
+        return (savedColors.Contains(color), savedColors);
+    }
+
+    private async Task SaveColorAsync(string color, string[]? savedColors = null, bool checkSettings = true)
+    {
+        if (LocalStorageService is null || EventAggregator is null)
+            return;
+
+        savedColors ??= await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? Array.Empty<string>();
+
+        if (savedColors.Contains(color))
+            return;
+
+        if (checkSettings && await LocalStorageService.GetKeyAsync<string>(StorageKey.AutoSaveEyedropper) != "true")
+            return;
+
+        Array.Resize(ref savedColors, savedColors.Length + 1);
+        savedColors[^1] = color;
+        _isSelectedColorSaved = true;
+        await LocalStorageService.SetKeyAsync(StorageKey.SavedColorsArray, savedColors);
+        await EventAggregator.GetService(Event.SaveColor).PublishAsync(color);
+    }
+
+    public void Dispose()
+    {
+        EventAggregator?.GetService(Event.EyedropperPick).Unsubscribe(SetSelectedColorAsync);
+    }
 }

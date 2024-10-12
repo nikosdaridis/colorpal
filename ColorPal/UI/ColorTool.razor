@@ -5,10 +5,13 @@
 }
 
 @code {
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
+    [Parameter]
+    public bool IsActive { get; set; }
 
-        Class = "inline-flex items-center justify-center h-8 w-8 rounded-md text-sm transition-colors duration-200 hover:bg-[var(--primary-color)]";
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        Class = $"inline-flex items-center justify-center h-8 w-8 rounded-md text-sm transition-colors duration-200 {(IsActive ? "bg-[var(--primary-color)] active" : string.Empty)}";
     }
 }
