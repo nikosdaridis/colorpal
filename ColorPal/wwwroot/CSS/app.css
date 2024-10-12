@@ -580,7 +580,7 @@
     cursor: pointer;
     user-select: none;
     background: var(--secondary-color);
-    border-radius: 20px;
+    border-radius: 70px;
     padding: 2px;
     transition: all 1s ease;
 }

@@ -20,7 +20,7 @@
     [Parameter]
     public EventAggregator<string>? EventAggregator { get; set; }
 
-    private string[] _colors = Array.Empty<string>();
+    private string[] _colors = [];
 
     /// <summary>
     /// Subscribes to events
@@ -55,7 +55,7 @@
         if (LocalStorageService is null)
             return;
 
-        _colors = await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? Array.Empty<string>();
+        _colors = await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? [];
         await InvokeAsync(StateHasChanged);
     }
 

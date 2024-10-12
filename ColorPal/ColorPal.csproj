@@ -53,7 +53,7 @@
 		<Exec Command="powershell -Command &quot;(gc '$(PublishDir)wwwroot\index.html') -replace '_framework', 'framework' | sc '$(PublishDir)wwwroot\index.html'&quot;" />
 	</Target>
 
-	<Target Name="CleanupPublish" AfterTargets="Publish">
+	<Target Name="CleanupPublish" BeforeTargets="ZipPublish">
 		<ItemGroup>
 			<FilesToRemove Include="$(PublishDir)wwwroot\ColorPal.styles.css" />
 			<FilesToRemove Include="$(PublishDir)wwwroot\CSS\tailwind.css" />
@@ -63,7 +63,7 @@
 		<RemoveDir Directories="$(PublishDir)wwwroot\TypeScript" Condition="Exists('$(PublishDir)wwwroot\TypeScript')" />
 	</Target>
 
-	<Target Name="ZipPublish" AfterTargets="Publish">
+	<Target Name="ZipPublish" BeforeTargets="UnzipPublish">
 		<PropertyGroup>
 			<ManifestJsonPath>$(PublishDir)wwwroot\manifest.json</ManifestJsonPath>
 			<VersionOutputFile>$(PublishDir)version.txt</VersionOutputFile>
@@ -78,6 +78,17 @@
 		<Exec Command="powershell Compress-Archive -Path '$(PublishDir)wwwroot\*' -DestinationPath '$(PublishDir)colorpal_$(Version).zip'" />
 
 		<Delete Files="$(VersionOutputFile)" />
+	</Target>
+
+	<Target Name="UnzipPublish" AfterTargets="Publish">
+		<PropertyGroup>
+			<ZipFilePath>$(PublishDir)colorpal_$(Version).zip</ZipFilePath>
+			<UnzipDestinationPath>$(PublishDir)colorpal_$(Version)\</UnzipDestinationPath>
+		</PropertyGroup>
+
+		<MakeDir Directories="$(UnzipDestinationPath)" />
+
+		<Exec Command="powershell -Command &quot;Expand-Archive -Path '$(ZipFilePath)' -DestinationPath '$(UnzipDestinationPath)' -Force&quot;" />
 	</Target>
 
 </Project>

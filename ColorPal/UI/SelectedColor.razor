@@ -5,7 +5,7 @@
     <div class="absolute left-4 right-4 top-2 flex items-center justify-between">
         <RoundButton IconPath="Icons\eyedropper.svg"
                      IconThemeFilter=false
-                     HandleClick=HandleEyeDropperClick />
+                     HandleClick=HandleEyeDropperClickAsync />
         @if (_showColorName)
         {
             <p class="cursor-pointer rounded-lg bg-white bg-opacity-50 px-2 py-1 text-center text-xs font-semibold shadow-xl backdrop-blur-xl transition-all duration-200 hover:scale-105 hover:bg-opacity-75">
@@ -55,11 +55,11 @@
         EventAggregator.GetService(Event.EyedropperPick).Subscribe(SetSelectedColorAsync);
 
         _selectedColor = await LocalStorageService.GetKeyAsync<string>(StorageKey.SelectedColor) ?? "#000000";
-        _isSelectedColorSaved = (await IsColorSaved(_selectedColor)).IsSaved;
+        _isSelectedColorSaved = (await IsColorSavedAsync(_selectedColor)).IsSaved;
         _showColorName = await LocalStorageService.GetKeyAsync<string>(StorageKey.ShowColorNames) == "true";
     }
 
-    private async Task HandleEyeDropperClick()
+    private async Task HandleEyeDropperClickAsync()
     {
         if (JSRuntime is null)
             return;
@@ -77,19 +77,19 @@
         _selectedColor = hexColor;
         await LocalStorageService.SetKeyAsync(StorageKey.SelectedColor, hexColor);
 
-        (bool isSaved, string[] savedColors) = await IsColorSaved(_selectedColor);
+        (bool isSaved, string[] savedColors) = await IsColorSavedAsync(_selectedColor);
         _isSelectedColorSaved = isSaved;
 
         await SaveColorAsync(_selectedColor, savedColors);
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task<(bool IsSaved, string[] SavedColors)> IsColorSaved(string color)
+    private async Task<(bool IsSaved, string[] SavedColors)> IsColorSavedAsync(string color)
     {
         if (LocalStorageService is null)
-            return (false, new string[] { });
+            return (false, []);
 
-        string[] savedColors = await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? Array.Empty<string>();
+        string[] savedColors = await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? [];
         return (savedColors.Contains(color), savedColors);
     }
 
@@ -98,7 +98,7 @@
         if (LocalStorageService is null || EventAggregator is null)
             return;
 
-        savedColors ??= await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? Array.Empty<string>();
+        savedColors ??= await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? [];
 
         if (savedColors.Contains(color))
             return;

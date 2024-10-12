@@ -4,7 +4,7 @@
         @ref=button
         @onclick=HandleOnClickAsync>
 
-    <img class="@GetIconSizeClass() @(IconThemeFilter ?"theme-filter" : string.Empty)"
+    <img class="@GetIconSizeClass() @(IconThemeFilter ? "theme-filter" : string.Empty)"
          src=@IconPath />
 
     <h3 class="font-semibold">@Label</h3>
