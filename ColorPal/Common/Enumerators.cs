@@ -3,6 +3,7 @@ namespace ColorPal.Common
     public enum Event
     {
         EyedropperPick,
+        SetSelectedColor,
         SaveColor,
         ColorCodeActiveTab,
         ColorsPerLine,
@@ -27,6 +28,24 @@ namespace ColorPal.Common
 
         [Value("downloadcsv")]
         DownloadCSV,
+    }
+
+    public enum ColorCodeFormat
+    {
+        [Value("HEX")]
+        HEX,
+
+        [Value("RGB")]
+        RGB,
+
+        [Value("HSL")]
+        HSL,
+
+        [Value("HSV")]
+        HSV,
+
+        [Value("Filter")]
+        Filter,
     }
 
     public enum StorageKey

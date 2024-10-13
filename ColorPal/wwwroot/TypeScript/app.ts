@@ -49,3 +49,9 @@ function activateEyeDropper(): Promise<string | null> {
         }, 100);
     });
 }
+
+// Opens color picker
+function openColorPicker(elementId: string): void {
+    const colorInput = document.getElementById(elementId);
+    colorInput?.click();
+}

@@ -9,20 +9,23 @@
 
         <input type="text"
                class="text-md flex h-8 w-full rounded-md border border-[var(--secondary-color)] bg-[var(--primary-color)] px-3 py-2 text-sm text-[var(--theme-invert-color)]"
-               value="@_inputValue"
+               value="@_colorCodeValue"
                readonly>
     </div>
 </div>
 
 @code {
     [Parameter]
+    public IJSRuntime? JSRuntime { get; set; }
+
+    [Parameter]
     public LocalStorageService? LocalStorageService { get; set; }
 
     [Parameter]
     public EventAggregator<string>? EventAggregator { get; set; }
 
-    private string _inputValue = string.Empty;
-
+    private ColorCodeFormat _activecolorCodeFormat = ColorCodeFormat.HEX;
+    private string _colorCodeValue = string.Empty;
 
     /// <summary>
     /// Subscribes to events
@@ -31,18 +34,40 @@
     {
         await base.OnInitializedAsync();
 
-        if (LocalStorageService is not null)
-            await HandleActiveTabChange(await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorCodeFormat));
+        if (LocalStorageService is null || EventAggregator is null)
+            return;
 
-        EventAggregator?.GetService(Event.ColorCodeActiveTab).Subscribe(HandleActiveTabChange);
+        EventAggregator.GetService(Event.ColorCodeActiveTab).Subscribe(UpdateActiveColorCodeAsync);
+        EventAggregator.GetService(Event.SetSelectedColor).Subscribe(UpdateColorCodeAsync);
+
+        _activecolorCodeFormat = Enum.Parse<ColorCodeFormat>(await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorCodeFormat) ?? ColorCodeFormat.HEX.GetValue());
+        await UpdateColorCodeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKey.SelectedColor) ?? string.Empty);
     }
 
-    /// <summary>
-    /// Handles active tab change event
-    /// </summary>
-    private async Task HandleActiveTabChange(string? activeTabName)
+    private async Task UpdateActiveColorCodeAsync(string? activeColorCodeFormat)
     {
-        _inputValue = $"Value for {activeTabName}";
+        _activecolorCodeFormat = Enum.Parse<ColorCodeFormat>(activeColorCodeFormat ?? ColorCodeFormat.HEX.ToString());
+
+        if (LocalStorageService is null)
+            return;
+
+        await UpdateColorCodeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKey.SelectedColor) ?? string.Empty);
+    }
+
+    private async Task UpdateColorCodeAsync(string hexColor)
+    {
+        if (JSRuntime is null || string.IsNullOrWhiteSpace(hexColor))
+            return;
+
+        _colorCodeValue = _activecolorCodeFormat switch
+        {
+            ColorCodeFormat.HEX => hexColor,
+            ColorCodeFormat.RGB => await JSRuntime.InvokeAsync<string>("hexToRgb", hexColor, "string"),
+            ColorCodeFormat.HSL => await JSRuntime.InvokeAsync<string>("hexToHsl", hexColor, "string"),
+            ColorCodeFormat.HSV => await JSRuntime.InvokeAsync<string>("hexToHsv", hexColor, "string"),
+            ColorCodeFormat.Filter => "TODO",
+            _ => hexColor
+        };
 
         await InvokeAsync(StateHasChanged);
     }
@@ -52,6 +77,7 @@
     /// </summary>
     public void Dispose()
     {
-        EventAggregator?.GetService(Event.ColorCodeActiveTab).Unsubscribe(HandleActiveTabChange);
+        EventAggregator?.GetService(Event.ColorCodeActiveTab).Unsubscribe(UpdateActiveColorCodeAsync);
+        EventAggregator?.GetService(Event.SetSelectedColor).Unsubscribe(UpdateColorCodeAsync);
     }
 }

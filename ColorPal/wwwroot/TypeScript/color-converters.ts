@@ -10,12 +10,15 @@ interface ColorHSL {
     l: number;
 }
 
+interface ColorHSV {
+    h: number;
+    s: number;
+    v: number;
+}
+
 function hexToRgb(hex: string): ColorRGB;
 function hexToRgb(hex: string, returnType: "string"): string;
-function hexToRgb(
-    hex: string,
-    returnType?: "string" | "ColorRGB"
-): string | ColorRGB {
+function hexToRgb(hex: string, returnType?: "string" | "ColorRGB"): string | ColorRGB {
     const [, r, g, b] = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i
         .exec(hex)
         ?.map((val) => parseInt(val, 16)) || [0, 0, 0];
@@ -23,8 +26,20 @@ function hexToRgb(
     return returnType === "string" ? `rgb(${r}, ${g}, ${b})` : { r, g, b };
 }
 
-function hexToHsl(hex: string): ColorHSL {
-    return rgbToHsl(hexToRgb(hex), "ColorHSL");
+function hexToHsl(hex: string): ColorHSL;
+function hexToHsl(hex: string, returnType: "string"): string;
+function hexToHsl(hex: string, returnType?: "string" | "ColorHSL"): string | ColorHSL {
+    const hsl = rgbToHsl(hexToRgb(hex));
+
+    return returnType === "string" ? `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)` : hsl;
+}
+
+function hexToHsv(hex: string): ColorHSV;
+function hexToHsv(hex: string, returnType: "string"): string;
+function hexToHsv(hex: string, returnType?: "string" | "ColorHSV"): string | ColorHSV {
+    const hsv = rgbToHsv(hexToRgb(hex));
+
+    return returnType === "string" ? `hsv(${hsv.h}, ${hsv.s}%, ${hsv.v}%)` : hsv;
 }
 
 function rgbToHex(rgb: ColorRGB): string {
@@ -32,12 +47,9 @@ function rgbToHex(rgb: ColorRGB): string {
     return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`.toLowerCase();
 }
 
-function rgbToHsl(rgb: ColorRGB): string;
-function rgbToHsl(rgb: ColorRGB, returnType: "ColorHSL"): ColorHSL;
-function rgbToHsl(
-    rgb: ColorRGB,
-    returnType?: "ColorHSL" | "string"
-): string | ColorHSL {
+function rgbToHsl(rgb: ColorRGB): ColorHSL;
+function rgbToHsl(rgb: ColorRGB, returnType: "string"): string;
+function rgbToHsl(rgb: ColorRGB, returnType?: "ColorHSL" | "string"): string | ColorHSL {
     const normalizedRgb = normalizeRgb(rgb);
     const max = Math.max(normalizedRgb.r, normalizedRgb.g, normalizedRgb.b);
     const min = Math.min(normalizedRgb.r, normalizedRgb.g, normalizedRgb.b);
@@ -53,9 +65,7 @@ function rgbToHsl(
 
         switch (max) {
             case normalizedRgb.r:
-                h =
-                    (normalizedRgb.g - normalizedRgb.b) / d +
-                    (normalizedRgb.g < normalizedRgb.b ? 6 : 0);
+                h = (normalizedRgb.g - normalizedRgb.b) / d + (normalizedRgb.g < normalizedRgb.b ? 6 : 0);
                 break;
             case normalizedRgb.g:
                 h = (normalizedRgb.b - normalizedRgb.r) / d + 2;
@@ -71,42 +81,41 @@ function rgbToHsl(
     s = Math.round(s * 100);
     l = Math.round(l * 100);
 
-    return returnType === "ColorHSL" ? { h, s, l } : `hsl(${h}, ${s}%, ${l}%)`;
+    return returnType === "string" ? `hsl(${h}, ${s}%, ${l}%)` : { h, s, l };
 }
 
-function rgbToHsv(rgb: ColorRGB): string {
+function rgbToHsv(rgb: ColorRGB): ColorHSV;
+function rgbToHsv(rgb: ColorRGB, returnType: "string"): string;
+function rgbToHsv(rgb: ColorRGB, returnType?: "ColorHSV" | "string"): string | ColorHSV {
     const normalizedRgb = normalizeRgb(rgb);
     let v = Math.max(normalizedRgb.r, normalizedRgb.g, normalizedRgb.b);
     const diff = v - Math.min(normalizedRgb.r, normalizedRgb.g, normalizedRgb.b);
-
-    const diffc = (c: number) => (v - c) / 6 / diff + 1 / 2;
-    const rr = diffc(normalizedRgb.r),
-        gg = diffc(normalizedRgb.g),
-        bb = diffc(normalizedRgb.b);
-
     let h = 0, s = 0;
 
     if (v === 0) {
         h = s = 0;
     } else {
-        if (diff === 0) {
-            h = 0;
-        } else {
-            if (normalizedRgb.r === v) h = bb - gg;
-            else if (normalizedRgb.g === v) h = 1 / 3 + rr - bb;
-            else if (normalizedRgb.b === v) h = 2 / 3 + gg - rr;
-
-            h = h < 0 ? h + 1 : h > 1 ? h - 1 : h;
+        s = diff / v;
+        if (diff !== 0) {
+            switch (v) {
+                case normalizedRgb.r:
+                    h = (normalizedRgb.g - normalizedRgb.b) / diff;
+                    break;
+                case normalizedRgb.g:
+                    h = 2 + (normalizedRgb.b - normalizedRgb.r) / diff;
+                    break;
+                case normalizedRgb.b:
+                    h = 4 + (normalizedRgb.r - normalizedRgb.g) / diff;
+                    break;
+            }
         }
-
-        s = diff === 0 ? 0 : Math.round((diff / v) * 100);
+        h = (h * 60 + 360) % 360;
     }
 
-    h = Math.round(h * 360);
-    s = Math.round(s);
     v = Math.round(v * 100);
+    s = Math.round(s * 100);
 
-    return `hsv(${h}, ${s}%, ${v}%)`;
+    return returnType === "string" ? `hsv(${Math.round(h)}, ${s}%, ${v}%)` : { h: Math.round(h), s, v };
 }
 
 function hslToHex(h: number, s: number, l: number): string {
