@@ -82,6 +82,9 @@ namespace ColorPal.Common
 
         [Value("colorpal-collapsed-color-tools")]
         CollapsedColorTools,
+
+        [Value("colorpal-prepend-black-filter")]
+        PrependBlackFilter,
     }
 
     public enum Theme

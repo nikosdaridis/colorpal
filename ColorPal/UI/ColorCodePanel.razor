@@ -2,13 +2,29 @@
 
 <div class="mt-2 space-y-2">
     <div class="flex items-center space-x-2">
-        <button class="inline-flex h-8 w-10 items-center justify-center rounded-md border border-[var(--secondary-color)] bg-[var(--primary-color)] font-medium hover:bg-[var(--secondary-color)]">
-            <img class="theme-filter h-[15px] w-[15px]"
-                 src="Icons/copyClipboard.svg" />
-        </button>
+
+        @if (JSRuntime is not null)
+        {
+            <button class="inline-flex h-8 w-10 items-center justify-center rounded-md border border-[var(--secondary-color)] bg-[var(--primary-color)] font-medium hover:bg-[var(--secondary-color)]"
+                    @onclick=@(() => JSRuntime.InvokeVoidAsync("copyToClipboard", _colorCodeValue))>
+
+                @if (_activeColorCodeFormat == ColorCodeFormat.Filter)
+                {
+                    <img class="h-[15px] w-[15px]"
+                         style=@_iconCSSFilter.Filter
+                         src="Icons/copyClipboard.svg" />
+                }
+                else
+                {
+                    <img class="theme-filter h-[15px] w-[15px]"
+                         src="Icons/copyClipboard.svg" />
+                }
+            </button>
+        }
 
         <input type="text"
-               class="text-md flex h-8 w-full rounded-md border border-[var(--secondary-color)] bg-[var(--primary-color)] px-3 py-2 text-sm text-[var(--theme-invert-color)]"
+               class="flex h-8 w-full rounded-md border border-[var(--secondary-color)] bg-[var(--primary-color)] px-3 py-2 text-sm text-[var(--theme-invert-color)]"
+               style="font-size: @((_activeColorCodeFormat == ColorCodeFormat.Filter) ? "10" : "14")px;"
                value="@_colorCodeValue"
                readonly>
     </div>
@@ -24,8 +40,10 @@
     [Parameter]
     public EventAggregator<string>? EventAggregator { get; set; }
 
-    private ColorCodeFormat _activecolorCodeFormat = ColorCodeFormat.HEX;
+    private ColorCodeFormat _activeColorCodeFormat = ColorCodeFormat.HEX;
+    private (bool AddHEXHashChar, bool PrependBlackFilter) _settings;
     private string _colorCodeValue = string.Empty;
+    private CssFilter _iconCSSFilter = new();
 
     /// <summary>
     /// Subscribes to events
@@ -40,13 +58,15 @@
         EventAggregator.GetService(Event.ColorCodeActiveTab).Subscribe(UpdateActiveColorCodeAsync);
         EventAggregator.GetService(Event.SetSelectedColor).Subscribe(UpdateColorCodeAsync);
 
-        _activecolorCodeFormat = Enum.Parse<ColorCodeFormat>(await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorCodeFormat) ?? ColorCodeFormat.HEX.GetValue());
+        _activeColorCodeFormat = Enum.Parse<ColorCodeFormat>(await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorCodeFormat) ?? ColorCodeFormat.HEX.GetValue());
+        _settings.AddHEXHashChar = await LocalStorageService.GetKeyAsync<string>(StorageKey.AddHexCharacter) == "true";
+        _settings.PrependBlackFilter = await LocalStorageService.GetKeyAsync<string>(StorageKey.PrependBlackFilter) == "true";
         await UpdateColorCodeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKey.SelectedColor) ?? string.Empty);
     }
 
     private async Task UpdateActiveColorCodeAsync(string? activeColorCodeFormat)
     {
-        _activecolorCodeFormat = Enum.Parse<ColorCodeFormat>(activeColorCodeFormat ?? ColorCodeFormat.HEX.ToString());
+        _activeColorCodeFormat = Enum.Parse<ColorCodeFormat>(activeColorCodeFormat ?? ColorCodeFormat.HEX.ToString());
 
         if (LocalStorageService is null)
             return;
@@ -56,16 +76,30 @@
 
     private async Task UpdateColorCodeAsync(string hexColor)
     {
-        if (JSRuntime is null || string.IsNullOrWhiteSpace(hexColor))
+        if (JSRuntime is null || LocalStorageService is null || string.IsNullOrWhiteSpace(hexColor))
             return;
 
-        _colorCodeValue = _activecolorCodeFormat switch
+        if (_activeColorCodeFormat == ColorCodeFormat.Filter)
         {
-            ColorCodeFormat.HEX => hexColor,
+            _iconCSSFilter = await JSRuntime.InvokeAsync<CssFilter>("hexToFilter", hexColor);
+
+            if (_settings.PrependBlackFilter)
+                _iconCSSFilter.Filter = _iconCSSFilter.Filter?.Replace("filter:", "filter: brightness(0) saturate(100%) ");
+
+            await JSRuntime.InvokeVoidAsync("setElementValue", "colorCodeTab-Filter", $"{_iconCSSFilter.Loss:0.#}% Loss");
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("setElementValue", "colorCodeTab-Filter", "Filter");
+        }
+
+        _colorCodeValue = _activeColorCodeFormat switch
+        {
+            ColorCodeFormat.HEX => _settings.AddHEXHashChar ? hexColor : hexColor[1..],
             ColorCodeFormat.RGB => await JSRuntime.InvokeAsync<string>("hexToRgb", hexColor, "string"),
             ColorCodeFormat.HSL => await JSRuntime.InvokeAsync<string>("hexToHsl", hexColor, "string"),
             ColorCodeFormat.HSV => await JSRuntime.InvokeAsync<string>("hexToHsv", hexColor, "string"),
-            ColorCodeFormat.Filter => "TODO",
+            ColorCodeFormat.Filter => _iconCSSFilter.Filter ?? string.Empty,
             _ => hexColor
         };
 
@@ -77,7 +111,10 @@
     /// </summary>
     public void Dispose()
     {
-        EventAggregator?.GetService(Event.ColorCodeActiveTab).Unsubscribe(UpdateActiveColorCodeAsync);
-        EventAggregator?.GetService(Event.SetSelectedColor).Unsubscribe(UpdateColorCodeAsync);
+        if (EventAggregator is null)
+            return;
+
+        EventAggregator.GetService(Event.ColorCodeActiveTab).Unsubscribe(UpdateActiveColorCodeAsync);
+        EventAggregator.GetService(Event.SetSelectedColor).Unsubscribe(UpdateColorCodeAsync);
     }
 }

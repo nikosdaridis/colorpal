@@ -148,7 +148,10 @@
 
     public void Dispose()
     {
-        EventAggregator?.GetService(Event.EyedropperPick).Unsubscribe(SetSelectedColorAsync);
-        EventAggregator?.GetService(Event.EyedropperPick).Unsubscribe(SaveEyedropperColorAsync);
+        if (EventAggregator is null)
+            return;
+
+        EventAggregator.GetService(Event.EyedropperPick).Unsubscribe(SetSelectedColorAsync);
+        EventAggregator.GetService(Event.EyedropperPick).Unsubscribe(SaveEyedropperColorAsync);
     }
 }

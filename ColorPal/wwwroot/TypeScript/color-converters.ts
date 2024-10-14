@@ -158,3 +158,244 @@ function hslToHex(h: number, s: number, l: number): string {
 function normalizeRgb(rgb: ColorRGB) {
     return { r: rgb.r / 255, g: rgb.g / 255, b: rgb.b / 255 };
 }
+
+function hexToFilter(hex: string): { filter: string, loss: number } {
+    const colorFilter = new ColorFilter(hexToRgb(hex));
+
+    return new FilterSolver(colorFilter).solve();
+}
+
+class ColorFilter {
+    colorRGB: ColorRGB;
+
+    constructor(rgb: ColorRGB) {
+        this.colorRGB = rgb;
+    }
+
+    set(rgb: ColorRGB) {
+        this.colorRGB = rgb;
+    }
+
+    hueRotate(angle: number = 0): void {
+        const radians = angle / 180 * Math.PI;
+        const sin = Math.sin(radians);
+        const cos = Math.cos(radians);
+
+        this.multiply([
+            0.213 + cos * 0.787 - sin * 0.213,
+            0.715 - cos * 0.715 - sin * 0.715,
+            0.072 - cos * 0.072 + sin * 0.928,
+            0.213 - cos * 0.213 + sin * 0.143,
+            0.715 + cos * 0.285 + sin * 0.140,
+            0.072 - cos * 0.072 - sin * 0.283,
+            0.213 - cos * 0.213 - sin * 0.787,
+            0.715 - cos * 0.715 + sin * 0.715,
+            0.072 + cos * 0.928 + sin * 0.072
+        ]);
+    }
+
+    sepia(value: number = 1): void {
+        this.multiply([
+            0.393 + 0.607 * (1 - value),
+            0.769 - 0.769 * (1 - value),
+            0.189 - 0.189 * (1 - value),
+            0.349 - 0.349 * (1 - value),
+            0.686 + 0.314 * (1 - value),
+            0.168 - 0.168 * (1 - value),
+            0.272 - 0.272 * (1 - value),
+            0.534 - 0.534 * (1 - value),
+            0.131 + 0.869 * (1 - value)
+        ]);
+    }
+
+    saturate(value: number = 1): void {
+        this.multiply([
+            0.213 + 0.787 * value,
+            0.715 - 0.715 * value,
+            0.072 - 0.072 * value,
+            0.213 - 0.213 * value,
+            0.715 + 0.285 * value,
+            0.072 - 0.072 * value,
+            0.213 - 0.213 * value,
+            0.715 - 0.715 * value,
+            0.072 + 0.928 * value
+        ]);
+    }
+
+    multiply(matrix: number[]): void {
+        const newR = this.clamp(this.colorRGB.r * matrix[0] + this.colorRGB.g * matrix[1] + this.colorRGB.b * matrix[2]);
+        const newG = this.clamp(this.colorRGB.r * matrix[3] + this.colorRGB.g * matrix[4] + this.colorRGB.b * matrix[5]);
+        const newB = this.clamp(this.colorRGB.r * matrix[6] + this.colorRGB.g * matrix[7] + this.colorRGB.b * matrix[8]);
+        this.colorRGB.r = newR;
+        this.colorRGB.g = newG;
+        this.colorRGB.b = newB;
+    }
+
+    brightness(value: number = 1): void {
+        this.linear(value);
+    }
+
+    contrast(value: number = 1): void {
+        this.linear(value, -(0.5 * value) + 0.5);
+    }
+
+    linear(slope: number = 1, intercept: number = 0): void {
+        this.colorRGB.r = this.clamp(this.colorRGB.r * slope + intercept * 255);
+        this.colorRGB.g = this.clamp(this.colorRGB.g * slope + intercept * 255);
+        this.colorRGB.b = this.clamp(this.colorRGB.b * slope + intercept * 255);
+    }
+
+    invert(value: number = 1): void {
+        this.colorRGB.r = this.clamp((value + this.colorRGB.r / 255 * (1 - 2 * value)) * 255);
+        this.colorRGB.g = this.clamp((value + this.colorRGB.g / 255 * (1 - 2 * value)) * 255);
+        this.colorRGB.b = this.clamp((value + this.colorRGB.b / 255 * (1 - 2 * value)) * 255);
+    }
+
+    clamp(value: number): number {
+        return Math.max(0, Math.min(255, value));
+    }
+}
+
+class FilterSolver {
+    colorFilter: ColorFilter;
+    colorHSL: ColorHSL;
+    reusedColorFilter: ColorFilter;
+
+    constructor(colorFilter: ColorFilter) {
+        this.colorFilter = colorFilter;
+        this.colorHSL = rgbToHsl(colorFilter.colorRGB);
+        this.reusedColorFilter = new ColorFilter({ r: 0, g: 0, b: 0 });
+    }
+
+    solve(): { filter: string, loss: number } {
+        const wideResult = this.solveWide();
+        const narrowResult = this.solveNarrow(wideResult);
+
+        console.log(`Wide: ${wideResult.loss.toFixed(2)} Narrow/Final: ${narrowResult.loss.toFixed(2)}`);
+        return { filter: this.filterCSS(narrowResult.values), loss: narrowResult.loss };
+    }
+
+    solveWide(): { values: number[]; loss: number } {
+        const A = 5;
+        const c = 15;
+        const a = [60, 180, 18000, 600, 1.2, 1.2];
+        let best: { values: number[]; loss: number } = { values: [], loss: Infinity };
+        let attempt = 0;
+
+        while (best.loss > 0.1 && attempt < 50) {
+            const initial = [50, 20, 3750, 50, 100, 100];
+            const result = this.spsa(A, a, c, initial, 1000);
+
+            if (result.loss < best.loss)
+                best = result;
+
+            attempt++;
+        }
+
+        return best;
+    }
+
+    solveNarrow(wide: { values: number[]; loss: number }): { values: number[]; loss: number } {
+        const A = wide.loss;
+        const c = 2;
+        const A1 = A + 1;
+        const a = [0.25 * A1, 0.25 * A1, A1, 0.25 * A1, 0.2 * A1, 0.2 * A1];
+        let best: { values: number[]; loss: number } = { values: wide.values, loss: wide.loss };
+        let attempt = 0;
+
+        while (best.loss > 0 && attempt < 50) {
+            const result = this.spsa(A, a, c, best.values, 500);
+
+            if (result.loss < best.loss)
+                best = result;
+
+            attempt++;
+        }
+
+        return best;
+    }
+
+    spsa(A: number, a: number[], c: number, values: number[], iters: number): { values: number[]; loss: number } {
+        const alpha = 1;
+        const gamma = 0.16666666666666666;
+
+        let best: number[] = [];
+        let bestLoss = Infinity;
+        const deltas = new Array(6).fill(0);
+        const highArgs = new Array(6).fill(0);
+        const lowArgs = new Array(6).fill(0);
+
+        for (let k = 0; k < iters; k++) {
+            const ck = c / Math.pow(k + 1, gamma);
+            for (let i = 0; i < 6; i++) {
+                deltas[i] = Math.random() > 0.5 ? 1 : -1;
+                highArgs[i] = values[i] + ck * deltas[i];
+                lowArgs[i] = values[i] - ck * deltas[i];
+            }
+
+            const lossDiff = this.loss(highArgs) - this.loss(lowArgs);
+            for (let i = 0; i < 6; i++) {
+                const g = lossDiff / (2 * ck) * deltas[i];
+                const ak = a[i] / Math.pow(A + k + 1, alpha);
+                values[i] = this.fix(values[i] - ak * g, i);
+            }
+
+            const loss = this.loss(values);
+            if (loss < bestLoss) {
+                best = values.slice();
+                bestLoss = loss;
+            }
+        }
+
+        return { values: best, loss: bestLoss };
+    }
+
+    fix(value: number, idx: number): number {
+        let max = 100;
+
+        if (idx === 2)
+            max = 7500;
+        else if (idx === 4 || idx === 5)
+            max = 200;
+
+
+        if (idx === 3) {
+            if (value > max)
+                value %= max;
+            else if (value < 0)
+                value = max + value % max;
+        } else {
+            value = Math.max(0, Math.min(max, value));
+        }
+
+        return value;
+    }
+
+    loss(filters: number[]): number {
+        const color = this.reusedColorFilter;
+        color.set({ r: 0, g: 0, b: 0 });
+
+        color.invert(filters[0] / 100);
+        color.sepia(filters[1] / 100);
+        color.saturate(filters[2] / 100);
+        color.hueRotate(filters[3] * 3.6);
+        color.brightness(filters[4] / 100);
+        color.contrast(filters[5] / 100);
+
+        const colorHSL = rgbToHsl(color.colorRGB);
+
+        return (
+            Math.abs(color.colorRGB.r - this.colorFilter.colorRGB.r) +
+            Math.abs(color.colorRGB.g - this.colorFilter.colorRGB.g) +
+            Math.abs(color.colorRGB.b - this.colorFilter.colorRGB.b) +
+            Math.abs(colorHSL.h - this.colorHSL.h) +
+            Math.abs(colorHSL.s - this.colorHSL.s) +
+            Math.abs(colorHSL.l - this.colorHSL.l)
+        );
+    }
+
+    filterCSS(filters: number[]): string {
+        const fmt = (idx: number, multiplier: number = 1): number => Math.round(filters[idx] * multiplier);
+        return `filter: invert(${fmt(0)}%) sepia(${fmt(1)}%) saturate(${fmt(2)}%) hue-rotate(${fmt(3, 3.6)}deg) brightness(${fmt(4)}%) contrast(${fmt(5)}%);`;
+    }
+}

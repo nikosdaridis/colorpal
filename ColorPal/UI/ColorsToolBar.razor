@@ -4,7 +4,7 @@
 
     @foreach (ColorToolType tool in Enum.GetValues(typeof(ColorToolType)))
     {
-        <ColorTool Id="colorTool"
+        <ColorTool Id=@($"colorTool-{tool.GetValue()}")
                    IconPath=@($"Icons/{tool.GetValue()}.svg")
                    IconSize=Size.Small
                    IconTextFilter=true

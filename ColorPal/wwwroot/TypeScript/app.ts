@@ -55,3 +55,17 @@ function openColorPicker(elementId: string): void {
     const colorInput = document.getElementById(elementId);
     colorInput?.click();
 }
+
+// Copies text to clipboard
+function copyToClipboard(text: string): void {
+    navigator.clipboard.writeText(text);
+}
+
+// Sets value of element
+function setElementValue(elementId: string, value: string): void {
+    const element = document.getElementById(elementId);
+    if (!element)
+        return;
+
+    element.textContent = value;
+}

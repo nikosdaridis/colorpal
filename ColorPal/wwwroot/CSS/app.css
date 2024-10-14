@@ -34,8 +34,8 @@
     filter: var(--text-filter);
 }
 
-#colorTool.active img,
-#colorTool:hover img {
+[id^="colorTool-"].active img,
+[id^="colorTool-"]:hover img {
     filter: var(--theme-filter);
 }
 
