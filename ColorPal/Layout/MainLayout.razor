@@ -1,15 +1,25 @@
 ﻿@inherits LayoutComponentBase
 
 @inject NavigationManager NavigationManager
+@inject StateService StateService
 
 <main class="min-w-[300px] max-w-[300px] bg-[var(--primary-color)] text-[var(--text-color)] transition-all duration-1000">
     @Body
 </main>
 
 @code {
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        await base.OnAfterRenderAsync(firstRender);
+
         if (firstRender)
+        {
             NavigationManager.NavigateTo("/");
+
+            if (StateService is null)
+                return;
+
+            _ = StateService.ParseAndStoreColorNameAsync();
+        }
     }
 }

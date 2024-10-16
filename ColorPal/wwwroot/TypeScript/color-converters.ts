@@ -271,7 +271,6 @@ class FilterSolver {
         const wideResult = this.solveWide();
         const narrowResult = this.solveNarrow(wideResult);
 
-        console.log(`Wide: ${wideResult.loss.toFixed(2)} Narrow/Final: ${narrowResult.loss.toFixed(2)}`);
         return { filter: this.filterCSS(narrowResult.values), loss: narrowResult.loss };
     }
 

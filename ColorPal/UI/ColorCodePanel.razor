@@ -41,7 +41,6 @@
     public EventAggregator<string>? EventAggregator { get; set; }
 
     private ColorCodeFormat _activeColorCodeFormat = ColorCodeFormat.HEX;
-    private (bool AddHEXHashChar, bool PrependBlackFilter) _settings;
     private string _colorCodeValue = string.Empty;
     private CssFilter _iconCSSFilter = new();
 
@@ -59,8 +58,6 @@
         EventAggregator.GetService(Event.SetSelectedColor).Subscribe(UpdateColorCodeAsync);
 
         _activeColorCodeFormat = Enum.Parse<ColorCodeFormat>(await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorCodeFormat) ?? ColorCodeFormat.HEX.GetValue());
-        _settings.AddHEXHashChar = await LocalStorageService.GetKeyAsync<string>(StorageKey.AddHexCharacter) == "true";
-        _settings.PrependBlackFilter = await LocalStorageService.GetKeyAsync<string>(StorageKey.PrependBlackFilter) == "true";
         await UpdateColorCodeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKey.SelectedColor) ?? string.Empty);
     }
 
@@ -83,7 +80,7 @@
         {
             _iconCSSFilter = await JSRuntime.InvokeAsync<CssFilter>("hexToFilter", hexColor);
 
-            if (_settings.PrependBlackFilter)
+            if (await LocalStorageService.GetKeyAsync<string>(StorageKey.PrependBlackFilter) == "true")
                 _iconCSSFilter.Filter = _iconCSSFilter.Filter?.Replace("filter:", "filter: brightness(0) saturate(100%) ");
 
             await JSRuntime.InvokeVoidAsync("setElementValue", "colorCodeTab-Filter", $"{_iconCSSFilter.Loss:0.#}% Loss");
@@ -95,7 +92,7 @@
 
         _colorCodeValue = _activeColorCodeFormat switch
         {
-            ColorCodeFormat.HEX => _settings.AddHEXHashChar ? hexColor : hexColor[1..],
+            ColorCodeFormat.HEX => await LocalStorageService.GetKeyAsync<string>(StorageKey.AddHexCharacter) == "true" ? hexColor : hexColor[1..],
             ColorCodeFormat.RGB => await JSRuntime.InvokeAsync<string>("hexToRgb", hexColor, "string"),
             ColorCodeFormat.HSL => await JSRuntime.InvokeAsync<string>("hexToHsl", hexColor, "string"),
             ColorCodeFormat.HSV => await JSRuntime.InvokeAsync<string>("hexToHsv", hexColor, "string"),

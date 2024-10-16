@@ -61,7 +61,7 @@
     /// Gets CSS classes for text size
     /// </summary>
     private string GetTextClass() =>
-        IsActive && Name == "Filter" ? "text-[10px]" : "text-sm";
+        IsActive && Name == ColorCodeFormat.Filter.GetValue() ? "text-[10px]" : "text-sm";
 
     /// <summary>
     /// Unsubscribes from events
