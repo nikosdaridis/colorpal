@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Concurrent;
+using System.Reflection;
 
 namespace ColorPal.Common
 {
@@ -8,12 +9,16 @@ namespace ColorPal.Common
         public string Value { get; } = value;
     }
 
+    /// <summary>
+    /// Gets the value of enum with ValueAttribute
+    /// </summary>
     public static class EnumExtensions
     {
-        /// <summary>
-        /// Gets value from ValueAttribute
-        /// </summary>
-        public static string GetValue(this Enum enumField) =>
-            enumField.GetType().GetField(enumField.ToString())?.GetCustomAttribute<ValueAttribute>()?.Value ?? string.Empty;
+        private static readonly ConcurrentDictionary<Enum, string> _enumValueCache = new();
+
+        public static string Value(this Enum field) =>
+            _enumValueCache.GetOrAdd(field, key =>
+                key.GetType().GetField(key.ToString())?
+                .GetCustomAttribute<ValueAttribute>()?.Value ?? string.Empty);
     }
 }

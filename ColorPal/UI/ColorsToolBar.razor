@@ -1,21 +1,19 @@
 ﻿@implements IDisposable
 
 <div class="flex items-center justify-between">
-
     @foreach (ColorToolType tool in Enum.GetValues(typeof(ColorToolType)))
     {
-        <ColorTool Id=@($"colorTool-{tool.GetValue()}")
-                   IconPath=@($"Icons/{tool.GetValue()}.svg")
+        <ColorTool Id=@($"colorTool-{tool.Value()}")
+                   IconPath=@($"Icons/{tool.Value()}.svg")
                    IconSize=Size.Small
                    IconTextFilter=true
-                   HandleClick=@(e => HandleColorToolClick(tool))
-                   IsActive=@(_activeColorTool == tool.GetValue()) />
+                   HandleClick=@(async e => await HandleColorToolClickAsync(tool))
+                   IsActive=@(_activeColorTool == tool.Value()) />
     }
 
     <select class="w-13 h-8 items-center justify-center rounded-md bg-[var(--secondary-color)] p-2 text-sm text-[var(--text-color)] focus:outline-none focus:ring-0"
             id="colorsPerLine"
             @onchange=HandleColorsPerLineChangeAsync>
-
         <option value="5">5</option>
         <option value="6">6</option>
         <option value="7">7</option>
@@ -35,15 +33,15 @@
     [Parameter]
     public EventAggregator<string>? EventAggregator { get; set; }
 
-    private string? _activeColorTool { get; set; }
+    [Parameter]
+    public StateService? StateService { get; set; }
 
+    private string? _activeColorTool { get; set; }
     private string _colorsPerLine { get; set; } = "5";
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-
-        Console.WriteLine(typeof(ColorTool).IsEnum);
 
         if (JSRuntime is null || LocalStorageService is null || EventAggregator is null)
             return;
@@ -51,32 +49,103 @@
         EventAggregator.GetService(Event.EyedropperPick).Subscribe(HandleEyedropperPickAsync);
 
         _colorsPerLine = await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorsPerLine) ?? "5";
-
-        await JSRuntime.InvokeVoidAsync("setSelectValue", "colorsPerLine", _colorsPerLine);
+        await JSRuntime.InvokeVoidAsync(JsFuncs.SetSelectValue.Value(), "colorsPerLine", _colorsPerLine);
     }
 
-    private void HandleColorToolClick(ColorToolType tool)
+    private async Task HandleColorToolClickAsync(ColorToolType tool)
     {
-        if (tool == ColorToolType.Move || tool == ColorToolType.TintsShades || tool == ColorToolType.Delete)
+        if (JSRuntime is null || LocalStorageService is null || EventAggregator is null || StateService is null)
+            return;
+
+        Task task = tool switch
         {
-            if (_activeColorTool == tool.GetValue())
-                _activeColorTool = null;
-            else
-                _activeColorTool = tool.GetValue();
+            ColorToolType.Move => HandleMoveAsync(),
+            ColorToolType.TintsShades => HandleTintsShadesAsync(),
+            ColorToolType.Delete => HandleDeleteAsync(),
+            ColorToolType.DeleteAll => HandleDeleteAllAsync(),
+            ColorToolType.DownloadPNG => HandleDownloadPNGAsync(),
+            ColorToolType.DownloadCSV => HandleDownloadCSVAsync(),
+            _ => Task.CompletedTask
+        };
+
+        await task;
+
+        async Task HandleMoveAsync()
+        {
+            SetColorToolState();
         }
-        else
+
+        async Task HandleTintsShadesAsync()
+        {
+            SetColorToolState();
+        }
+
+        async Task HandleDeleteAsync()
+        {
+            SetColorToolState();
+        }
+
+        async Task HandleDeleteAllAsync()
+        {
             _activeColorTool = null;
+
+            if (await JSRuntime.InvokeAsync<bool>("confirm", "Delete all saved colors?"))
+            {
+                await LocalStorageService.SetKeyAsync<string[]>(StorageKey.SavedColorsArray, Array.Empty<string>());
+                await EventAggregator.GetService(Event.DeleteAllSavedColors).PublishAsync(string.Empty);
+            }
+        }
+
+        async Task HandleDownloadPNGAsync()
+        {
+            _activeColorTool = null;
+        }
+
+        async Task HandleDownloadCSVAsync()
+        {
+            _activeColorTool = null;
+
+            string[] savedColors = await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? [];
+
+            if (!savedColors.Any())
+                return;
+
+            StringBuilder csvBuilder = new();
+            csvBuilder.AppendLine("Name,#HEX,HEX,RGB,HSL,HSV,Filter,Prepend Black Filter,Filter Loss");
+
+            foreach (string hexColor in savedColors)
+            {
+                ColorRGB rgbColor = await JSRuntime.InvokeAsync<ColorRGB>(JsFuncs.HexToRgb.Value(), hexColor);
+                ColorName? closestColor = StateService.FindClosestNamedColor(rgbColor);
+                CssFilter cssFilter = await JSRuntime.InvokeAsync<CssFilter>(JsFuncs.HexToFilter.Value(), hexColor);
+
+                csvBuilder.AppendLine(string.Format("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\"",
+                    closestColor?.Name ?? string.Empty,
+                    hexColor,
+                    hexColor[1..],
+                    await JSRuntime.InvokeAsync<string>(JsFuncs.HexToRgb.Value(), hexColor, "string") ?? string.Empty,
+                    await JSRuntime.InvokeAsync<string>(JsFuncs.RgbToHsl.Value(), rgbColor, "string") ?? string.Empty,
+                    await JSRuntime.InvokeAsync<string>(JsFuncs.RgbToHsv.Value(), rgbColor, "string") ?? string.Empty,
+                    cssFilter.Filter ?? string.Empty,
+                    cssFilter.Filter?.Replace("filter:", "filter: brightness(0) saturate(100%) ") ?? string.Empty,
+                    $"{cssFilter.Loss.ToString("0.##")}%" ?? string.Empty
+                ));
+            }
+
+            await JSRuntime.InvokeVoidAsync(JsFuncs.DownloadCsv.Value(), csvBuilder.ToString(), "ColorPalData");
+        }
+
+        void SetColorToolState() =>
+            _activeColorTool = _activeColorTool == tool.Value() ? null : tool.Value();
     }
 
     private async Task HandleEyedropperPickAsync(string eyedropperColor)
     {
         _activeColorTool = null;
-        await InvokeAsync(StateHasChanged);
+        StateHasChanged();
+        await Task.CompletedTask;
     }
 
-    /// <summary>
-    /// Sets colors per line to local storage and publishes the event
-    /// </summary>
     private async Task HandleColorsPerLineChangeAsync(ChangeEventArgs e)
     {
         _colorsPerLine = e.Value?.ToString() ?? "5";
@@ -94,9 +163,9 @@
 
     public void Dispose()
     {
-        if (EventAggregator is null)
-            return;
-
-        EventAggregator.GetService(Event.EyedropperPick).Unsubscribe(HandleEyedropperPickAsync);
+        if (EventAggregator != null)
+        {
+            EventAggregator.GetService(Event.EyedropperPick).Unsubscribe(HandleEyedropperPickAsync);
+        }
     }
 }

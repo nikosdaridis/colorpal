@@ -58,7 +58,13 @@ function openColorPicker(elementId: string): void {
 
 // Copies text to clipboard
 function copyToClipboard(text: string): void {
-    navigator.clipboard.writeText(text);
+    if (!document.hasFocus())
+        window.focus();
+
+    try {
+        navigator.clipboard.writeText(text);
+    }
+    catch { }
 }
 
 // Sets value of element
@@ -68,4 +74,14 @@ function setElementValue(elementId: string, value: string): void {
         return;
 
     element.textContent = value;
+}
+
+// Downloads CSV file
+function downloadCsv(dataString: string, fileName: string): void {
+    const link = document.createElement("a");
+    link.href = `data:text/csv;charset=utf-8,${encodeURIComponent(dataString)}`;
+    link.download = `${fileName}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }

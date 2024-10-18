@@ -7,6 +7,7 @@ namespace ColorPal.Common
         SaveColor,
         ColorCodeActiveTab,
         ColorsPerLine,
+        DeleteAllSavedColors
     }
 
     public enum ColorToolType
@@ -85,6 +86,61 @@ namespace ColorPal.Common
 
         [Value("colorpal-prepend-black-filter")]
         PrependBlackFilter,
+    }
+
+    public enum JsFuncs
+    {
+        [Value("getThemeFilter")]
+        GetThemeFilter,
+
+        [Value("getManifestVersionAsync")]
+        GetManifestVersionAsync,
+
+        [Value("setSelectValue")]
+        SetSelectValue,
+
+        [Value("setGridColumns")]
+        SetGridColumns,
+
+        [Value("activateEyeDropper")]
+        ActivateEyeDropper,
+
+        [Value("openColorPicker")]
+        OpenColorPicker,
+
+        [Value("copyToClipboard")]
+        CopyToClipboard,
+
+        [Value("setElementValue")]
+        SetElementValue,
+
+        [Value("downloadCsv")]
+        DownloadCsv,
+
+        //Color Converters
+        [Value("hexToRgb")]
+        HexToRgb,
+
+        [Value("hexToHsl")]
+        HexToHsl,
+
+        [Value("hexToHsv")]
+        HexToHsv,
+
+        [Value("rgbToHex")]
+        RgbToHex,
+
+        [Value("rgbToHsl")]
+        RgbToHsl,
+
+        [Value("rgbToHsv")]
+        RgbToHsv,
+
+        [Value("hslToHex")]
+        HslToHex,
+
+        [Value("hexToFilter")]
+        HexToFilter
     }
 
     public enum Theme

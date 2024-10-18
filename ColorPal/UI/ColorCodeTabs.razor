@@ -1,9 +1,9 @@
 ﻿<div class="grid h-9 grid-cols-5 items-center justify-center rounded-lg bg-[var(--secondary-color)] p-1">
     @foreach (ColorCodeFormat colorFormat in Enum.GetValues(typeof(ColorCodeFormat)))
     {
-        <ColorCodeTab Name=@colorFormat.GetValue()
-                      IsActive=@(_currentColorCodeFormat == colorFormat.GetValue())
-                      HandleClick=@(() => HandleOnClickAsync(colorFormat.GetValue()))
+        <ColorCodeTab Name=@colorFormat.Value()
+                      IsActive=@(_currentColorCodeFormat == colorFormat.Value())
+                      HandleClick=@(() => HandleOnClickAsync(colorFormat.Value()))
                       EventAggregator=EventAggregator />
     }
 </div>
@@ -20,7 +20,7 @@
     protected override async Task OnInitializedAsync()
     {
         if (LocalStorageService is not null)
-            _currentColorCodeFormat = await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorCodeFormat) ?? ColorCodeFormat.HEX.GetValue();
+            _currentColorCodeFormat = await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorCodeFormat) ?? ColorCodeFormat.HEX.Value();
     }
 
     /// <summary>

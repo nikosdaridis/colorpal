@@ -6,7 +6,7 @@
         @if (JSRuntime is not null)
         {
             <button class="inline-flex h-8 w-10 items-center justify-center rounded-md border border-[var(--secondary-color)] bg-[var(--primary-color)] font-medium hover:bg-[var(--secondary-color)]"
-                    @onclick=@(() => JSRuntime.InvokeVoidAsync("copyToClipboard", _colorCodeValue))>
+                    @onclick=@(() => JSRuntime.InvokeVoidAsync(JsFuncs.CopyToClipboard.Value(), _colorCodeValue))>
 
                 @if (_activeColorCodeFormat == ColorCodeFormat.Filter)
                 {
@@ -57,7 +57,7 @@
         EventAggregator.GetService(Event.ColorCodeActiveTab).Subscribe(UpdateActiveColorCodeAsync);
         EventAggregator.GetService(Event.SetSelectedColor).Subscribe(UpdateColorCodeAsync);
 
-        _activeColorCodeFormat = Enum.Parse<ColorCodeFormat>(await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorCodeFormat) ?? ColorCodeFormat.HEX.GetValue());
+        _activeColorCodeFormat = Enum.Parse<ColorCodeFormat>(await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorCodeFormat) ?? ColorCodeFormat.HEX.Value());
         await UpdateColorCodeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKey.SelectedColor) ?? string.Empty);
     }
 
@@ -78,29 +78,29 @@
 
         if (_activeColorCodeFormat == ColorCodeFormat.Filter)
         {
-            _iconCSSFilter = await JSRuntime.InvokeAsync<CssFilter>("hexToFilter", hexColor);
+            _iconCSSFilter = await JSRuntime.InvokeAsync<CssFilter>(JsFuncs.HexToFilter.Value(), hexColor);
 
             if (await LocalStorageService.GetKeyAsync<string>(StorageKey.PrependBlackFilter) == "true")
                 _iconCSSFilter.Filter = _iconCSSFilter.Filter?.Replace("filter:", "filter: brightness(0) saturate(100%) ");
 
-            await JSRuntime.InvokeVoidAsync("setElementValue", "colorCodeTab-Filter", $"{_iconCSSFilter.Loss:0.#}% Loss");
+            await JSRuntime.InvokeVoidAsync(JsFuncs.SetElementValue.Value(), "colorCodeTab-Filter", $"{_iconCSSFilter.Loss:0.#}% Loss");
         }
         else
         {
-            await JSRuntime.InvokeVoidAsync("setElementValue", "colorCodeTab-Filter", "Filter");
+            await JSRuntime.InvokeVoidAsync(JsFuncs.SetElementValue.Value(), "colorCodeTab-Filter", "Filter");
         }
 
         _colorCodeValue = _activeColorCodeFormat switch
         {
             ColorCodeFormat.HEX => await LocalStorageService.GetKeyAsync<string>(StorageKey.AddHexCharacter) == "true" ? hexColor : hexColor[1..],
-            ColorCodeFormat.RGB => await JSRuntime.InvokeAsync<string>("hexToRgb", hexColor, "string"),
-            ColorCodeFormat.HSL => await JSRuntime.InvokeAsync<string>("hexToHsl", hexColor, "string"),
-            ColorCodeFormat.HSV => await JSRuntime.InvokeAsync<string>("hexToHsv", hexColor, "string"),
+            ColorCodeFormat.RGB => await JSRuntime.InvokeAsync<string>(JsFuncs.HexToRgb.Value(), hexColor, "string"),
+            ColorCodeFormat.HSL => await JSRuntime.InvokeAsync<string>(JsFuncs.HexToHsl.Value(), hexColor, "string"),
+            ColorCodeFormat.HSV => await JSRuntime.InvokeAsync<string>(JsFuncs.HexToHsl.Value(), hexColor, "string"),
             ColorCodeFormat.Filter => _iconCSSFilter.Filter ?? string.Empty,
             _ => hexColor
         };
 
-        await InvokeAsync(StateHasChanged);
+        StateHasChanged();
     }
 
     /// <summary>

@@ -39,7 +39,9 @@
     {
         IsActive = Name == activeTabName;
 
-        await InvokeAsync(StateHasChanged);
+        StateHasChanged();
+
+        await Task.CompletedTask;
     }
 
     /// <summary>
@@ -61,7 +63,7 @@
     /// Gets CSS classes for text size
     /// </summary>
     private string GetTextClass() =>
-        IsActive && Name == ColorCodeFormat.Filter.GetValue() ? "text-[10px]" : "text-sm";
+        IsActive && Name == ColorCodeFormat.Filter.Value() ? "text-[10px]" : "text-sm";
 
     /// <summary>
     /// Unsubscribes from events

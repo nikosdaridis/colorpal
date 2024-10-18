@@ -14,7 +14,7 @@ namespace ColorPal.Services
         /// </summary>
         public async Task SetThemeAsync(Theme theme)
         {
-            await LocalStorageService.SetKeyAsync(StorageKey.Theme, theme.GetValue());
+            await LocalStorageService.SetKeyAsync(StorageKey.Theme, theme.Value());
 
             await SetCssVariableAsync(CSSVariable.Primary, Color.LightPrimary, Color.DarkPrimary);
             await SetCssVariableAsync(CSSVariable.Secondary, Color.LightSecondary, Color.DarkSecondary);
@@ -22,11 +22,12 @@ namespace ColorPal.Services
             await SetCssVariableAsync(CSSVariable.ThemeInvert, Color.LightThemeInvert, Color.DarkThemeInvert);
 
             // Sets theme filter based on the current theme
-            await JSRuntime.InvokeVoidAsync("document.documentElement.style.setProperty", CSSVariable.ThemeFilter.GetValue(), await JSRuntime.InvokeAsync<string>("getThemeFilter", theme.GetValue()));
+            await JSRuntime.InvokeVoidAsync("document.documentElement.style.setProperty", CSSVariable.ThemeFilter.Value(),
+                await JSRuntime.InvokeAsync<string>(JsFuncs.GetThemeFilter.Value(), theme.Value()));
 
             // Sets css variable for theme
             async Task SetCssVariableAsync(CSSVariable property, Color light, Color dark) =>
-                await JSRuntime.InvokeVoidAsync("document.documentElement.style.setProperty", property.GetValue(), theme == Theme.Light ? light.GetValue() : dark.GetValue());
+                await JSRuntime.InvokeVoidAsync("document.documentElement.style.setProperty", property.Value(), theme == Theme.Light ? light.Value() : dark.Value());
         }
 
         /// <summary>
@@ -38,9 +39,9 @@ namespace ColorPal.Services
         /// <summary>
         /// Parses color names json and stores in memory
         /// </summary>
-        public async Task ParseAndStoreColorNameAsync()
+        public async Task ParseAndStoreColorNamesAsync()
         {
-            string namedColorsString = await HttpClient.GetStringAsync("Data/named-colors.json");
+            string namedColorsString = await HttpClient.GetStringAsync("Data/colorNames.json");
 
             try
             {

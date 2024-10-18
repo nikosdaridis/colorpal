@@ -281,7 +281,7 @@ class FilterSolver {
         let best: { values: number[]; loss: number } = { values: [], loss: Infinity };
         let attempt = 0;
 
-        while (best.loss > 0.1 && attempt < 50) {
+        while (best.loss > 0.5 && attempt < 20) {
             const initial = [50, 20, 3750, 50, 100, 100];
             const result = this.spsa(A, a, c, initial, 1000);
 
@@ -302,7 +302,7 @@ class FilterSolver {
         let best: { values: number[]; loss: number } = { values: wide.values, loss: wide.loss };
         let attempt = 0;
 
-        while (best.loss > 0 && attempt < 50) {
+        while (best.loss > 0.05 && attempt < 50) {
             const result = this.spsa(A, a, c, best.values, 500);
 
             if (result.loss < best.loss)

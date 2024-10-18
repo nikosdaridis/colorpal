@@ -9,7 +9,7 @@
 </div>
 
 <div class="grid gap-3 bg-[var(--secondary-color)] px-3 py-1">
-    <ColorsToolBar JSRuntime=JSRuntime LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
+    <ColorsToolBar JSRuntime=JSRuntime LocalStorageService=LocalStorageService EventAggregator=EventAggregator StateService=StateService />
     <ColorsGrid JSRuntime=JSRuntime LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
 </div>
 
@@ -21,6 +21,6 @@
         if (StateService is null || LocalStorageService is null)
             return;
 
-        await StateService.SetThemeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKey.Theme) ?? Theme.Light.GetValue());
+        await StateService.SetThemeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKey.Theme) ?? Theme.Light.Value());
     }
 }

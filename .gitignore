@@ -402,6 +402,6 @@ node_modules
 
 #JavaScript and Tailwind production files
 app.js
-color-converters.js
-service-worker.js
-tailwind-app.css
+colorConverters.js
+serviceWorker.js
+appTailwind.css
