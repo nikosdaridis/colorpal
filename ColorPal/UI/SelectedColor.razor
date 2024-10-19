@@ -80,7 +80,7 @@
                 if (!_colorNames.All.Any())
                     continue;
 
-                _colorNames.Selected = StateService.FindClosestNamedColor(await JSRuntime.InvokeAsync<ColorRGB>(JsFuncs.HexToRgb.Value(), _selectedHEXColor)) ?? new();
+                _colorNames.Selected = StateService.FindClosestColorName(await JSRuntime.InvokeAsync<ColorRGB>(JsFuncs.HexToRgb.Value(), _selectedHEXColor)) ?? new();
                 StateHasChanged();
             }
         });
@@ -106,7 +106,7 @@
         _isSelectedColorSaved = isSaved;
 
         if (_colorNames.Show)
-            _colorNames.Selected = StateService.FindClosestNamedColor(await JSRuntime.InvokeAsync<ColorRGB>(JsFuncs.HexToRgb.Value(), _selectedHEXColor)) ?? new();
+            _colorNames.Selected = StateService.FindClosestColorName(await JSRuntime.InvokeAsync<ColorRGB>(JsFuncs.HexToRgb.Value(), _selectedHEXColor)) ?? new();
 
         await LocalStorageService.SetKeyAsync(StorageKey.SelectedColor, hexColor);
 

@@ -5,16 +5,29 @@ using System.Text.Json;
 
 namespace ColorPal.Services
 {
-    public sealed class StateService(HttpClient HttpClient, IJSRuntime JSRuntime, LocalStorageService LocalStorageService)
+    public sealed class StateService
     {
+        private readonly HttpClient _httpClient;
+        private readonly IJSRuntime _jsRuntime;
+        private readonly LocalStorageService _localStorageService;
+
         private List<ColorName> _colorNames = [];
+
+        public StateService(HttpClient httpClient, IJSRuntime jsRuntime, LocalStorageService localStorageService)
+        {
+            _httpClient = httpClient;
+            _jsRuntime = jsRuntime;
+            _localStorageService = localStorageService;
+
+            _jsRuntime.InvokeVoidAsync(JsFuncs.InitializeStateService.Value(), DotNetObjectReference.Create(this));
+        }
 
         /// <summary>
         /// Sets localstorage theme and updates css variables
         /// </summary>
         public async Task SetThemeAsync(Theme theme)
         {
-            await LocalStorageService.SetKeyAsync(StorageKey.Theme, theme.Value());
+            await _localStorageService.SetKeyAsync(StorageKey.Theme, theme.Value());
 
             await SetCssVariableAsync(CSSVariable.Primary, Color.LightPrimary, Color.DarkPrimary);
             await SetCssVariableAsync(CSSVariable.Secondary, Color.LightSecondary, Color.DarkSecondary);
@@ -22,12 +35,12 @@ namespace ColorPal.Services
             await SetCssVariableAsync(CSSVariable.ThemeInvert, Color.LightThemeInvert, Color.DarkThemeInvert);
 
             // Sets theme filter based on the current theme
-            await JSRuntime.InvokeVoidAsync("document.documentElement.style.setProperty", CSSVariable.ThemeFilter.Value(),
-                await JSRuntime.InvokeAsync<string>(JsFuncs.GetThemeFilter.Value(), theme.Value()));
+            await _jsRuntime.InvokeVoidAsync("document.documentElement.style.setProperty", CSSVariable.ThemeFilter.Value(),
+                await _jsRuntime.InvokeAsync<string>(JsFuncs.GetThemeFilter.Value(), theme.Value()));
 
             // Sets css variable for theme
             async Task SetCssVariableAsync(CSSVariable property, Color light, Color dark) =>
-                await JSRuntime.InvokeVoidAsync("document.documentElement.style.setProperty", property.Value(), theme == Theme.Light ? light.Value() : dark.Value());
+                await _jsRuntime.InvokeVoidAsync("document.documentElement.style.setProperty", property.Value(), theme == Theme.Light ? light.Value() : dark.Value());
         }
 
         /// <summary>
@@ -41,7 +54,7 @@ namespace ColorPal.Services
         /// </summary>
         public async Task ParseAndStoreColorNamesAsync()
         {
-            string namedColorsString = await HttpClient.GetStringAsync("Data/colorNames.json");
+            string namedColorsString = await _httpClient.GetStringAsync("Data/colorNames.json");
 
             try
             {
@@ -62,7 +75,8 @@ namespace ColorPal.Services
         /// <summary>
         /// Finds closest named color based on rgb sum distance
         /// </summary>
-        public ColorName? FindClosestNamedColor(ColorRGB? colorRGB)
+        [JSInvokable]
+        public ColorName? FindClosestColorName(ColorRGB? colorRGB)
         {
             if (colorRGB is null)
                 return null;

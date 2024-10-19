@@ -16,6 +16,11 @@ interface ColorHSV {
     v: number;
 }
 
+interface ColorName {
+    name: string;
+    rgb: ColorRGB;
+}
+
 function hexToRgb(hex: string): ColorRGB;
 function hexToRgb(hex: string, returnType: "string"): string;
 function hexToRgb(hex: string, returnType?: "string" | "ColorRGB"): string | ColorRGB {

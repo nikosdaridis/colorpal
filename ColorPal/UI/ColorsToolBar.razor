@@ -99,6 +99,14 @@
         async Task HandleDownloadPNGAsync()
         {
             _activeColorTool = null;
+
+            await JSRuntime.InvokeVoidAsync(
+                JsFuncs.DownloadImage.Value(),
+                await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? [],
+                Int32.Parse(await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorsPerLine) ?? "5"),
+                await LocalStorageService.GetKeyAsync<string>(StorageKey.ShowColorNames) == "true" ? true : false,
+                await LocalStorageService.GetKeyAsync<string>(StorageKey.AddHexCharacter) == "true" ? true : false
+            );
         }
 
         async Task HandleDownloadCSVAsync()
@@ -116,7 +124,7 @@
             foreach (string hexColor in savedColors)
             {
                 ColorRGB rgbColor = await JSRuntime.InvokeAsync<ColorRGB>(JsFuncs.HexToRgb.Value(), hexColor);
-                ColorName? closestColor = StateService.FindClosestNamedColor(rgbColor);
+                ColorName? closestColor = StateService.FindClosestColorName(rgbColor);
                 CssFilter cssFilter = await JSRuntime.InvokeAsync<CssFilter>(JsFuncs.HexToFilter.Value(), hexColor);
 
                 csvBuilder.AppendLine(string.Format("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\"",
@@ -132,14 +140,14 @@
                 ));
             }
 
-            await JSRuntime.InvokeVoidAsync(JsFuncs.DownloadCsv.Value(), csvBuilder.ToString(), "ColorPalData");
+            await JSRuntime.InvokeVoidAsync(JsFuncs.DownloadCsv.Value(), csvBuilder.ToString(), "ColorPal-Data");
         }
 
         void SetColorToolState() =>
             _activeColorTool = _activeColorTool == tool.Value() ? null : tool.Value();
     }
 
-    private async Task HandleEyedropperPickAsync(string eyedropperColor)
+    private async Task HandleEyedropperPickAsync(string hexColor)
     {
         _activeColorTool = null;
         StateHasChanged();

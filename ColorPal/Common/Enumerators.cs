@@ -90,6 +90,9 @@ namespace ColorPal.Common
 
     public enum JsFuncs
     {
+        [Value("initializeStateService")]
+        InitializeStateService,
+
         [Value("getThemeFilter")]
         GetThemeFilter,
 
@@ -113,6 +116,9 @@ namespace ColorPal.Common
 
         [Value("setElementValue")]
         SetElementValue,
+
+        [Value("downloadImage")]
+        DownloadImage,
 
         [Value("downloadCsv")]
         DownloadCsv,

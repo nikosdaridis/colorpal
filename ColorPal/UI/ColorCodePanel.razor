@@ -95,7 +95,7 @@
             ColorCodeFormat.HEX => await LocalStorageService.GetKeyAsync<string>(StorageKey.AddHexCharacter) == "true" ? hexColor : hexColor[1..],
             ColorCodeFormat.RGB => await JSRuntime.InvokeAsync<string>(JsFuncs.HexToRgb.Value(), hexColor, "string"),
             ColorCodeFormat.HSL => await JSRuntime.InvokeAsync<string>(JsFuncs.HexToHsl.Value(), hexColor, "string"),
-            ColorCodeFormat.HSV => await JSRuntime.InvokeAsync<string>(JsFuncs.HexToHsl.Value(), hexColor, "string"),
+            ColorCodeFormat.HSV => await JSRuntime.InvokeAsync<string>(JsFuncs.HexToHsv.Value(), hexColor, "string"),
             ColorCodeFormat.Filter => _iconCSSFilter.Filter ?? string.Empty,
             _ => hexColor
         };
