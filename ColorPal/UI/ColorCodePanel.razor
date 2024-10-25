@@ -58,7 +58,7 @@
         EventAggregator.GetService(Event.SetSelectedColor).Subscribe(UpdateColorCodeAsync);
 
         _activeColorCodeFormat = Enum.Parse<ColorCodeFormat>(await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorCodeFormat) ?? ColorCodeFormat.HEX.Value());
-        await UpdateColorCodeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKey.SelectedColor) ?? string.Empty);
+        await UpdateColorCodeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKey.SelectedHexColor) ?? string.Empty);
     }
 
     private async Task UpdateActiveColorCodeAsync(string? activeColorCodeFormat)
@@ -68,7 +68,7 @@
         if (LocalStorageService is null)
             return;
 
-        await UpdateColorCodeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKey.SelectedColor) ?? string.Empty);
+        await UpdateColorCodeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKey.SelectedHexColor) ?? string.Empty);
     }
 
     private async Task UpdateColorCodeAsync(string hexColor)
@@ -81,7 +81,7 @@
             _iconCSSFilter = await JSRuntime.InvokeAsync<CssFilter>(JsFuncs.HexToFilter.Value(), hexColor);
 
             if (await LocalStorageService.GetKeyAsync<string>(StorageKey.PrependBlackFilter) == "true")
-                _iconCSSFilter.Filter = _iconCSSFilter.Filter?.Replace("filter:", "filter: brightness(0) saturate(100%) ");
+                _iconCSSFilter.Filter = _iconCSSFilter.Filter?.Replace("filter:", "filter: brightness(0) saturate(100%)");
 
             await JSRuntime.InvokeVoidAsync(JsFuncs.SetElementValue.Value(), "colorCodeTab-Filter", $"{_iconCSSFilter.Loss:0.#}% Loss");
         }

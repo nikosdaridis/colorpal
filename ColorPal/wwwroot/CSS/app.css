@@ -24,6 +24,9 @@
     --text-filter: invert(52%) sepia(8%) saturate(328%) hue-rotate(202deg) brightness(90%) contrast(92%);
     --light-text-filter: invert(52%) sepia(8%) saturate(328%) hue-rotate(202deg) brightness(90%) contrast(92%);
     --dark-text-filter: invert(71%) sepia(6%) saturate(308%) hue-rotate(202deg) brightness(91%) contrast(83%);
+    --move-tool-filter: invert(29%) sepia(34%) saturate(7492%) hue-rotate(210deg) brightness(96%) contrast(114%);
+    --tintsShades-tool-filter: invert(71%) sepia(64%) saturate(3548%) hue-rotate(360deg) brightness(103%) contrast(105%);
+    --delete-tool-filter: invert(14%) sepia(99%) saturate(6375%) hue-rotate(356deg) brightness(104%) contrast(116%);
 }
 
 .theme-filter {
@@ -37,6 +40,40 @@
 [id^="colorTool-"].active img,
 [id^="colorTool-"]:hover img {
     filter: var(--theme-filter);
+}
+
+[id^="colorRectangle"] #colorRectangle-image-wrapper {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 25%;
+    padding: 3px;
+}
+
+    [id^="colorRectangle"] #colorRectangle-image-wrapper:has(img[src=""]) {
+        display: none;
+    }
+
+[id^="colorRectangle"]:hover #colorRectangle-image-wrapper {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+[id^="colorRectangle"] img[src*="move.svg"] {
+    filter: var(--move-tool-filter);
+}
+
+[id^="colorRectangle"] img[src*="tintsShades.svg"] {
+    filter: var(--tintsShades-tool-filter);
+}
+
+[id^="colorRectangle"] img[src*="delete.svg"] {
+    filter: var(--delete-tool-filter);
+}
+
+img[src=""] {
+    display: none;
 }
 
 #themeOption {

@@ -167,8 +167,8 @@ async function downloadImage(savedColors: string[], colorsPerLine: number, showC
 
             const colorsText = colorsTextTemplate.cloneNode(false) as HTMLElement;
 
-            colorsText.textContent += `${hexToRgb(color, "string")}\r\n`;
             colorsText.textContent += `${addHexCharacter ? color : color.slice(1)}\r\n`;
+            colorsText.textContent += `${hexToRgb(color, "string")}\r\n`;
             colorsText.textContent += `${rgbToHsl(rgbColor, "string")}\r\n`;
             colorsText.textContent += `${rgbToHsv(rgbColor, "string")}`;
 

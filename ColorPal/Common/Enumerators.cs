@@ -3,15 +3,20 @@ namespace ColorPal.Common
     public enum Event
     {
         EyedropperPick,
+        OpenColorPicker,
         SetSelectedColor,
         SaveColor,
         ColorCodeActiveTab,
         ColorsPerLine,
+        SetActiveColorTool,
         DeleteAllSavedColors
     }
 
     public enum ColorToolType
     {
+        [Value("")]
+        None,
+
         [Value("move")]
         Move,
 
@@ -58,7 +63,7 @@ namespace ColorPal.Common
         Theme,
 
         [Value("colorpal-selected-color")]
-        SelectedColor,
+        SelectedHexColor,
 
         [Value("colorpal-saved-colors-array")]
         SavedColorsArray,

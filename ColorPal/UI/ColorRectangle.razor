@@ -1,7 +1,65 @@
-﻿<span class="aspect-square cursor-pointer rounded-md ring-1 ring-[var(--theme-invert-color)] transition-all duration-200 hover:scale-110 hover:ring-green-500"
-      style="background-color: @HEXColor;" />
+﻿<span class=@GetClass()
+      style="background-color: @HEXColor;"
+      id=@($"colorRectangle{(IsSelected ? "-active" : string.Empty)}")
+      @onclick=HandleOnClickAsync>
+    <div class="w-1/2"
+         id="colorRectangle-image-wrapper">
+        <img src=@GetImgSrc()
+             draggable="false" />
+    </div>
+</span>
 
 @code {
     [Parameter]
-    public string? HEXColor { get; set; } = "ffffff";
+    public string HEXColor { get; set; } = "ffffff";
+
+    [Parameter]
+    public bool IsSelected { get; set; }
+
+    [Parameter]
+    public ColorToolType ActiveColorTool { get; set; }
+
+    [Parameter]
+    public EventAggregator<string>? EventAggregator { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    /// <summary>
+    /// Invokes callback
+    /// </summary>
+    public async Task HandleOnClickAsync(MouseEventArgs args)
+    {
+        if (EventAggregator is null)
+            return;
+
+        await EventAggregator.GetService(Event.SetSelectedColor).PublishAsync(HEXColor);
+    }
+
+    private string GetClass()
+    {
+        string baseClass = "aspect-square flex justify-center items-center cursor-pointer ring-1 ring-[var(--theme-invert-color)] transition-all duration-200 hover:scale-110 hover:ring-green-500";
+        string selectedClass = "rounded-2xl ring-green-500";
+        string notSelectedClass = "rounded-md";
+        string activeToolClass = ActiveColorTool switch
+        {
+            ColorToolType.Move => "ring-blue-500",
+            ColorToolType.TintsShades => "ring-orange-500",
+            ColorToolType.Delete => "ring-red-500",
+            _ => string.Empty
+        };
+
+        return $"{baseClass} {(IsSelected ? selectedClass : notSelectedClass)} {activeToolClass}";
+    }
+
+    private string GetImgSrc() =>
+        ActiveColorTool switch
+        {
+            ColorToolType.Move => "Icons/move.svg",
+            ColorToolType.TintsShades => "Icons/tintsShades.svg",
+            ColorToolType.Delete => "Icons/delete.svg",
+            _ => string.Empty
+        };
 }

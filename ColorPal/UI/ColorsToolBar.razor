@@ -1,7 +1,7 @@
 ﻿@implements IDisposable
 
 <div class="flex items-center justify-between">
-    @foreach (ColorToolType tool in Enum.GetValues(typeof(ColorToolType)))
+    @foreach (ColorToolType tool in Enum.GetValues(typeof(ColorToolType)).Cast<ColorToolType>().Skip(1))
     {
         <ColorTool Id=@($"colorTool-{tool.Value()}")
                    IconPath=@($"Icons/{tool.Value()}.svg")
@@ -46,7 +46,8 @@
         if (JSRuntime is null || LocalStorageService is null || EventAggregator is null)
             return;
 
-        EventAggregator.GetService(Event.EyedropperPick).Subscribe(HandleEyedropperPickAsync);
+        EventAggregator.GetService(Event.EyedropperPick).Subscribe(ResetActiveColorToolAsync);
+        EventAggregator.GetService(Event.OpenColorPicker).Subscribe(ResetActiveColorToolAsync);
 
         _colorsPerLine = await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorsPerLine) ?? "5";
         await JSRuntime.InvokeVoidAsync(JsFuncs.SetSelectValue.Value(), "colorsPerLine", _colorsPerLine);
@@ -68,38 +69,37 @@
             _ => Task.CompletedTask
         };
 
+        await SetActiveColorToolAsync();
         await task;
 
         async Task HandleMoveAsync()
         {
-            SetColorToolState();
+
         }
 
         async Task HandleTintsShadesAsync()
         {
-            SetColorToolState();
+
         }
 
         async Task HandleDeleteAsync()
         {
-            SetColorToolState();
+
         }
 
         async Task HandleDeleteAllAsync()
         {
-            _activeColorTool = null;
+            _activeColorTool = string.Empty;
 
             if (await JSRuntime.InvokeAsync<bool>("confirm", "Delete all saved colors?"))
             {
                 await LocalStorageService.SetKeyAsync<string[]>(StorageKey.SavedColorsArray, Array.Empty<string>());
-                await EventAggregator.GetService(Event.DeleteAllSavedColors).PublishAsync(string.Empty);
+                await EventAggregator.GetService(Event.DeleteAllSavedColors).PublishAsync(ColorToolType.DeleteAll.Value());
             }
         }
 
         async Task HandleDownloadPNGAsync()
         {
-            _activeColorTool = null;
-
             await JSRuntime.InvokeVoidAsync(
                 JsFuncs.DownloadImage.Value(),
                 await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? [],
@@ -111,8 +111,6 @@
 
         async Task HandleDownloadCSVAsync()
         {
-            _activeColorTool = null;
-
             string[] savedColors = await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? [];
 
             if (!savedColors.Any())
@@ -130,28 +128,41 @@
                 csvBuilder.AppendLine(string.Format("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\"",
                     closestColor?.Name ?? string.Empty,
                     hexColor,
-                    hexColor[1..],
+                    hexColor.Length > 1 ? hexColor[1..] : string.Empty,
                     await JSRuntime.InvokeAsync<string>(JsFuncs.HexToRgb.Value(), hexColor, "string") ?? string.Empty,
                     await JSRuntime.InvokeAsync<string>(JsFuncs.RgbToHsl.Value(), rgbColor, "string") ?? string.Empty,
                     await JSRuntime.InvokeAsync<string>(JsFuncs.RgbToHsv.Value(), rgbColor, "string") ?? string.Empty,
                     cssFilter.Filter ?? string.Empty,
-                    cssFilter.Filter?.Replace("filter:", "filter: brightness(0) saturate(100%) ") ?? string.Empty,
-                    $"{cssFilter.Loss.ToString("0.##")}%" ?? string.Empty
+                    cssFilter.Filter?.Replace("filter:", "filter: brightness(0) saturate(100%)") ?? string.Empty,
+                    $"{cssFilter.Loss?.ToString("0.##")}%" ?? string.Empty
                 ));
             }
 
             await JSRuntime.InvokeVoidAsync(JsFuncs.DownloadCsv.Value(), csvBuilder.ToString(), "ColorPal-Data");
         }
 
-        void SetColorToolState() =>
-            _activeColorTool = _activeColorTool == tool.Value() ? null : tool.Value();
+        async Task SetActiveColorToolAsync()
+        {
+            _activeColorTool = tool switch
+            {
+                ColorToolType.DeleteAll or ColorToolType.DownloadPNG or ColorToolType.DownloadCSV => string.Empty,
+                _ when _activeColorTool != tool.Value() => tool.Value(),
+                _ => string.Empty
+            };
+
+            await EventAggregator.GetService(Event.SetActiveColorTool).PublishAsync(_activeColorTool);
+        }
     }
 
-    private async Task HandleEyedropperPickAsync(string hexColor)
+    private async Task ResetActiveColorToolAsync(string hexColor)
     {
-        _activeColorTool = null;
+        if (EventAggregator is null)
+            return;
+
+        _activeColorTool = string.Empty;
+        await EventAggregator.GetService(Event.SetActiveColorTool).PublishAsync(_activeColorTool);
+
         StateHasChanged();
-        await Task.CompletedTask;
     }
 
     private async Task HandleColorsPerLineChangeAsync(ChangeEventArgs e)
@@ -171,9 +182,10 @@
 
     public void Dispose()
     {
-        if (EventAggregator != null)
-        {
-            EventAggregator.GetService(Event.EyedropperPick).Unsubscribe(HandleEyedropperPickAsync);
-        }
+        if (EventAggregator is null)
+            return;
+
+        EventAggregator.GetService(Event.EyedropperPick).Unsubscribe(ResetActiveColorToolAsync);
+        EventAggregator.GetService(Event.OpenColorPicker).Subscribe(ResetActiveColorToolAsync);
     }
 }
