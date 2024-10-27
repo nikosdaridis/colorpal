@@ -241,7 +241,6 @@ function removeMoveColorsListeners() {
 function onDragStart(event: Event) {
     draggingElement = event.currentTarget as HTMLElement;
     draggingElement.classList.add("dragging");
-    draggingElement.lastElementChild?.setAttribute("src", "");
 }
 
 function onDragEnd(event: Event) {
@@ -270,12 +269,13 @@ function onDragLeave(event: Event) {
 
 function swapColors(drag: HTMLElement, replace: HTMLElement) {
     const savedColors = JSON.parse(localStorage.getItem("colorpal-saved-colors-array") || "[]");
-    const [dragIndex, replaceIndex] = [savedColors.indexOf(drag.dataset.color!), savedColors.indexOf(replace.dataset.color!)];
+    const [dragIndex, replaceIndex] = [savedColors.indexOf(drag.dataset.color), savedColors.indexOf(replace.dataset.color)];
 
     if (dragIndex === -1 || replaceIndex === -1)
         return;
 
-    [savedColors[dragIndex], savedColors[replaceIndex]] = [replace.dataset.color!, drag.dataset.color!];
+    [savedColors[dragIndex], savedColors[replaceIndex]] = [replace.dataset.color, drag.dataset.color];
+
     localStorage.setItem("colorpal-saved-colors-array", JSON.stringify(savedColors));
-    colorsGridComponent.invokeMethodAsync("RenderColorsGrid");
+    colorsGridComponent.invokeMethodAsync("RenderSavedColorsAsync", null);
 }

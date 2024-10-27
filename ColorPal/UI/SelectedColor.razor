@@ -66,6 +66,8 @@
         EventAggregator.GetService(Event.EyedropperPick).Subscribe(SetSelectedColorAndPublishEventAsync);
         EventAggregator.GetService(Event.EyedropperPick).Subscribe(SaveEyedropperColorAsync);
         EventAggregator.GetService(Event.SetSelectedColor).Subscribe(SetSelectedColorAsync);
+        EventAggregator.GetService(Event.DeleteSavedColor).Subscribe(RenderSelectedColorAsync);
+        EventAggregator.GetService(Event.DeleteAllSavedColors).Subscribe(RenderSelectedColorAsync);
 
         _selectedHEXColor = await LocalStorageService.GetKeyAsync<string>(StorageKey.SelectedHexColor) ?? "#000000";
         _isSelectedColorSaved = (await IsColorSavedAsync(_selectedHEXColor)).IsSaved;
@@ -223,6 +225,12 @@
         await JSRuntime.InvokeVoidAsync(JsFuncs.CopyToClipboard.Value(), colorCode);
     }
 
+    private async Task RenderSelectedColorAsync(string? input = null)
+    {
+        _isSelectedColorSaved = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
     public void Dispose()
     {
         if (EventAggregator is null)
@@ -231,5 +239,7 @@
         EventAggregator.GetService(Event.EyedropperPick).Unsubscribe(SetSelectedColorAndPublishEventAsync);
         EventAggregator.GetService(Event.EyedropperPick).Unsubscribe(SaveEyedropperColorAsync);
         EventAggregator.GetService(Event.SetSelectedColor).Unsubscribe(SetSelectedColorAsync);
+        EventAggregator.GetService(Event.DeleteSavedColor).Unsubscribe(RenderSelectedColorAsync);
+        EventAggregator.GetService(Event.DeleteAllSavedColors).Unsubscribe(RenderSelectedColorAsync);
     }
 }

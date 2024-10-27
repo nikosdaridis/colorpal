@@ -20,6 +20,9 @@
     public ColorToolType ActiveColorTool { get; set; }
 
     [Parameter]
+    public LocalStorageService? LocalStorageService { get; set; }
+
+    [Parameter]
     public EventAggregator<string>? EventAggregator { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -27,15 +30,15 @@
         await base.OnInitializedAsync();
     }
 
-    /// <summary>
-    /// Invokes callback
-    /// </summary>
     public async Task HandleOnClickAsync(MouseEventArgs args)
     {
         if (EventAggregator is null)
             return;
 
         await EventAggregator.GetService(Event.SetSelectedColor).PublishAsync(HEXColor);
+
+        if (ActiveColorTool == ColorToolType.Delete)
+            await DeleteSavedColor();
     }
 
     private string GetClass()
@@ -62,4 +65,22 @@
             ColorToolType.Delete => "Icons/delete.svg",
             _ => string.Empty
         };
+
+    private async Task<bool> DeleteSavedColor()
+    {
+        if (LocalStorageService is null || EventAggregator is null)
+            return false;
+
+        string[] savedColors = await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? [];
+
+        if (!savedColors.Contains(HEXColor))
+            return false;
+
+        savedColors = savedColors.Where(color => color != HEXColor).ToArray();
+
+        await LocalStorageService.SetKeyAsync(StorageKey.SavedColorsArray, savedColors);
+        await EventAggregator.GetService(Event.DeleteSavedColor).PublishAsync(HEXColor);
+
+        return true;
+    }
 }

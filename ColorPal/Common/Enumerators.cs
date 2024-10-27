@@ -9,6 +9,7 @@ namespace ColorPal.Common
         ColorCodeActiveTab,
         ColorsPerLine,
         SetActiveColorTool,
+        DeleteSavedColor,
         DeleteAllSavedColors
     }
 

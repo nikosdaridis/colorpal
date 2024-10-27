@@ -64,7 +64,7 @@
         {
             ColorToolType.Move => HandleMoveAsync(previousActiveColorTool),
             ColorToolType.TintsShades => HandleTintsShadesAsync(),
-            ColorToolType.Delete => HandleDeleteAsync(),
+            ColorToolType.Delete => Task.CompletedTask,
             ColorToolType.DeleteAll => HandleDeleteAllAsync(),
             ColorToolType.DownloadPNG => HandleDownloadPNGAsync(),
             ColorToolType.DownloadCSV => HandleDownloadCSVAsync(),
@@ -86,16 +86,14 @@
             //await JSRuntime.InvokeVoidAsync();
         }
 
-        async Task HandleDeleteAsync()
-        {
-            //await JSRuntime.InvokeVoidAsync();
-        }
-
         async Task HandleDeleteAllAsync()
         {
+            if ((await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? []).Length == 0)
+                return;
+
             if (await JSRuntime.InvokeAsync<bool>("confirm", "Delete all saved colors?"))
             {
-                await LocalStorageService.SetKeyAsync<string[]>(StorageKey.SavedColorsArray, Array.Empty<string>());
+                await LocalStorageService.SetKeyAsync<string[]>(StorageKey.SavedColorsArray, []);
                 await EventAggregator.GetService(Event.DeleteAllSavedColors).PublishAsync(ColorToolType.DeleteAll.Value());
             }
         }
@@ -145,7 +143,6 @@
 
         async Task<ColorToolType> SetActiveColorToolAsync()
         {
-            ColorToolType previousActiveColorTool;
             if (!EnumExtensions.TryParse(_activeColorTool, out previousActiveColorTool))
                 previousActiveColorTool = ColorToolType.None;
 
@@ -154,9 +151,8 @@
 
             _activeColorTool = tool switch
             {
-                ColorToolType.DeleteAll or ColorToolType.DownloadPNG or ColorToolType.DownloadCSV => string.Empty,
                 _ when _activeColorTool != tool.Value() => tool.Value(),
-                _ => string.Empty
+                _ => ColorToolType.None.Value()
             };
 
             await EventAggregator.GetService(Event.SetActiveColorTool).PublishAsync(_activeColorTool);
