@@ -60,6 +60,15 @@
     pointer-events: auto;
 }
 
+[id^="colorRectangle"] h4 {
+    transition: .3s ease;
+}
+
+[id^="colorRectangle-active"] h4,
+[id^="colorRectangle"]:hover h4 {
+    font-size: 0px;
+}
+
 [id^="colorRectangle"] img[src*="move.svg"] {
     filter: var(--move-tool-filter) drop-shadow(0 0 2px black);
 }

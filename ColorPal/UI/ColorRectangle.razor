@@ -4,9 +4,19 @@
       id=@($"colorRectangle{(IsSelected ? "-active" : string.Empty)}")
       draggable=@(ActiveColorTool == ColorToolType.Move ? "true" : "false")
       @onclick=HandleOnClickAsync>
-    <img class="w-2/3"
-         src=@GetImgSrc()
-         draggable="false" />
+    @if (TintsShadesIndex is null)
+    {
+        <img class="w-[60%]"
+             src=@GetImgSrc()
+             draggable="false" />
+    }
+    else
+    {
+        <h4 class="absolute bottom-0 left-1/2 transform -translate-x-1/2 text-[7px] font-semibold"
+            style="color: @(TintsShadesIndex <= 40 ? "white" : "black");">
+            @TintsShadesIndex
+        </h4>
+    }
 </span>
 
 @code {
@@ -15,6 +25,9 @@
 
     [Parameter]
     public bool IsSelected { get; set; }
+
+    [Parameter]
+    public int? TintsShadesIndex { get; set; }
 
     [Parameter]
     public ColorToolType ActiveColorTool { get; set; }
@@ -39,12 +52,15 @@
 
         if (ActiveColorTool == ColorToolType.Delete)
             await DeleteSavedColor();
+
+        if (ActiveColorTool == ColorToolType.TintsShades)
+            await EventAggregator.GetService(Event.RenderTintsShades).PublishAsync(HEXColor);
     }
 
     private string GetClass()
     {
-        string baseClass = "aspect-square flex justify-center items-center cursor-pointer ring-1 ring-[var(--theme-invert-color)] transition-all duration-200 hover:scale-110 hover:ring-green-500";
-        string selectedClass = "rounded-2xl ring-green-500";
+        string baseClass = "aspect-square relative flex justify-center items-center cursor-pointer ring-1 ring-[var(--theme-invert-color)] transition-all duration-200 hover:scale-[1.1] hover:ring-[var(--primary-color)]";
+        string selectedClass = "rounded-xl ring-green-500";
         string notSelectedClass = "rounded-md";
         string activeToolClass = ActiveColorTool switch
         {
@@ -54,7 +70,7 @@
             _ => string.Empty
         };
 
-        return $"{baseClass} {(IsSelected ? selectedClass : notSelectedClass)} {activeToolClass}";
+        return $"{baseClass} {(IsSelected ? selectedClass : $"{notSelectedClass} {activeToolClass}")}";
     }
 
     private string GetImgSrc() =>

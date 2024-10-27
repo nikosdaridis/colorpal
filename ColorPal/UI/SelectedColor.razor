@@ -89,6 +89,12 @@
         });
     }
 
+    private async Task RenderSelectedColorAsync(string? input = null)
+    {
+        _isSelectedColorSaved = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
     private async Task HandleEyeDropperClickAsync()
     {
         if (JSRuntime is null)
@@ -223,12 +229,6 @@
         };
 
         await JSRuntime.InvokeVoidAsync(JsFuncs.CopyToClipboard.Value(), colorCode);
-    }
-
-    private async Task RenderSelectedColorAsync(string? input = null)
-    {
-        _isSelectedColorSaved = false;
-        await InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()

@@ -13,7 +13,8 @@
 
     <select class="w-13 h-8 items-center justify-center rounded-md bg-[var(--secondary-color)] p-2 text-sm text-[var(--text-color)] focus:outline-none focus:ring-0"
             id="colorsPerLine"
-            @onchange=HandleColorsPerLineChangeAsync>
+            @bind:get=_colorsPerLine
+            @bind:set=HandleColorsPerLineChangeAndPublishEventAsync>
         <option value="5">5</option>
         <option value="6">6</option>
         <option value="7">7</option>
@@ -48,6 +49,7 @@
 
         EventAggregator.GetService(Event.EyedropperPick).Subscribe(ResetActiveColorToolAsync);
         EventAggregator.GetService(Event.OpenColorPicker).Subscribe(ResetActiveColorToolAsync);
+        EventAggregator.GetService(Event.ColorsPerLine).Subscribe(HandleColorsPerLineChangeAsync);
 
         _colorsPerLine = await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorsPerLine) ?? "5";
         await JSRuntime.InvokeVoidAsync(JsFuncs.SetSelectValue.Value(), "colorsPerLine", _colorsPerLine);
@@ -63,7 +65,7 @@
         Task task = tool switch
         {
             ColorToolType.Move => HandleMoveAsync(previousActiveColorTool),
-            ColorToolType.TintsShades => HandleTintsShadesAsync(),
+            ColorToolType.TintsShades => Task.CompletedTask,
             ColorToolType.Delete => Task.CompletedTask,
             ColorToolType.DeleteAll => HandleDeleteAllAsync(),
             ColorToolType.DownloadPNG => HandleDownloadPNGAsync(),
@@ -79,11 +81,6 @@
                 return;
 
             await JSRuntime.InvokeVoidAsync(JsFuncs.HandleColorsMove.Value());
-        }
-
-        async Task HandleTintsShadesAsync()
-        {
-            //await JSRuntime.InvokeVoidAsync();
         }
 
         async Task HandleDeleteAllAsync()
@@ -151,6 +148,7 @@
 
             _activeColorTool = tool switch
             {
+                ColorToolType.DeleteAll or ColorToolType.DownloadPNG or ColorToolType.DownloadCSV => ColorToolType.None.Value(),
                 _ when _activeColorTool != tool.Value() => tool.Value(),
                 _ => ColorToolType.None.Value()
             };
@@ -172,19 +170,23 @@
         StateHasChanged();
     }
 
-    private async Task HandleColorsPerLineChangeAsync(ChangeEventArgs e)
+    private async Task HandleColorsPerLineChangeAsync(string colorsPerLine)
     {
-        _colorsPerLine = e.Value?.ToString() ?? "5";
+        _colorsPerLine = colorsPerLine;
+        await InvokeAsync(StateHasChanged);
+    }
 
-        if (LocalStorageService is null)
-            return;
+    private async Task HandleColorsPerLineChangeAndPublishEventAsync(string? colorsPerLine)
+    {
+        _colorsPerLine = colorsPerLine ?? "5";
 
-        await LocalStorageService.SetKeyAsync(StorageKey.ColorsPerLine, _colorsPerLine);
+        if (LocalStorageService is not null)
+            await LocalStorageService.SetKeyAsync(StorageKey.ColorsPerLine, _colorsPerLine);
 
-        if (EventAggregator is null)
-            return;
+        if (EventAggregator is not null)
+            await EventAggregator.GetService(Event.ColorsPerLine).PublishAsync(_colorsPerLine);
 
-        await EventAggregator.GetService(Event.ColorsPerLine).PublishAsync(_colorsPerLine);
+        StateHasChanged();
     }
 
     public void Dispose()
@@ -193,6 +195,7 @@
             return;
 
         EventAggregator.GetService(Event.EyedropperPick).Unsubscribe(ResetActiveColorToolAsync);
-        EventAggregator.GetService(Event.OpenColorPicker).Subscribe(ResetActiveColorToolAsync);
+        EventAggregator.GetService(Event.OpenColorPicker).Unsubscribe(ResetActiveColorToolAsync);
+        EventAggregator.GetService(Event.ColorsPerLine).Unsubscribe(HandleColorsPerLineChangeAsync);
     }
 }
