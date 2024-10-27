@@ -88,9 +88,6 @@ namespace ColorPal.Common
         [Value("colorpal-show-color-names")]
         ShowColorNames,
 
-        [Value("colorpal-collapsed-color-tools")]
-        CollapsedColorTools,
-
         [Value("colorpal-prepend-black-filter")]
         PrependBlackFilter,
     }
@@ -103,6 +100,9 @@ namespace ColorPal.Common
         [Value("initializeColorsGridComponent")]
         InitializeColorsGridComponent,
 
+        [Value("getClientColorScheme")]
+        GetClientColorScheme,
+        
         [Value("getThemeFilter")]
         GetThemeFilter,
 

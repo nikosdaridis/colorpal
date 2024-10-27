@@ -4,18 +4,19 @@
       id=@($"colorRectangle{(IsSelected ? "-active" : string.Empty)}")
       draggable=@(ActiveColorTool == ColorToolType.Move ? "true" : "false")
       @onclick=HandleOnClickAsync>
-    @if (TintsShadesIndex is null)
-    {
-        <img class="w-[60%]"
-             src=@GetImgSrc()
-             draggable="false" />
-    }
-    else
+
+    @if (ActiveColorTool == ColorToolType.TintsShades && TintsShadesIndex is not null)
     {
         <h4 class="absolute bottom-0 left-1/2 transform -translate-x-1/2 text-[7px] font-semibold"
             style="color: @(TintsShadesIndex <= 40 ? "white" : "black");">
             @TintsShadesIndex
         </h4>
+    }
+    else
+    {
+        <img class="w-[60%]"
+             src=@GetImgSrc()
+             draggable="false" />
     }
 </span>
 

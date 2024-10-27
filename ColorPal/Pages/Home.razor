@@ -2,6 +2,9 @@
 
 @page "/"
 
+@if (!_isInitialized)
+    return;
+
 <SelectedColor NavigationManager=NavigationManager JSRuntime=JSRuntime LocalStorageService=LocalStorageService EventAggregator=EventAggregator StateService=StateService />
 <div class="px-3 py-2">
     <ColorCodeTabs LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
@@ -14,13 +17,19 @@
 </div>
 
 @code {
+    private bool _isInitialized;
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
-        if (StateService is null || LocalStorageService is null)
+        if (LocalStorageService is null || StateService is null)
             return;
 
+        await LocalStorageService.ValidateLocalStorageAsync();
         await StateService.SetThemeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKey.Theme) ?? Theme.Light.Value());
+
+        _isInitialized = true;
+        StateHasChanged();
     }
 }

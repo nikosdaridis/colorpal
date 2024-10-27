@@ -16,6 +16,11 @@ function initializeColorsGridComponent(dotNetObjectReference: any) {
     colorsGridComponent = dotNetObjectReference;
 }
 
+// Gets client color scheme
+function getClientColorScheme(): "light" | "dark" {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
 // Gets dark or light theme filter 
 function getThemeFilter(theme: string): string {
     const themeType = theme === "dark" ? "light" : "dark";
