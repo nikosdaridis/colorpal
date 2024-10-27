@@ -6,7 +6,7 @@
 
     @foreach (string hexColor in _savedColors)
     {
-            <ColorRectangle HEXColor=@hexColor IsSelected=@(_selectedHexColor == hexColor) ActiveColorTool=@_activeColorTool EventAggregator=EventAggregator />
+        <ColorRectangle HEXColor=@hexColor IsSelected=@(_selectedHexColor == hexColor) ActiveColorTool=@_activeColorTool EventAggregator=EventAggregator />
     }
 </div>
 
@@ -39,6 +39,8 @@
         EventAggregator.GetService(Event.DeleteAllSavedColors).Subscribe(RenderSavedColorsAsync);
         EventAggregator.GetService(Event.SetSelectedColor).Subscribe(HandleSetSelectedColorAsync);
         EventAggregator.GetService(Event.SetActiveColorTool).Subscribe(HandleActiveColorToolAsync);
+
+        await JSRuntime.InvokeVoidAsync(JsFuncs.InitializeColorsGridComponent.Value(), DotNetObjectReference.Create(this));
 
         _selectedHexColor = await LocalStorageService.GetKeyAsync<string>(StorageKey.SelectedHexColor) ?? string.Empty;
 
@@ -88,6 +90,16 @@
 
         StateHasChanged();
         await Task.CompletedTask;
+    }
+
+    [JSInvokable("RenderColorsGrid")]
+    public async Task RenderColorsGrid()
+    {
+        if (LocalStorageService is null)
+            return;
+
+        _savedColors = await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? [];
+        StateHasChanged();
     }
 
     /// <summary>

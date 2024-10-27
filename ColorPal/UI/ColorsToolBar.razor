@@ -58,9 +58,11 @@
         if (JSRuntime is null || LocalStorageService is null || EventAggregator is null || StateService is null)
             return;
 
+        ColorToolType previousActiveColorTool = await SetActiveColorToolAsync();
+
         Task task = tool switch
         {
-            ColorToolType.Move => HandleMoveAsync(),
+            ColorToolType.Move => HandleMoveAsync(previousActiveColorTool),
             ColorToolType.TintsShades => HandleTintsShadesAsync(),
             ColorToolType.Delete => HandleDeleteAsync(),
             ColorToolType.DeleteAll => HandleDeleteAllAsync(),
@@ -69,28 +71,28 @@
             _ => Task.CompletedTask
         };
 
-        await SetActiveColorToolAsync();
         await task;
 
-        async Task HandleMoveAsync()
+        async Task HandleMoveAsync(ColorToolType previousActiveColorTool)
         {
+            if (previousActiveColorTool == ColorToolType.Move)
+                return;
 
+            await JSRuntime.InvokeVoidAsync(JsFuncs.HandleColorsMove.Value());
         }
 
         async Task HandleTintsShadesAsync()
         {
-
+            //await JSRuntime.InvokeVoidAsync();
         }
 
         async Task HandleDeleteAsync()
         {
-
+            //await JSRuntime.InvokeVoidAsync();
         }
 
         async Task HandleDeleteAllAsync()
         {
-            _activeColorTool = string.Empty;
-
             if (await JSRuntime.InvokeAsync<bool>("confirm", "Delete all saved colors?"))
             {
                 await LocalStorageService.SetKeyAsync<string[]>(StorageKey.SavedColorsArray, Array.Empty<string>());
@@ -141,8 +143,15 @@
             await JSRuntime.InvokeVoidAsync(JsFuncs.DownloadCsv.Value(), csvBuilder.ToString(), "ColorPal-Data");
         }
 
-        async Task SetActiveColorToolAsync()
+        async Task<ColorToolType> SetActiveColorToolAsync()
         {
+            ColorToolType previousActiveColorTool;
+            if (!EnumExtensions.TryParse(_activeColorTool, out previousActiveColorTool))
+                previousActiveColorTool = ColorToolType.None;
+
+            if (previousActiveColorTool == ColorToolType.Move)
+                await JSRuntime.InvokeVoidAsync(JsFuncs.RemoveMoveColorsListeners.Value());
+
             _activeColorTool = tool switch
             {
                 ColorToolType.DeleteAll or ColorToolType.DownloadPNG or ColorToolType.DownloadCSV => string.Empty,
@@ -151,6 +160,8 @@
             };
 
             await EventAggregator.GetService(Event.SetActiveColorTool).PublishAsync(_activeColorTool);
+
+            return previousActiveColorTool;
         }
     }
 

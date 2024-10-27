@@ -37,39 +37,39 @@
     filter: var(--text-filter);
 }
 
+[id^="colorRectangle"].dragging,
+[id^="colorRectangle"].replacing {
+    transform: scale(1.10);
+    border-radius: 5%;
+    --tw-ring-color: var(--theme-invert-color) !important;
+}
+
 [id^="colorTool-"].active img,
 [id^="colorTool-"]:hover img {
     filter: var(--theme-filter);
 }
 
-[id^="colorRectangle"] #colorRectangle-image-wrapper {
+[id^="colorRectangle"] img {
     opacity: 0;
     pointer-events: none;
     transition: opacity .2s ease;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 25%;
-    padding: 3px;
 }
 
-    [id^="colorRectangle"] #colorRectangle-image-wrapper:has(img[src=""]) {
-        display: none;
-    }
-
-[id^="colorRectangle"]:hover #colorRectangle-image-wrapper {
+[id^="colorRectangle"]:hover img {
     opacity: 1;
     pointer-events: auto;
 }
 
 [id^="colorRectangle"] img[src*="move.svg"] {
-    filter: var(--move-tool-filter);
+    filter: var(--move-tool-filter) drop-shadow(0 0 2px black);
 }
 
 [id^="colorRectangle"] img[src*="tintsShades.svg"] {
-    filter: var(--tintsShades-tool-filter);
+    filter: var(--tintsShades-tool-filter) drop-shadow(0 0 2px black);
 }
 
 [id^="colorRectangle"] img[src*="delete.svg"] {
-    filter: var(--delete-tool-filter);
+    filter: var(--delete-tool-filter) drop-shadow(0 0 2px black);
 }
 
 img[src=""] {

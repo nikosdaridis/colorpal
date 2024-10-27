@@ -1,10 +1,19 @@
 declare const domtoimage: any;
 
 var stateServiceReference: any;
+var colorsGridComponent: any;
+var draggingElement: HTMLElement | null = null;
+var replacingElement: HTMLElement | null = null;
+var mouseOverColor = false;
 
 // Initializes state service reference
 function initializeStateService(dotNetObjectReference: any) {
     stateServiceReference = dotNetObjectReference;
+}
+
+// Initializes colors grid component reference
+function initializeColorsGridComponent(dotNetObjectReference: any) {
+    colorsGridComponent = dotNetObjectReference;
 }
 
 // Gets dark or light theme filter 
@@ -200,4 +209,73 @@ function downloadCsv(dataString: string, fileName: string): void {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+}
+
+// Handles colors move
+function handleColorsMove(): void {
+    const colors = document.querySelectorAll<HTMLElement>("[id*='colorRectangle']");
+
+    colors.forEach(addMoveColorsListeners);
+}
+
+function addMoveColorsListeners(draggable: HTMLElement) {
+    draggable.addEventListener("dragstart", onDragStart);
+    draggable.addEventListener("dragend", onDragEnd);
+    draggable.addEventListener("dragover", onDragOver);
+    draggable.addEventListener("dragenter", onDragEnter);
+    draggable.addEventListener("dragleave", onDragLeave);
+}
+
+function removeMoveColorsListeners() {
+    const colors = document.querySelectorAll<HTMLElement>("[id*='colorRectangle']");
+
+    colors.forEach(color => {
+        color.removeEventListener("dragstart", onDragStart);
+        color.removeEventListener("dragend", onDragEnd);
+        color.removeEventListener("dragover", onDragOver);
+        color.removeEventListener("dragenter", onDragEnter);
+        color.removeEventListener("dragleave", onDragLeave);
+    });
+};
+
+function onDragStart(event: Event) {
+    draggingElement = event.currentTarget as HTMLElement;
+    draggingElement.classList.add("dragging");
+    draggingElement.lastElementChild?.setAttribute("src", "");
+}
+
+function onDragEnd(event: Event) {
+    if (draggingElement && replacingElement && draggingElement.dataset.color !== replacingElement.dataset.color)
+        swapColors(draggingElement, replacingElement);
+
+    draggingElement?.classList.remove("dragging");
+    replacingElement?.classList.remove("replacing");
+}
+
+function onDragOver(event: Event) {
+    event.preventDefault();
+    replacingElement = event.currentTarget as HTMLElement;
+    replacingElement.classList.add("replacing");
+}
+
+function onDragEnter() {
+    mouseOverColor = true;
+}
+
+function onDragLeave(event: Event) {
+    const draggable = event.currentTarget as HTMLElement;
+    mouseOverColor = false;
+    draggable.classList.remove("replacing");
+}
+
+function swapColors(drag: HTMLElement, replace: HTMLElement) {
+    const savedColors = JSON.parse(localStorage.getItem("colorpal-saved-colors-array") || "[]");
+    const [dragIndex, replaceIndex] = [savedColors.indexOf(drag.dataset.color!), savedColors.indexOf(replace.dataset.color!)];
+
+    if (dragIndex === -1 || replaceIndex === -1)
+        return;
+
+    [savedColors[dragIndex], savedColors[replaceIndex]] = [replace.dataset.color!, drag.dataset.color!];
+    localStorage.setItem("colorpal-saved-colors-array", JSON.stringify(savedColors));
+    colorsGridComponent.invokeMethodAsync("RenderColorsGrid");
 }

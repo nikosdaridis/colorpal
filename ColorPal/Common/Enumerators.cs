@@ -98,6 +98,9 @@ namespace ColorPal.Common
         [Value("initializeStateService")]
         InitializeStateService,
 
+        [Value("initializeColorsGridComponent")]
+        InitializeColorsGridComponent,
+
         [Value("getThemeFilter")]
         GetThemeFilter,
 
@@ -127,6 +130,12 @@ namespace ColorPal.Common
 
         [Value("downloadCsv")]
         DownloadCsv,
+        
+        [Value("handleColorsMove")]
+        HandleColorsMove,
+
+        [Value("removeMoveColorsListeners")]
+        RemoveMoveColorsListeners,
 
         //Color Converters
         [Value("hexToRgb")]

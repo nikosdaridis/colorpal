@@ -1,12 +1,12 @@
 ﻿<span class=@GetClass()
       style="background-color: @HEXColor;"
+      data-color=@HEXColor
       id=@($"colorRectangle{(IsSelected ? "-active" : string.Empty)}")
+      draggable=@(ActiveColorTool == ColorToolType.Move ? "true" : "false")
       @onclick=HandleOnClickAsync>
-    <div class="w-1/2"
-         id="colorRectangle-image-wrapper">
-        <img src=@GetImgSrc()
-             draggable="false" />
-    </div>
+    <img class="w-2/3"
+         src=@GetImgSrc()
+         draggable="false" />
 </span>
 
 @code {
