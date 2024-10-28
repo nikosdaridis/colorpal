@@ -1,16 +1,26 @@
-﻿using System.Text.Json.Serialization;
+﻿using MessagePack;
 
 namespace ColorPal.Common.Models
 {
-    public class ColorRGB(int r, int g, int b)
+    [MessagePackObject]
+    public class ColorRGB
     {
-        [JsonPropertyName("r")]
-        public int R { get; set; } = r;
+        public ColorRGB() { }
 
-        [JsonPropertyName("g")]
-        public int G { get; set; } = g;
+        public ColorRGB(int r, int g, int b)
+        {
+            R = r;
+            G = g;
+            B = b;
+        }
 
-        [JsonPropertyName("b")]
-        public int B { get; set; } = b;
+        [Key(0)]
+        public int R { get; set; }
+
+        [Key(1)]
+        public int G { get; set; }
+
+        [Key(2)]
+        public int B { get; set; }
     }
 }

@@ -119,11 +119,11 @@
             foreach (string hexColor in savedColors)
             {
                 ColorRGB rgbColor = await JSRuntime.InvokeAsync<ColorRGB>(JsFuncs.HexToRgb.Value(), hexColor);
-                ColorName? closestColor = StateService.FindClosestColorName(rgbColor);
+                string closestColorName = StateService.FindClosestRoundedColorName(rgbColor);
                 CssFilter cssFilter = await JSRuntime.InvokeAsync<CssFilter>(JsFuncs.HexToFilter.Value(), hexColor);
 
                 csvBuilder.AppendLine(string.Format("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\"",
-                    closestColor?.Name ?? string.Empty,
+                    closestColorName,
                     hexColor,
                     hexColor.Length > 1 ? hexColor[1..] : string.Empty,
                     await JSRuntime.InvokeAsync<string>(JsFuncs.HexToRgb.Value(), hexColor, "string") ?? string.Empty,

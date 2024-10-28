@@ -7,12 +7,12 @@
         <RoundButton IconPath="Icons\eyedropper.svg"
                      IconThemeFilter=false
                      HandleClick=HandleEyeDropperClickAsync />
-        @if (_colorNames.Show && !string.IsNullOrWhiteSpace(_colorNames.Selected.Name) && JSRuntime is not null)
+        @if (_colorNames.Show && !string.IsNullOrWhiteSpace(_colorNames.SelectedName) && JSRuntime is not null)
         {
             <p class="cursor-pointer rounded-lg bg-white bg-opacity-50 px-2 py-1 text-center text-[11px] font-semibold shadow-xl backdrop-blur-xl transition-all duration-200 hover:text-xs hover:bg-opacity-75"
-               @onclick=@(async() => await JSRuntime.InvokeVoidAsync(JsFuncs.CopyToClipboard.Value(), _colorNames.Selected.Name))
+               @onclick=@(async() => await JSRuntime.InvokeVoidAsync(JsFuncs.CopyToClipboard.Value(), _colorNames.SelectedName))
             @onclick:stopPropagation>
-                @_colorNames.Selected.Name
+                @_colorNames.SelectedName
             </p>
         }
 
@@ -53,7 +53,7 @@
 
     private string _selectedHEXColor = "#000000";
     private bool _isSelectedColorSaved;
-    private (bool Show, ColorName Selected, List<ColorName> All) _colorNames = (true, new(), []);
+    private (bool Show, string SelectedName) _colorNames = (true, string.Empty);
     private Timer? _colorPickerDebounceTimer;
 
     protected override async Task OnInitializedAsync()
@@ -75,17 +75,11 @@
 
         _ = Task.Run(async () =>
         {
-            while (!_colorNames.All.Any())
-            {
-                _colorNames.All = StateService.GetColorNames();
+            while (!StateService.ColorNamesInitialized())
                 await Task.Delay(50);
 
-                if (!_colorNames.All.Any())
-                    continue;
-
-                _colorNames.Selected = StateService.FindClosestColorName(await JSRuntime.InvokeAsync<ColorRGB>(JsFuncs.HexToRgb.Value(), _selectedHEXColor)) ?? new();
-                StateHasChanged();
-            }
+            _colorNames.SelectedName = StateService.FindClosestRoundedColorName(await JSRuntime.InvokeAsync<ColorRGB>(JsFuncs.HexToRgb.Value(), _selectedHEXColor));
+            StateHasChanged();
         });
     }
 
@@ -118,7 +112,7 @@
         _isSelectedColorSaved = isSaved;
 
         if (_colorNames.Show)
-            _colorNames.Selected = StateService.FindClosestColorName(await JSRuntime.InvokeAsync<ColorRGB>(JsFuncs.HexToRgb.Value(), _selectedHEXColor)) ?? new();
+            _colorNames.SelectedName = StateService.FindClosestRoundedColorName(await JSRuntime.InvokeAsync<ColorRGB>(JsFuncs.HexToRgb.Value(), _selectedHEXColor));
 
         await LocalStorageService.SetKeyAsync(StorageKey.SelectedHexColor, hexColor);
 

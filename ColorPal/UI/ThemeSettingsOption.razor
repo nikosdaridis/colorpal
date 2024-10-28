@@ -40,9 +40,6 @@
     public LocalStorageService? LocalStorageService { get; set; }
 
     [Parameter]
-    public StateService? StateService { get; set; }
-
-    [Parameter]
     public string? Label { get; set; }
 
     private string? _theme;
@@ -63,14 +60,14 @@
     /// </summary>
     private async Task ToggleThemeAsync()
     {
-        if (LocalStorageService is null || StateService is null)
+        if (LocalStorageService is null)
             return;
 
         _theme = await GetLocalStorageTheme() == Theme.Light.Value()
             ? Theme.Dark.Value()
             : Theme.Light.Value();
 
-        await StateService.SetThemeAsync(_theme);
+        await LocalStorageService.SetThemeAsync(_theme);
     }
 
     /// <summary>

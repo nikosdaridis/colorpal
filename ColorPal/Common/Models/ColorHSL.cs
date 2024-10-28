@@ -2,15 +2,24 @@
 
 namespace ColorPal.Common.Models
 {
-    public class ColorHSL(int h, int s, int l)
+    public class ColorHSL
     {
+        public ColorHSL() { }
+
+        public ColorHSL(int h, int s, int l)
+        {
+            H = h;
+            S = s;
+            L = l;
+        }
+
         [JsonPropertyName("h")]
-        public int H { get; set; } = h;
+        public int H { get; set; }
 
         [JsonPropertyName("s")]
-        public int S { get; set; } = s;
+        public int S { get; set; }
 
         [JsonPropertyName("l")]
-        public int L { get; set; } = l;
+        public int L { get; set; }
     }
 }

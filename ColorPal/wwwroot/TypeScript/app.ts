@@ -164,8 +164,7 @@ async function downloadImage(savedColors: string[], colorsPerLine: number, showC
 
             if (showColorNames) {
                 const nameText = nameTextTemplate.cloneNode(false) as HTMLElement;
-                const colorName = await findClosestColorName(rgbColor) as ColorName | null;
-                nameText.textContent = colorName?.name ?? "";
+                nameText.textContent = await findClosestColorName(rgbColor) as string;
 
                 const nameLength = nameText.textContent.length;
                 if (nameLength > 33) nameText.style.fontSize = "10px";
@@ -196,11 +195,11 @@ async function downloadImage(savedColors: string[], colorsPerLine: number, showC
 
         return colorsContainer;
 
-        async function findClosestColorName(rgb: ColorRGB): Promise<ColorName | null> {
+        async function findClosestColorName(rgb: ColorRGB): Promise<string> {
             try {
-                return await stateServiceReference?.invokeMethodAsync("FindClosestColorName", rgb) as ColorName | null;
+                return await stateServiceReference?.invokeMethodAsync("FindClosestColorName", rgb) as string;
             } catch {
-                return null;
+                return "";
             }
         }
     }
