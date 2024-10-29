@@ -197,7 +197,7 @@ async function downloadImage(savedColors: string[], colorsPerLine: number, showC
 
         async function findClosestColorName(rgb: ColorRGB): Promise<string> {
             try {
-                return await stateServiceReference?.invokeMethodAsync("FindClosestColorName", rgb) as string;
+                return await stateServiceReference?.invokeMethodAsync("FindClosestRoundedColorName", rgb) as string;
             } catch {
                 return "";
             }

@@ -1,6 +1,8 @@
 ﻿using MessagePack;
+using MessagePack.Resolvers;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -12,7 +14,8 @@ namespace ColorNamesBinaryMap
         static async Task Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
-            Console.Write("Enter step value for RGB processing (recommended 5). Lower values will increase CPU load significantly: ");
+            Console.WriteLine("Enter RGB rounding step value (recommended 3-5)");
+            Console.WriteLine("Lower values will increase CPU load and file size significantly: ");
 
             if (!int.TryParse(Console.ReadLine(), out int step) || step < 1)
             {
@@ -20,10 +23,11 @@ namespace ColorNamesBinaryMap
                 Console.WriteLine("⚠️ Invalid input, defaulting to step = 5");
             }
 
-            string inputUri = "https://unpkg.com/color-name-list@10.28.0/dist/colornames.json";
+            string inputUri = "https://unpkg.com/color-name-list/dist/colornames.json";
             string outputFilePath = @$"C:\Users\nikos\Desktop\_repos\colorpal\ColorPal\wwwroot\Data\colorNamesStep{step}.dat";
 
             Console.WriteLine($"⏳ Generating colors map with step = {step}...");
+            Console.WriteLine($"📂 Output Path: {outputFilePath}");
 
             Console.WriteLine(step switch
             {
@@ -39,10 +43,11 @@ namespace ColorNamesBinaryMap
                 List<ColorName> colorNames = await colorNamesBinaryMap.DownloadAndConvertColorDataAsync(inputUri);
 
                 Stopwatch stopwatch = Stopwatch.StartNew();
-                Dictionary<int, string> colorsMap = colorNamesBinaryMap.GenerateRoundedColorMap(colorNames, step);
+                Dictionary<uint, string> colorsMap = colorNamesBinaryMap.GenerateRoundedColorMap(colorNames, step);
+
+                await colorNamesBinaryMap.CompressAndSaveDataAsync(colorsMap, outputFilePath);
                 stopwatch.Stop();
 
-                await colorNamesBinaryMap.SaveClosestColorDataAsync(colorsMap, outputFilePath);
                 Console.WriteLine($"\n👍 Done in {stopwatch.Elapsed.TotalSeconds:F2} seconds!");
             }
             catch (Exception ex)
@@ -93,7 +98,7 @@ namespace ColorNamesBinaryMap
             string json = await _httpClient.GetStringAsync(uri);
             List<InputModel> inputColors = JsonSerializer.Deserialize<List<InputModel>>(json) ?? [];
 
-            List<ColorName> colorNames = new();
+            List<ColorName> colorNames = [];
             foreach (InputModel inputColor in inputColors)
             {
                 colorNames.Add(new()
@@ -106,11 +111,18 @@ namespace ColorNamesBinaryMap
             return colorNames;
         }
 
-        public async Task SaveClosestColorDataAsync(Dictionary<int, string> colorsMap, string filePath)
+        public async Task CompressAndSaveDataAsync(Dictionary<uint, string> colorsMap, string filePath)
         {
-            byte[] bytes = MessagePackSerializer.Serialize(colorsMap);
+            byte[] messagePackBytes = MessagePackSerializer.Serialize(colorsMap, ContractlessStandardResolver.Options.WithCompression(MessagePackCompression.Lz4Block));
+
+            using MemoryStream memoryStream = new();
+            using (GZipStream gzipStream = new(memoryStream, CompressionLevel.Optimal))
+            {
+                gzipStream.Write(messagePackBytes, 0, messagePackBytes.Length);
+            }
+
             Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
-            await File.WriteAllBytesAsync(filePath, bytes);
+            await File.WriteAllBytesAsync(filePath, memoryStream.ToArray());
         }
 
         private static ColorRGB HexToRgb(string? hex)
@@ -126,103 +138,93 @@ namespace ColorNamesBinaryMap
             return new() { R = r, G = g, B = b };
         }
 
-        public Dictionary<int, string> GenerateRoundedColorMap(List<ColorName> colorNames, int step)
+        public Dictionary<uint, string> GenerateRoundedColorMap(List<ColorName> colorNames, int step)
         {
-            ConcurrentDictionary<int, string> colorsMap = new();
-            object lockObj = new();
-            HashSet<int> uniqueColors = [];
+            ConcurrentDictionary<uint, string> colorsMap = new();
+            ConcurrentDictionary<uint, byte> uniqueColors = new();
+            object consoleLock = new();
 
             Parallel.For(0, 256, r =>
             {
                 for (int g = 0; g < 256; g++)
-                {
                     for (int b = 0; b < 256; b++)
-                    {
-                        ColorRGB roundedColor = RoundColor(new ColorRGB { R = (byte)r, G = (byte)g, B = (byte)b }, step);
-                        int colorKey = GetColorKey(roundedColor);
-
-                        if (!uniqueColors.Contains(colorKey))
-                            lock (uniqueColors)
-                                uniqueColors.Add(colorKey);
-                    }
-                }
+                        uniqueColors.TryAdd(GetColorKey(RoundColor(new ColorRGB { R = (byte)r, G = (byte)g, B = (byte)b }, step)), 0);
             });
 
-            int currentIteration = 0;
-            int totalIterations = uniqueColors.Count;
+            long currentIteration = 0;
+            long totalIterations = uniqueColors.Count;
 
-            Parallel.For(0, 256, r =>
+            Parallel.ForEach(Partitioner.Create(uniqueColors.Keys), roundedColorKey =>
             {
-                for (int g = 0; g < 256; g++)
+                ColorRGB roundedColor = new()
                 {
-                    for (int b = 0; b < 256; b++)
+                    R = (byte)(roundedColorKey >> 16 & 0xFF),
+                    G = (byte)(roundedColorKey >> 8 & 0xFF),
+                    B = (byte)(roundedColorKey & 0xFF)
+                };
+
+                ColorName? closestColor = FindClosestColorEuclideanDistance(roundedColor, colorNames);
+                if (closestColor is not null)
+                {
+                    colorsMap.TryAdd(roundedColorKey, closestColor.Name!);
+                    long iteration = Interlocked.Increment(ref currentIteration);
+
+                    if (iteration % 1000 == 0)
                     {
-                        ColorRGB roundedColor = RoundColor(new ColorRGB { R = (byte)r, G = (byte)g, B = (byte)b }, step);
-                        int roundedColorKey = GetColorKey(roundedColor);
-
-                        if (!colorsMap.ContainsKey(roundedColorKey))
+                        lock (consoleLock)
                         {
-                            ColorName? closestColor = FindClosestColor(roundedColor, colorNames);
-                            if (closestColor is not null)
-                            {
-                                colorsMap.TryAdd(roundedColorKey, closestColor.Name!);
-                                int iteration = Interlocked.Increment(ref currentIteration);
-
-                                if (iteration <= totalIterations)
-                                {
-                                    double percentage = (iteration / (double)totalIterations) * 100;
-                                    lock (lockObj)
-                                    {
-                                        Console.SetCursorPosition(0, Console.CursorTop);
-                                        Console.Write($"Progress: {iteration:N0}/{totalIterations:N0} ({Math.Min(percentage, 100):F2}%)");
-                                    }
-                                }
-                            }
+                            Console.SetCursorPosition(0, Console.CursorTop);
+                            Console.Write($"Progress: {iteration:N0}/{totalIterations:N0} ({Math.Min((iteration / (double)totalIterations) * 100, 100):F2}%)");
                         }
                     }
                 }
             });
 
-            return new Dictionary<int, string>(colorsMap);
+            Console.SetCursorPosition(0, Console.CursorTop);
+            Console.WriteLine($"Progress: {totalIterations:N0}/{totalIterations:N0} (100.00%)");
+
+            return new Dictionary<uint, string>(colorsMap);
         }
 
-        static ColorRGB RoundColor(ColorRGB color, int step)
-        {
-            return new ColorRGB
+        static ColorRGB RoundColor(ColorRGB color, int step) =>
+            new()
             {
-                R = color.R >= 255 ? (byte)255 : (byte)(Math.Round((color.R + step / 2.0) / step) * step),
-                G = color.G >= 255 ? (byte)255 : (byte)(Math.Round((color.G + step / 2.0) / step) * step),
-                B = color.B >= 255 ? (byte)255 : (byte)(Math.Round((color.B + step / 2.0) / step) * step)
+                R = color.R >= 255 ? (byte)255 : (byte)((color.R / step) * step),
+                G = color.G >= 255 ? (byte)255 : (byte)((color.G / step) * step),
+                B = color.B >= 255 ? (byte)255 : (byte)((color.B / step) * step)
             };
-        }
 
-        static int GetColorKey(ColorRGB color) =>
-            (color.R << 16) | (color.G << 8) | color.B;
+        static uint GetColorKey(ColorRGB color) =>
+            (uint)(color.R << 16 | color.G << 8 | color.B);
 
-        private static ColorName? FindClosestColor(ColorRGB colorRGB, List<ColorName> colorNames)
+        private static ColorName? FindClosestColorEuclideanDistance(ColorRGB colorRGB, List<ColorName> colorNames)
         {
             ColorName? closestNamedColor = null;
-            int closestDistance = int.MaxValue;
+            double highestSimilarity = double.MinValue;
 
             foreach (ColorName colorName in colorNames)
             {
                 if (colorName.RGB is null)
                     continue;
 
-                int distance = GetRGBSumDistance(colorRGB, colorName.RGB);
-                if (distance < closestDistance)
+                double rDiff = colorRGB.R - colorName.RGB.R;
+                double gDiff = colorRGB.G - colorName.RGB.G;
+                double bDiff = colorRGB.B - colorName.RGB.B;
+                double squaredDistance = rDiff * rDiff + gDiff * gDiff + bDiff * bDiff;
+
+                double similarity = ((441.67 - Math.Sqrt(squaredDistance)) / 441.67) * 100;
+
+                if (similarity > highestSimilarity)
                 {
                     closestNamedColor = colorName;
-                    closestDistance = distance;
+                    highestSimilarity = similarity;
 
-                    if (closestDistance == 0)
-                        break;
+                    if (highestSimilarity == 100)
+                        return closestNamedColor;
                 }
             }
-            return closestNamedColor;
 
-            static int GetRGBSumDistance(ColorRGB color, ColorRGB match) =>
-                Math.Abs(color.R - match.R) + Math.Abs(color.G - match.G) + Math.Abs(color.B - match.B);
+            return closestNamedColor;
         }
     }
 }

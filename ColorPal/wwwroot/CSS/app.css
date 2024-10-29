@@ -17,16 +17,19 @@
     --primary-color: ##ffffff;
     --secondary-color: #f4f4f5;
     --text-color: #787881;
-    --theme-invert-color: #fafafa;
+    --selected-color: #22bb33;
+    --move-tool-color: #00b3e1;
+    --tintsshades-tool-color: #e86100;
+    --delete-tool-color: #dd1144;
     --theme-filter: invert(94%) sepia(99%) saturate(28%) hue-rotate(252deg) brightness(106%) contrast(96%);
     --light-theme-filter: invert(94%) sepia(99%) saturate(28%) hue-rotate(252deg) brightness(106%) contrast(96%);
     --dark-theme-filter: invert(0%) sepia(42%) saturate(16%) hue-rotate(37deg) brightness(101%) contrast(92%);
     --text-filter: invert(52%) sepia(8%) saturate(328%) hue-rotate(202deg) brightness(90%) contrast(92%);
     --light-text-filter: invert(52%) sepia(8%) saturate(328%) hue-rotate(202deg) brightness(90%) contrast(92%);
     --dark-text-filter: invert(71%) sepia(6%) saturate(308%) hue-rotate(202deg) brightness(91%) contrast(83%);
-    --move-tool-filter: invert(29%) sepia(34%) saturate(7492%) hue-rotate(210deg) brightness(96%) contrast(114%);
-    --tintsShades-tool-filter: invert(71%) sepia(64%) saturate(3548%) hue-rotate(360deg) brightness(103%) contrast(105%);
-    --delete-tool-filter: invert(14%) sepia(99%) saturate(6375%) hue-rotate(356deg) brightness(104%) contrast(116%);
+    --move-tool-filter: invert(72%) sepia(84%) saturate(2808%) hue-rotate(148deg) brightness(81%) contrast(122%);
+    --tintsShades-tool-filter: invert(38%) sepia(81%) saturate(2326%) hue-rotate(8deg) brightness(98%) contrast(101%);
+    --delete-tool-filter: invert(17%) sepia(94%) saturate(4925%) hue-rotate(337deg) brightness(88%) contrast(97%);
 }
 
 .theme-filter {

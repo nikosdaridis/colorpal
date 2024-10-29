@@ -60,18 +60,19 @@
 
     private string GetClass()
     {
-        string baseClass = "aspect-square relative flex justify-center items-center cursor-pointer ring-1 ring-[var(--theme-invert-color)] transition-all duration-200 hover:scale-[1.1] hover:ring-[var(--primary-color)]";
-        string selectedClass = "rounded-xl ring-green-500";
-        string notSelectedClass = "rounded-md";
-        string activeToolClass = ActiveColorTool switch
-        {
-            ColorToolType.Move => "ring-blue-500",
-            ColorToolType.TintsShades => "ring-orange-500",
-            ColorToolType.Delete => "ring-red-500",
-            _ => string.Empty
-        };
+        string baseClass = "aspect-square relative flex justify-center items-center cursor-pointer transition-all duration-200 hover:scale-[1.1] hover:ring-[var(--primary-color)]";
+        string shapeClass = IsSelected ? "rounded-xl" : "rounded-md";
+        string ringClass = IsSelected
+            ? "ring-2 ring-[var(--selected-color)]"
+            : ActiveColorTool switch
+            {
+                ColorToolType.Move => "ring-1 ring-[var(--move-tool-color)]",
+                ColorToolType.TintsShades => "ring-1 ring-[var(--tintsshades-tool-color)]",
+                ColorToolType.Delete => "ring-1 ring-[var(--delete-tool-color)]",
+                _ => "ring-1 ring-[var(--theme-invert-color)]"
+            };
 
-        return $"{baseClass} {(IsSelected ? selectedClass : $"{notSelectedClass} {activeToolClass}")}";
+        return $"{baseClass} {shapeClass} {ringClass}";
     }
 
     private string GetImgSrc() =>
