@@ -1,7 +1,6 @@
 ﻿using ColorPal.Common;
 using ColorPal.Common.Models;
 using MessagePack;
-using MessagePack.Resolvers;
 using Microsoft.JSInterop;
 using System.IO.Compression;
 
@@ -44,8 +43,7 @@ namespace ColorPal.Services
                 await gZipStream.CopyToAsync(decompressedStream);
                 decompressedStream.Seek(0, SeekOrigin.Begin);
 
-                _colorNamesMap = MessagePackSerializer.Deserialize<Dictionary<uint, string>>(decompressedStream.ToArray(),
-                    ContractlessStandardResolver.Options.WithCompression(MessagePackCompression.Lz4Block));
+                _colorNamesMap = MessagePackSerializer.Deserialize<Dictionary<uint, string>>(decompressedStream.ToArray());
             }
             catch (Exception ex)
             {

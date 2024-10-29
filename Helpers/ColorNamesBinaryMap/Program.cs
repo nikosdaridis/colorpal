@@ -1,5 +1,4 @@
 ﻿using MessagePack;
-using MessagePack.Resolvers;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO.Compression;
@@ -113,7 +112,7 @@ namespace ColorNamesBinaryMap
 
         public async Task CompressAndSaveDataAsync(Dictionary<uint, string> colorsMap, string filePath)
         {
-            byte[] messagePackBytes = MessagePackSerializer.Serialize(colorsMap, ContractlessStandardResolver.Options.WithCompression(MessagePackCompression.Lz4Block));
+            byte[] messagePackBytes = MessagePackSerializer.Serialize(colorsMap);
 
             using MemoryStream memoryStream = new();
             using (GZipStream gzipStream = new(memoryStream, CompressionLevel.Optimal))
