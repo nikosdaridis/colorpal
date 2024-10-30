@@ -94,6 +94,9 @@ namespace ColorPal.Common
 
     public enum JsFuncs
     {
+        [Value("isInitialized")]
+        IsInitialized,
+
         [Value("initializeStateService")]
         InitializeStateService,
 
@@ -102,12 +105,15 @@ namespace ColorPal.Common
 
         [Value("getClientColorScheme")]
         GetClientColorScheme,
-        
+
         [Value("getThemeFilter")]
         GetThemeFilter,
 
         [Value("getManifestVersionAsync")]
         GetManifestVersionAsync,
+
+        [Value("setColorPickerPosition")]
+        SetColorPickerPosition,
 
         [Value("setSelectValue")]
         SetSelectValue,
@@ -124,15 +130,15 @@ namespace ColorPal.Common
         [Value("copyToClipboard")]
         CopyToClipboard,
 
-        [Value("setElementValue")]
-        SetElementValue,
+        [Value("setElementValueById")]
+        SetElementValueById,
 
         [Value("downloadImage")]
         DownloadImage,
 
         [Value("downloadCsv")]
         DownloadCsv,
-        
+
         [Value("handleColorsMove")]
         HandleColorsMove,
 

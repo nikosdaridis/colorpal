@@ -12,6 +12,8 @@
                             IsSelected=@(_selectedHexColor == _tintsShadesHexColors[i])
                             TintsShadesIndex=@(i + 1)
                             ActiveColorTool=@_activeColorTool
+                            ActiveColorCodeFormat=@_activeColorCodeFormat
+                            JSRuntime=JSRuntime
                             LocalStorageService=LocalStorageService
                             EventAggregator=EventAggregator />
         }
@@ -23,6 +25,8 @@
             <ColorRectangle HEXColor=@hexColor
                             IsSelected=@(_selectedHexColor == hexColor)
                             ActiveColorTool=@_activeColorTool
+                            ActiveColorCodeFormat=@_activeColorCodeFormat
+                            JSRuntime=JSRuntime
                             LocalStorageService=LocalStorageService
                             EventAggregator=EventAggregator />
         }
@@ -44,6 +48,7 @@
     private ColorHSL? _tintsShadesBaseHslColor;
     private string[] _tintsShadesHexColors = new string[99];
     private ColorToolType _activeColorTool = ColorToolType.None;
+    private ColorCodeFormat _activeColorCodeFormat = ColorCodeFormat.HEX;
 
     /// <summary>
     /// Subscribes to events
@@ -55,6 +60,7 @@
         if (JSRuntime is null || LocalStorageService is null || EventAggregator is null)
             return;
 
+        EventAggregator.GetService(Event.ColorCodeActiveTab).Subscribe(UpdateActiveColorCodeFormatAsync);
         EventAggregator.GetService(Event.ColorsPerLine).Subscribe(HandleColorsPerLineChangeAsync);
         EventAggregator.GetService(Event.SaveColor).Subscribe(RenderSavedColorsAsync);
         EventAggregator.GetService(Event.RenderTintsShades).Subscribe(HandleRenderTintsShades);
@@ -66,6 +72,7 @@
         await JSRuntime.InvokeVoidAsync(JsFuncs.InitializeColorsGridComponent.Value(), DotNetObjectReference.Create(this));
 
         _selectedHexColor = await LocalStorageService.GetKeyAsync<string>(StorageKey.SelectedHexColor) ?? string.Empty;
+        await UpdateActiveColorCodeFormatAsync();
 
         await SetGridColumns(await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorsPerLine) ?? "5");
         await RenderSavedColorsAsync();
@@ -79,6 +86,18 @@
 
         _savedColors = await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? [];
         StateHasChanged();
+    }
+
+    private async Task UpdateActiveColorCodeFormatAsync(string? activeColorCodeFormat = null)
+    {
+        if (LocalStorageService is null)
+            return;
+
+        if (string.IsNullOrWhiteSpace(activeColorCodeFormat))
+            activeColorCodeFormat = await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorCodeFormat) ?? ColorCodeFormat.HEX.Value();
+
+        _activeColorCodeFormat = Enum.Parse<ColorCodeFormat>(activeColorCodeFormat ?? ColorCodeFormat.HEX.Value());
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task HandleColorsPerLineChangeAsync(string colorsPerLine) =>
@@ -144,6 +163,7 @@
         if (EventAggregator is null)
             return;
 
+        EventAggregator.GetService(Event.ColorCodeActiveTab).Unsubscribe(UpdateActiveColorCodeFormatAsync);
         EventAggregator.GetService(Event.ColorsPerLine).Unsubscribe(HandleColorsPerLineChangeAsync);
         EventAggregator.GetService(Event.SaveColor).Unsubscribe(RenderSavedColorsAsync);
         EventAggregator.GetService(Event.RenderTintsShades).Unsubscribe(HandleRenderTintsShades);

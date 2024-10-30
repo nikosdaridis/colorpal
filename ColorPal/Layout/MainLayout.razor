@@ -3,7 +3,7 @@
 @inject NavigationManager NavigationManager
 @inject StateService StateService
 
-<main class="min-w-[300px] max-w-[300px] bg-[var(--primary-color)] text-[var(--text-color)] transition-all duration-1000">
+<main class="hidden min-w-[300px] max-w-[300px] bg-[var(--primary-color)] text-[var(--text-color)] transition-all duration-1000">
     @Body
 </main>
 
@@ -14,12 +14,10 @@
 
         if (firstRender)
         {
+            if (StateService is not null)
+                _ = StateService.DecompressParseAndCacheColorNamesAsync();
+
             NavigationManager.NavigateTo("/");
-
-            if (StateService is null)
-                return;
-
-            _ = StateService.DecompressParseAndCacheColorNamesAsync();
         }
     }
 }

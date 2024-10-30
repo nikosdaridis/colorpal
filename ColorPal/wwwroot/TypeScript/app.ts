@@ -16,6 +16,15 @@ function initializeColorsGridComponent(dotNetObjectReference: any) {
     colorsGridComponent = dotNetObjectReference;
 }
 
+// Shows body and main content after initialization
+function isInitialized(): void {
+    const bodyElement = document.querySelector("body");
+    const mainElement = document.querySelector("main");
+
+    bodyElement?.classList.remove("hidden");
+    mainElement?.classList.remove("hidden");
+}
+
 // Gets client color scheme
 function getClientColorScheme(): "light" | "dark" {
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -33,6 +42,15 @@ async function getManifestVersionAsync(): Promise<string> {
     const response = await fetch("manifest.json");
     const manifest = await response.json();
     return manifest.version;
+}
+
+// Sets color picker position based on color tools bar position
+function setColorPickerPosition() {
+    const colorToolsBar = document.getElementById("colorToolsBar");
+    const colorPicker = document.getElementById("colorPicker");
+
+    if (colorToolsBar && colorPicker)
+        colorPicker.style.top = `${colorToolsBar.getBoundingClientRect().top}px`;
 }
 
 // Sets value of select element
@@ -90,8 +108,8 @@ function copyToClipboard(text: string): void {
     catch { }
 }
 
-// Sets value of element
-function setElementValue(elementId: string, value: string): void {
+// Sets value of element by id
+function setElementValueById(elementId: string, value: string): void {
     const element = document.getElementById(elementId);
     if (!element)
         return;

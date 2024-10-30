@@ -1,6 +1,6 @@
 ﻿@implements IDisposable
 
-<div class="flex items-center justify-between">
+<div id="colorToolsBar" class="flex items-center justify-between">
     @foreach (ColorToolType tool in Enum.GetValues(typeof(ColorToolType)).Cast<ColorToolType>().Skip(1))
     {
         <ColorTool Id=@($"colorTool-{tool.Value()}")
