@@ -15,10 +15,10 @@
 </div>
 
 <div align="center">
-<img alt="Screenshot 1" src=https://raw.githubusercontent.com/nikosdaridis/colorpal-blazor-browser-extension/main/Screenshot1.jpg>
-<img alt="Screenshot 2" src=https://raw.githubusercontent.com/nikosdaridis/colorpal-blazor-browser-extension/main/Screenshot2.jpg>
-<img alt="Screenshot 3" src=https://raw.githubusercontent.com/nikosdaridis/colorpal-blazor-browser-extension/main/Screenshot3.jpg>
-<img alt="Screenshot 4" src=https://raw.githubusercontent.com/nikosdaridis/colorpal-blazor-browser-extension/main/Screenshot4.jpg>
+<img alt="Screenshot 1" height="425" src=https://raw.githubusercontent.com/nikosdaridis/colorpal-blazor-browser-extension/main/images/Screenshot1.jpg>
+<img alt="Screenshot 2" height="425" src=https://raw.githubusercontent.com/nikosdaridis/colorpal-blazor-browser-extension/main/images/Screenshot2.jpg>
+<img alt="Screenshot 3" height="425" src=https://raw.githubusercontent.com/nikosdaridis/colorpal-blazor-browser-extension/main/images/Screenshot3.jpg>
+<img alt="Screenshot 4" height="425" src=https://raw.githubusercontent.com/nikosdaridis/colorpal-blazor-browser-extension/main/images/Screenshot4.jpg>
 </div>
 
 ## 🛠 Installation
