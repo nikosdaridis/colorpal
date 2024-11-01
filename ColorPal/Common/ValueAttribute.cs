@@ -9,7 +9,6 @@ namespace ColorPal.Common
         public string Value { get; } = value;
     }
 
-
     public static class EnumExtensions
     {
         private static readonly ConcurrentDictionary<Enum, string> _enumValueCache = new();

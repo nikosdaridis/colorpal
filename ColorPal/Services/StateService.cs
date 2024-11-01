@@ -45,9 +45,9 @@ namespace ColorPal.Services
 
                 _colorNamesMap = MessagePackSerializer.Deserialize<Dictionary<uint, string>>(decompressedStream.ToArray());
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine($"Error parsing color names: {ex.Message}");
+                _colorNamesMap = new() { { 0, string.Empty } };
             }
         }
 

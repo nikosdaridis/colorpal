@@ -8,10 +8,10 @@
     protected IJSRuntime? JSRuntime { get; set; }
 
     [Inject]
-    protected EventAggregator<string>? EventAggregator { get; set; }
+    protected LocalStorageService? LocalStorageService { get; set; }
 
     [Inject]
-    protected LocalStorageService? LocalStorageService { get; set; }
+    protected EventAggregator<string>? EventAggregator { get; set; }
 
     [Inject]
     protected StateService? StateService { get; set; }

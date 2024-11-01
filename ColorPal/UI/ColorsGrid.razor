@@ -4,32 +4,16 @@
      style="grid-auto-rows: 1fr;"
      id="colorsGrid">
 
-    @if (_activeColorTool == ColorToolType.TintsShades && _tintsShadesBaseHslColor is not null)
+    @foreach (string hexColor in _activeColorTool == ColorToolType.TintsShades && _tintsShadesBaseHslColor is not null ? _tintsShadesHexColors : _savedHexColors)
     {
-        for (int i = 0; i < _tintsShadesHexColors.Length; i++)
-        {
-            <ColorRectangle HEXColor=@_tintsShadesHexColors[i]
-                            IsSelected=@(_selectedHexColor == _tintsShadesHexColors[i])
-                            TintsShadesIndex=@(i + 1)
-                            ActiveColorTool=@_activeColorTool
-                            ActiveColorCodeFormat=@_activeColorCodeFormat
-                            JSRuntime=JSRuntime
-                            LocalStorageService=LocalStorageService
-                            EventAggregator=EventAggregator />
-        }
-    }
-    else
-    {
-        foreach (string hexColor in _savedColors)
-        {
-            <ColorRectangle HEXColor=@hexColor
-                            IsSelected=@(_selectedHexColor == hexColor)
-                            ActiveColorTool=@_activeColorTool
-                            ActiveColorCodeFormat=@_activeColorCodeFormat
-                            JSRuntime=JSRuntime
-                            LocalStorageService=LocalStorageService
-                            EventAggregator=EventAggregator />
-        }
+        <ColorRectangle HEXColor=@hexColor
+                        IsSelected=@(_selectedHexColor == hexColor)
+                        TintsShadesIndex=@(_activeColorTool == ColorToolType.TintsShades && _tintsShadesBaseHslColor is not null ? Array.IndexOf(_tintsShadesHexColors, hexColor) + 1 : null)
+                        ActiveColorTool=@_activeColorTool
+                        ActiveColorCodeFormat=@_activeColorCodeFormat
+                        JSRuntime=JSRuntime
+                        LocalStorageService=LocalStorageService
+                        EventAggregator=EventAggregator />
     }
 </div>
 
@@ -43,7 +27,7 @@
     [Parameter]
     public EventAggregator<string>? EventAggregator { get; set; }
 
-    private string[] _savedColors = [];
+    private string[] _savedHexColors = [];
     private string? _selectedHexColor;
     private ColorHSL? _tintsShadesBaseHslColor;
     private string[] _tintsShadesHexColors = new string[99];
@@ -51,7 +35,7 @@
     private ColorCodeFormat _activeColorCodeFormat = ColorCodeFormat.HEX;
 
     /// <summary>
-    /// Subscribes to events
+    /// Subscribes to events, initializes the component in JS, sets active color and code format and renders saved colors
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
@@ -78,16 +62,22 @@
         await RenderSavedColorsAsync();
     }
 
+    /// <summary>
+    /// Renders saved colors
+    /// </summary>
     [JSInvokable]
     public async Task RenderSavedColorsAsync(string? input = null)
     {
         if (LocalStorageService is null)
             return;
 
-        _savedColors = await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? [];
+        _savedHexColors = await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? [];
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Updates active color code format
+    /// </summary>
     private async Task UpdateActiveColorCodeFormatAsync(string? activeColorCodeFormat = null)
     {
         if (LocalStorageService is null)
@@ -100,9 +90,15 @@
         await InvokeAsync(StateHasChanged);
     }
 
+    /// <summary>
+    /// Handles colors per line change
+    /// </summary>
     private async Task HandleColorsPerLineChangeAsync(string colorsPerLine) =>
         await SetGridColumns(colorsPerLine);
 
+    /// <summary>
+    /// Sets grid columns based on colors per line
+    /// </summary>
     private async Task SetGridColumns(string colorsPerLine)
     {
         if (JSRuntime is null)
@@ -111,6 +107,9 @@
         await JSRuntime.InvokeVoidAsync(JsFuncs.SetGridColumns.Value(), "colorsGrid", colorsPerLine);
     }
 
+    /// <summary>
+    /// Handles selected color change
+    /// </summary>
     private async Task HandleSetSelectedColorAsync(string hexColor)
     {
         if (string.IsNullOrWhiteSpace(hexColor))
@@ -121,6 +120,9 @@
         await Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Handles active color tool change
+    /// </summary>
     private async Task HandleActiveColorToolAsync(string activeColorTool)
     {
         if (!EnumExtensions.TryParse(activeColorTool, out _activeColorTool))
@@ -140,6 +142,9 @@
         await Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Renders tints and shades
+    /// </summary>
     private async Task HandleRenderTintsShades(string hexColor)
     {
         if (JSRuntime is null || EventAggregator is null)

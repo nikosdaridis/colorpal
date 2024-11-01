@@ -7,11 +7,11 @@
 
 <SelectedColor NavigationManager=NavigationManager JSRuntime=JSRuntime LocalStorageService=LocalStorageService EventAggregator=EventAggregator StateService=StateService />
 <div class="px-3 py-2">
-    <ColorCodeTabs LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
+    <ColorCodeFormatTabs LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
     <ColorCodePanel JSRuntime=JSRuntime LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
 </div>
 
-<div class="grid gap-3 bg-[var(--secondary-color)] px-3 pt-1 pb-2">
+<div class="grid gap-3 bg-[var(--secondary-color)] px-3 pb-2 pt-1">
     <ColorsToolBar JSRuntime=JSRuntime LocalStorageService=LocalStorageService EventAggregator=EventAggregator StateService=StateService />
     <ColorsGrid JSRuntime=JSRuntime LocalStorageService=LocalStorageService EventAggregator=EventAggregator />
 </div>
@@ -19,6 +19,9 @@
 @code {
     private bool _isInitialized;
 
+    /// <summary>
+    /// Validates local storage and sets theme
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -26,7 +29,6 @@
         if (JSRuntime is null || LocalStorageService is null)
             return;
 
-        _ = LocalStorageService.SetThemeAsync(Theme.Light, false);
         await LocalStorageService.ValidateAsync();
         _isInitialized = true;
         _ = JSRuntime.InvokeVoidAsync(JsFuncs.IsInitialized.Value());

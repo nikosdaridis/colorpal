@@ -4,7 +4,7 @@
     <div class="flex items-center space-x-2">
         @if (JSRuntime is not null)
         {
-            <button class="inline-flex h-8 w-10 items-center justify-center rounded-md border border-[var(--secondary-color)] bg-[var(--primary-color)] font-medium hover:bg-[var(--secondary-color)] active:scale-90 transition-transform duration-100"
+            <button class="inline-flex h-8 w-10 items-center justify-center rounded-md border border-[var(--secondary-color)] bg-[var(--primary-color)] font-medium transition-transform duration-100 hover:bg-[var(--secondary-color)] active:scale-90"
                     @onclick=@(() => JSRuntime.InvokeVoidAsync(JsFuncs.CopyToClipboard.Value(), _colorCodeValue))>
 
                 @if (_activeColorCodeFormat == ColorCodeFormat.Filter)
@@ -21,7 +21,7 @@
             </button>
         }
 
-        <div class="w-full min-h-8 rounded-md border border-[var(--secondary-color)] bg-[var(--primary-color)] text-sm text-[var(--theme-invert-color)] flex items-center justify-center text-center break-words select-text"
+        <div class="flex min-h-8 w-full select-text items-center justify-center break-words rounded-md border border-[var(--secondary-color)] bg-[var(--primary-color)] text-center text-sm text-[var(--theme-invert-color)]"
              style="font-size: @((_activeColorCodeFormat == ColorCodeFormat.Filter) ? "11" : "14")px;"
              contenteditable="false">
             @_colorCodeValue
@@ -42,9 +42,10 @@
     private ColorCodeFormat _activeColorCodeFormat = ColorCodeFormat.HEX;
     private string _colorCodeValue = string.Empty;
     private CssFilter _iconCSSFilter = new();
+    private Timer? _updateColorCodeDebounceTimer;
 
     /// <summary>
-    /// Subscribes to events
+    /// Subscribes to events, updates active color code format and value
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
@@ -54,12 +55,15 @@
             return;
 
         EventAggregator.GetService(Event.ColorCodeActiveTab).Subscribe(UpdateActiveColorCodeFormatAsync);
-        EventAggregator.GetService(Event.SetSelectedColor).Subscribe(UpdateColorCodeAsync);
+        EventAggregator.GetService(Event.SetSelectedColor).Subscribe(UpdateColorCodeWithDebounceAsync);
 
         _activeColorCodeFormat = Enum.Parse<ColorCodeFormat>(await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorCodeFormat) ?? ColorCodeFormat.HEX.Value());
         await UpdateColorCodeAsync(await LocalStorageService.GetKeyAsync<string>(StorageKey.SelectedHexColor) ?? string.Empty);
     }
 
+    /// <summary>
+    /// Handles updates to the active color code format and value
+    /// </summary>
     private async Task UpdateActiveColorCodeFormatAsync(string? activeColorCodeFormat)
     {
         _activeColorCodeFormat = Enum.Parse<ColorCodeFormat>(activeColorCodeFormat ?? ColorCodeFormat.HEX.Value());
@@ -71,6 +75,27 @@
 
     }
 
+    /// <summary>
+    /// Updates color code value based on active format with debounce
+    /// </summary>
+    private async Task UpdateColorCodeWithDebounceAsync(string hexColor)
+    {
+        if (string.IsNullOrWhiteSpace(hexColor))
+            return;
+
+        _updateColorCodeDebounceTimer?.Dispose();
+
+        _updateColorCodeDebounceTimer = new Timer(async _ =>
+        {
+            await UpdateColorCodeAsync(hexColor);
+        }, null, 2, Timeout.Infinite);
+
+        await Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Updates color code value based on active format
+    /// </summary>
     private async Task UpdateColorCodeAsync(string hexColor)
     {
         if (JSRuntime is null || LocalStorageService is null || string.IsNullOrWhiteSpace(hexColor))
@@ -113,6 +138,6 @@
             return;
 
         EventAggregator.GetService(Event.ColorCodeActiveTab).Unsubscribe(UpdateActiveColorCodeFormatAsync);
-        EventAggregator.GetService(Event.SetSelectedColor).Unsubscribe(UpdateColorCodeAsync);
+        EventAggregator.GetService(Event.SetSelectedColor).Unsubscribe(UpdateColorCodeWithDebounceAsync);
     }
 }

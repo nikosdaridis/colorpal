@@ -117,8 +117,8 @@ function setElementValueById(elementId: string, value: string): void {
     element.textContent = value;
 }
 
-// Downloads image of saved colors
-async function downloadImage(savedColors: string[], colorsPerLine: number, showColorNames: boolean, addHexCharacter: boolean): Promise<void> {
+// Downloads Png image of saved colors
+async function downloadPng(savedColors: string[], colorsPerLine: number, showColorNames: boolean, addHexCharacter: boolean): Promise<void> {
     if (!savedColors.length)
         return;
 
@@ -223,7 +223,7 @@ async function downloadImage(savedColors: string[], colorsPerLine: number, showC
     }
 }
 
-// Downloads CSV file
+// Downloads CSV file of saved colors
 function downloadCsv(dataString: string, fileName: string): void {
     const link = document.createElement("a");
     link.href = `data:text/csv;charset=utf-8,${encodeURIComponent(dataString)}`;
@@ -233,13 +233,14 @@ function downloadCsv(dataString: string, fileName: string): void {
     document.body.removeChild(link);
 }
 
-// Handles colors move
+// Handles colors move tool listeners
 function handleColorsMove(): void {
     const colors = document.querySelectorAll<HTMLElement>("[id*='colorRectangle']");
 
     colors.forEach(addMoveColorsListeners);
 }
 
+// Adds colors move tool listeners
 function addMoveColorsListeners(draggable: HTMLElement) {
     draggable.addEventListener("dragstart", onDragStart);
     draggable.addEventListener("dragend", onDragEnd);
@@ -248,6 +249,7 @@ function addMoveColorsListeners(draggable: HTMLElement) {
     draggable.addEventListener("dragleave", onDragLeave);
 }
 
+// Removes colors move tool listeners
 function removeMoveColorsListeners() {
     const colors = document.querySelectorAll<HTMLElement>("[id*='colorRectangle']");
 
@@ -289,6 +291,7 @@ function onDragLeave(event: Event) {
     draggable.classList.remove("replacing");
 }
 
+// Swaps saved colors, saves to local storage and renders colors grid
 function swapColors(drag: HTMLElement, replace: HTMLElement) {
     const savedColors = JSON.parse(localStorage.getItem("colorpal-saved-colors-array") || "[]");
     const [dragIndex, replaceIndex] = [savedColors.indexOf(drag.dataset.color), savedColors.indexOf(replace.dataset.color)];

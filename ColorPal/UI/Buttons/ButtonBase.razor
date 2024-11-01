@@ -6,7 +6,7 @@
         @onclick=HandleOnClickAsync
         @onclick:stopPropagation>
 
-    <img class="@GetIconSizeClass() @(IconThemeFilter ? "theme-filter" : string.Empty) @(IconTextFilter ? "text-filter" : string.Empty)"
+    <img class="@GetIconSizeClass() @(IconThemeFilter ?"theme-filter" : string.Empty) @(IconTextFilter ? "text-filter" : string.Empty)"
          src="@IconPath" />
 </button>
 

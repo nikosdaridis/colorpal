@@ -133,8 +133,8 @@ namespace ColorPal.Common
         [Value("setElementValueById")]
         SetElementValueById,
 
-        [Value("downloadImage")]
-        DownloadImage,
+        [Value("downloadPng")]
+        DownloadPng,
 
         [Value("downloadCsv")]
         DownloadCsv,

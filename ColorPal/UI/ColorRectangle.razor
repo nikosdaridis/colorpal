@@ -7,8 +7,8 @@
 
     @if (ActiveColorTool == ColorToolType.TintsShades && TintsShadesIndex is not null)
     {
-        <h4 class="absolute bottom-0 left-1/2 transform -translate-x-1/2 text-[8px] font-semibold"
-            style="color: @(TintsShadesIndex <= 40 ? "white" : "black");">
+        <h4 class="absolute bottom-0 left-1/2 -translate-x-1/2 transform text-[8px] font-semibold"
+            style="color: @(TintsShadesIndex <= 50 ? "white" : "black");">
             @TintsShadesIndex
         </h4>
     }
@@ -45,11 +45,9 @@
     [Parameter]
     public EventAggregator<string>? EventAggregator { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-    }
-
+    /// <summary>
+    /// Handles on click event, copies color code to clipboard based on active format and handles active color tool event
+    /// </summary>
     public async Task HandleOnClickAsync(MouseEventArgs args)
     {
         if (JSRuntime is null || LocalStorageService is null || EventAggregator is null)
@@ -61,7 +59,7 @@
             ColorCodeFormat.RGB => await JSRuntime.InvokeAsync<string>(JsFuncs.HexToRgb.Value(), HEXColor, "string"),
             ColorCodeFormat.HSL => await JSRuntime.InvokeAsync<string>(JsFuncs.HexToHsl.Value(), HEXColor, "string"),
             ColorCodeFormat.HSV => await JSRuntime.InvokeAsync<string>(JsFuncs.HexToHsv.Value(), HEXColor, "string"),
-            ColorCodeFormat.Filter => await JSRuntime.InvokeAsync<string>(JsFuncs.HexToFilter.Value(), HEXColor),
+            ColorCodeFormat.Filter => (await JSRuntime.InvokeAsync<CssFilter>(JsFuncs.HexToFilter.Value(), HEXColor)).Filter ?? string.Empty,
             _ => HEXColor
         };
 
@@ -76,6 +74,9 @@
             await EventAggregator.GetService(Event.RenderTintsShades).PublishAsync(HEXColor);
     }
 
+    /// <summary>
+    /// Gets class based on selected state and active color tool
+    /// </summary>
     private string GetClass()
     {
         string baseClass = "aspect-square relative flex justify-center items-center cursor-pointer transition-all duration-200 hover:scale-[1.1] hover:ring-[var(--primary-color)]";
@@ -93,6 +94,9 @@
         return $"{baseClass} {shapeClass} {ringClass}";
     }
 
+    /// <summary>
+    /// Gets image source based on active color tool
+    /// </summary>
     private string GetImgSrc() =>
         ActiveColorTool switch
         {
@@ -102,6 +106,9 @@
             _ => string.Empty
         };
 
+    /// <summary>
+    /// Deletes saved color from local storage and publishes event
+    /// </summary>
     private async Task<bool> DeleteSavedColor()
     {
         if (LocalStorageService is null || EventAggregator is null)

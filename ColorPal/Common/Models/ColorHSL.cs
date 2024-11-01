@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace ColorPal.Common.Models
+﻿namespace ColorPal.Common.Models
 {
     public class ColorHSL
     {
@@ -13,13 +11,10 @@ namespace ColorPal.Common.Models
             L = l;
         }
 
-        [JsonPropertyName("h")]
         public int H { get; set; }
 
-        [JsonPropertyName("s")]
         public int S { get; set; }
 
-        [JsonPropertyName("l")]
         public int L { get; set; }
     }
 }

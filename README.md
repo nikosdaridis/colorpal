@@ -1,10 +1,10 @@
 <div align="center">
-  <a href="https://chromewebstore.google.com/detail/colorpal-color-picker-eye/mbnpegpimodgjmlbfhkkdgbcfjmgpoad" target="_blank"><img alt="Logo" src="https://raw.githubusercontent.com/nikosdaridis/colorpal/main/images/Logo.png" width="100" /></a>
+  <a href="https://chromewebstore.google.com/detail/colorpal-color-picker-eye/mbnpegpimodgjmlbfhkkdgbcfjmgpoad" target="_blank"><img alt="Logo" src="https://raw.githubusercontent.com/nikosdaridis/colorpal-blazor-browser-extension/main/images/Logo.png" width="100" /></a>
 </div>
-<h1 align="center">ColorPal - Advanced color tools</h1>
+<h1 align="center">ColorPal - Blazor Browser Extension</h1>
 <p align="center">Browser extension to pick colors from the screen, make tints and shades and download your palette!</p>
-<p align="center">v2.0.0 work in progress - Rewrite extension with Blazor WASM and Tailwind CSS</p>
-<p align="center"><a href="https://github.com/nikosdaridis/colorpal/tree/1.3.7" target="_blank">v1.3.7</a> Built with <a href="https://www.typescriptlang.org" target="_blank">TypeScript</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank">HTML</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank">CSS</a></p>
+<p align="center"><a href="https://github.com/nikosdaridis/colorpal-blazor-browser-extension" target="_blank">v2.0.0</a> Built with <a href="https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor" target="_blank">Blazor - C#</a>, <a href="https://www.typescriptlang.org/" target="_blank">TypeScript</a> and <a href="https://tailwindcss.com/" target="_blank">Tailwind CSS</a></p>
+<p align="center"><a href="https://github.com/nikosdaridis/colorpal-blazor-browser-extension/tree/1.3.7" target="_blank">v1.3.7</a> Built with <a href="https://www.typescriptlang.org" target="_blank">TypeScript</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank">HTML</a> and <a href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank">CSS</a></p>
 <div align="center">
    <a href="https://chromewebstore.google.com/detail/colorpal-color-picker-eye/mbnpegpimodgjmlbfhkkdgbcfjmgpoad">
    <picture>
@@ -12,6 +12,13 @@
    <img height="70" src="https://i.imgur.com/oGxig2F.png" alt="Chrome Web Store">
    </picture>
    </a>
+</div>
+
+<div align="center">
+<img alt="Screenshot 1" src=https://raw.githubusercontent.com/nikosdaridis/colorpal-blazor-browser-extension/main/Screenshot1.jpg>
+<img alt="Screenshot 2" src=https://raw.githubusercontent.com/nikosdaridis/colorpal-blazor-browser-extension/main/Screenshot2.jpg>
+<img alt="Screenshot 3" src=https://raw.githubusercontent.com/nikosdaridis/colorpal-blazor-browser-extension/main/Screenshot3.jpg>
+<img alt="Screenshot 4" src=https://raw.githubusercontent.com/nikosdaridis/colorpal-blazor-browser-extension/main/Screenshot4.jpg>
 </div>
 
 ## 🛠 Installation

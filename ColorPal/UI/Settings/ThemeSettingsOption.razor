@@ -1,7 +1,7 @@
 ﻿<div class="flex items-center justify-between">
-    <label class="font-semibold">@Label</label>
+    <h3 class="font-semibold">@Label</h3>
 
-    <button class="peer absolute relative right-[31px] inline-flex scale-[20%] items-center justify-end"
+    <button class="peer relative right-[30px] inline-flex scale-[20%] items-center justify-end"
             @onclick="ToggleThemeAsync">
 
         <div id="themeOption"
@@ -45,6 +45,9 @@
     private string? _theme;
     private ElementReference _button;
 
+    /// <summary>
+    /// Initializes theme from local storage
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -76,7 +79,7 @@
     private async Task<string> GetLocalStorageTheme()
     {
         if (LocalStorageService is null)
-            return "light";
+            return Theme.Light.Value();
 
         return await LocalStorageService.GetKeyAsync<string>(StorageKey.Theme) ?? Theme.Light.Value();
     }

@@ -15,12 +15,10 @@
             id="colorsPerLine"
             @bind:get=_colorsPerLine
             @bind:set=HandleColorsPerLineChangeAndPublishEventAsync>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-        <option value="10">10</option>
+        @for (int i = 5; i <= 10; i++)
+        {
+            <option value=@i>@i</option>
+        }
     </select>
 </div>
 
@@ -40,6 +38,9 @@
     private string? _activeColorTool { get; set; }
     private string _colorsPerLine { get; set; } = "5";
 
+    /// <summary>
+    /// Subscribes to events and sets colors per line
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -55,6 +56,9 @@
         await JSRuntime.InvokeVoidAsync(JsFuncs.SetSelectValue.Value(), "colorsPerLine", _colorsPerLine);
     }
 
+    /// <summary>
+    /// Handles color tool click and publishes events
+    /// </summary>
     private async Task HandleColorToolClickAsync(ColorToolType tool)
     {
         if (JSRuntime is null || LocalStorageService is null || EventAggregator is null || StateService is null)
@@ -98,7 +102,7 @@
         async Task HandleDownloadPNGAsync()
         {
             await JSRuntime.InvokeVoidAsync(
-                JsFuncs.DownloadImage.Value(),
+                JsFuncs.DownloadPng.Value(),
                 await LocalStorageService.GetKeyAsync<string[]>(StorageKey.SavedColorsArray) ?? [],
                 Int32.Parse(await LocalStorageService.GetKeyAsync<string>(StorageKey.ColorsPerLine) ?? "5"),
                 await LocalStorageService.GetKeyAsync<string>(StorageKey.ShowColorNames) == "true" ? true : false,
@@ -159,6 +163,9 @@
         }
     }
 
+    /// <summary>
+    /// Resets active color tool and publishes event
+    /// </summary>
     private async Task ResetActiveColorToolAsync(string hexColor)
     {
         if (EventAggregator is null)
@@ -170,25 +177,34 @@
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Handles colors per line change and renders component
+    /// </summary>
     private async Task HandleColorsPerLineChangeAsync(string colorsPerLine)
     {
         _colorsPerLine = colorsPerLine;
         await InvokeAsync(StateHasChanged);
     }
 
+    /// <summary>
+    /// Handles colors per line change and publishes event
+    /// </summary>
     private async Task HandleColorsPerLineChangeAndPublishEventAsync(string? colorsPerLine)
     {
+        if (LocalStorageService is null || EventAggregator is null)
+            return;
+
         _colorsPerLine = colorsPerLine ?? "5";
 
-        if (LocalStorageService is not null)
-            await LocalStorageService.SetKeyAsync(StorageKey.ColorsPerLine, _colorsPerLine);
-
-        if (EventAggregator is not null)
-            await EventAggregator.GetService(Event.ColorsPerLine).PublishAsync(_colorsPerLine);
+        await LocalStorageService.SetKeyAsync(StorageKey.ColorsPerLine, _colorsPerLine);
+        await EventAggregator.GetService(Event.ColorsPerLine).PublishAsync(_colorsPerLine);
 
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Unsubscribes from events
+    /// </summary>
     public void Dispose()
     {
         if (EventAggregator is null)
