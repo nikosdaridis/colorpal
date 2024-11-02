@@ -4,16 +4,32 @@
      style="grid-auto-rows: 1fr;"
      id="colorsGrid">
 
-    @foreach (string hexColor in _activeColorTool == ColorToolType.TintsShades && _tintsShadesBaseHslColor is not null ? _tintsShadesHexColors : _savedHexColors)
+    @if (_activeColorTool == ColorToolType.TintsShades && _tintsShadesBaseHslColor is not null)
     {
-        <ColorRectangle HEXColor=@hexColor
-                        IsSelected=@(_selectedHexColor == hexColor)
-                        TintsShadesIndex=@(_activeColorTool == ColorToolType.TintsShades && _tintsShadesBaseHslColor is not null ? Array.IndexOf(_tintsShadesHexColors, hexColor) + 1 : null)
-                        ActiveColorTool=@_activeColorTool
-                        ActiveColorCodeFormat=@_activeColorCodeFormat
-                        JSRuntime=JSRuntime
-                        LocalStorageService=LocalStorageService
-                        EventAggregator=EventAggregator />
+        for (int i = 0; i < _tintsShadesHexColors.Length; i++)
+        {
+            <ColorRectangle HEXColor=@_tintsShadesHexColors[i]
+                            IsSelected=@(_selectedHexColor == _tintsShadesHexColors[i])
+                            TintsShadesIndex=@(i + 1)
+                            ActiveColorTool=@_activeColorTool
+                            ActiveColorCodeFormat=@_activeColorCodeFormat
+                            JSRuntime=JSRuntime
+                            LocalStorageService=LocalStorageService
+                            EventAggregator=EventAggregator />
+        }
+    }
+    else
+    {
+        foreach (string hexColor in _savedHexColors)
+        {
+            <ColorRectangle HEXColor=@hexColor
+                            IsSelected=@(_selectedHexColor == hexColor)
+                            ActiveColorTool=@_activeColorTool
+                            ActiveColorCodeFormat=@_activeColorCodeFormat
+                            JSRuntime=JSRuntime
+                            LocalStorageService=LocalStorageService
+                            EventAggregator=EventAggregator />
+        }
     }
 </div>
 
@@ -139,7 +155,6 @@
         }
 
         StateHasChanged();
-        await Task.CompletedTask;
     }
 
     /// <summary>

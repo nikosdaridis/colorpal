@@ -40,6 +40,9 @@ namespace ColorPal.Common
 
     public enum ColorCodeFormat
     {
+        [Value("")]
+        None,
+
         [Value("HEX")]
         HEX,
 

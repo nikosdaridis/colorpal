@@ -1,10 +1,10 @@
 ﻿<div class="grid h-9 grid-cols-5 items-center justify-center rounded-lg bg-[var(--secondary-color)] p-1">
-    @foreach (ColorCodeFormat colorFormat in Enum.GetValues(typeof(ColorCodeFormat)))
+    @foreach (ColorCodeFormat colorFormat in Enum.GetValues(typeof(ColorCodeFormat)).Cast<ColorCodeFormat>().Skip(1))
     {
         <ColorCodeFormatTab Name=@colorFormat.Value()
-                      IsActive=@(_currentColorCodeFormat == colorFormat)
-                      HandleClick=@(() => HandleOnClickAsync(colorFormat.Value()))
-                      EventAggregator=EventAggregator />
+                            IsActive=@(_currentColorCodeFormat == colorFormat)
+                            HandleClick=@(() => HandleOnClickAsync(colorFormat.Value()))
+                            EventAggregator=EventAggregator />
     }
 </div>
 
@@ -15,7 +15,7 @@
     [Parameter]
     public EventAggregator<string>? EventAggregator { get; set; }
 
-    private ColorCodeFormat _currentColorCodeFormat = ColorCodeFormat.HEX;
+    private ColorCodeFormat _currentColorCodeFormat = ColorCodeFormat.None;
 
     /// <summary>
     /// Intializes current color code format
