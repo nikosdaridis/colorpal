@@ -1,8 +1,8 @@
 ﻿using ColorPal.Common;
 using ColorPal.Common.Models;
 using MessagePack;
+using MessagePack.Resolvers;
 using Microsoft.JSInterop;
-using System.IO.Compression;
 
 namespace ColorPal.Services
 {
@@ -11,7 +11,7 @@ namespace ColorPal.Services
         private readonly HttpClient _httpClient;
         private readonly IJSRuntime _jsRuntime;
         private Dictionary<uint, string> _colorNamesMap = [];
-        private readonly int _colorNamesStep = 3;
+        private readonly int _colorNamesStep = 4;
 
         public StateService(HttpClient httpClient, IJSRuntime jsRuntime)
         {
@@ -34,16 +34,10 @@ namespace ColorPal.Services
         {
             try
             {
-                byte[] gZipData = await _httpClient.GetByteArrayAsync(@$"Data/colorNamesStep{_colorNamesStep}.dat");
+                byte[] colorNamesData = await _httpClient.GetByteArrayAsync(@$"Data/colorNamesStep{_colorNamesStep}.dat");
 
-                using MemoryStream compressedStream = new(gZipData);
-                using GZipStream gZipStream = new(compressedStream, CompressionMode.Decompress);
-                using MemoryStream decompressedStream = new();
-
-                await gZipStream.CopyToAsync(decompressedStream);
-                decompressedStream.Seek(0, SeekOrigin.Begin);
-
-                _colorNamesMap = MessagePackSerializer.Deserialize<Dictionary<uint, string>>(decompressedStream.ToArray());
+                _colorNamesMap = MessagePackSerializer.Deserialize<Dictionary<uint, string>>(colorNamesData,
+                    ContractlessStandardResolver.Options.WithCompression(MessagePackCompression.Lz4Block));
             }
             catch
             {

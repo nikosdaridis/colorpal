@@ -1,7 +1,7 @@
 ﻿using MessagePack;
+using MessagePack.Resolvers;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -16,7 +16,7 @@ namespace ColorNamesBinaryMap
             Console.WriteLine("Enter RGB rounding step value (recommended 3-5)");
             Console.WriteLine("Lower values will increase CPU load and file size significantly: ");
 
-            if (!int.TryParse(Console.ReadLine(), out int step) || step < 1)
+            if (!int.TryParse(Console.ReadLine(), out int step) || step < 1 || step > int.MaxValue)
             {
                 step = 5;
                 Console.WriteLine("⚠️ Invalid input, defaulting to step = 5");
@@ -38,12 +38,10 @@ namespace ColorNamesBinaryMap
 
             try
             {
+                Stopwatch stopwatch = Stopwatch.StartNew();
                 ColorNamesBinaryMap colorNamesBinaryMap = new();
                 List<ColorName> colorNames = await colorNamesBinaryMap.DownloadAndConvertColorDataAsync(inputUri);
-
-                Stopwatch stopwatch = Stopwatch.StartNew();
                 Dictionary<uint, string> colorsMap = colorNamesBinaryMap.GenerateRoundedColorMap(colorNames, step);
-
                 await colorNamesBinaryMap.CompressAndSaveDataAsync(colorsMap, outputFilePath);
                 stopwatch.Stop();
 
@@ -112,16 +110,11 @@ namespace ColorNamesBinaryMap
 
         public async Task CompressAndSaveDataAsync(Dictionary<uint, string> colorsMap, string filePath)
         {
-            byte[] messagePackBytes = MessagePackSerializer.Serialize(colorsMap);
-
-            using MemoryStream memoryStream = new();
-            using (GZipStream gzipStream = new(memoryStream, CompressionLevel.Optimal))
-            {
-                gzipStream.Write(messagePackBytes, 0, messagePackBytes.Length);
-            }
+            byte[] messagePackBytes = MessagePackSerializer.Serialize(colorsMap,
+                ContractlessStandardResolver.Options.WithCompression(MessagePackCompression.Lz4Block));
 
             Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
-            await File.WriteAllBytesAsync(filePath, memoryStream.ToArray());
+            await File.WriteAllBytesAsync(filePath, messagePackBytes);
         }
 
         private static ColorRGB HexToRgb(string? hex)
