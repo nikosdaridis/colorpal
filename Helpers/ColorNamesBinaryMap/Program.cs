@@ -139,6 +139,7 @@ namespace ColorNamesBinaryMap
 
             return new Dictionary<uint, string>(colorsMap);
 
+            // Generates dictionary of unique rounded colors
             ConcurrentDictionary<uint, byte> GenerateUniqueColors(int step)
             {
                 ConcurrentDictionary<uint, byte> uniqueColors = new();
@@ -228,12 +229,12 @@ namespace ColorNamesBinaryMap
 
             // Rounds RGB values to the nearest multiple of step min 0, max 255
             ColorRGB RoundColor(ColorRGB color, int step) =>
-                        new()
-                        {
-                            R = color.R >= 255 ? (byte)255 : (byte)((color.R / step) * step),
-                            G = color.G >= 255 ? (byte)255 : (byte)((color.G / step) * step),
-                            B = color.B >= 255 ? (byte)255 : (byte)((color.B / step) * step)
-                        };
+                new()
+                {
+                    R = color.R >= 255 ? (byte)255 : (byte)((color.R / step) * step),
+                    G = color.G >= 255 ? (byte)255 : (byte)((color.G / step) * step),
+                    B = color.B >= 255 ? (byte)255 : (byte)((color.B / step) * step)
+                };
 
             // Encodes RGB to color key
             uint EncodeColorKey(ColorRGB color) =>
