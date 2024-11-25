@@ -9,6 +9,15 @@ updates:
       - "dependencies"
       - ".NET"
       - "automerge"
+      
+    - package-ecosystem: "nuget"
+      directory: "/Helpers/ColorNamesBinaryMap"
+      schedule:
+        interval: "daily"
+      labels:
+        - "dependencies"
+        - ".NET"
+        - "automerge"
 
   # Configuration for npm
   - package-ecosystem: "npm"
