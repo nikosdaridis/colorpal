@@ -12,7 +12,7 @@ namespace ColorNamesBinaryMap
     {
         /*
          * This application creates a compressed binary map linking RGB values to their nearest color names
-         * RGB values are rounded to a configurable precision step to reduce space complexity and improve performance
+         * RGB values are rounded to a configurable precision step to improve performance
          * The map, built from online JSON data, stores each 32-bit encoded RGB key with its closest color name for O(1) lookup
          */
 
@@ -37,8 +37,8 @@ namespace ColorNamesBinaryMap
             try
             {
                 Stopwatch stopwatch = Stopwatch.StartNew();
-
                 ColorNamesBinaryMap colorNamesBinaryMap = new();
+
                 string jsonData = await colorNamesBinaryMap.FetchJsonFromUriAsync(inputUri);
                 List<ColorName> colorNames = ColorNamesBinaryMap.ParseColorData(jsonData);
                 Dictionary<uint, string> colorsMap = ColorNamesBinaryMap.GenerateRoundedColorMap(colorNames, step);
@@ -107,11 +107,11 @@ namespace ColorNamesBinaryMap
         public async Task<string> FetchJsonFromUriAsync(string uri)
         {
             Console.WriteLine($"🌐 HTTP GET to: {uri}");
-            string json = await _httpClient.GetStringAsync(uri);
-            int bytes = Encoding.UTF8.GetByteCount(json);
+            string jsonString = await _httpClient.GetStringAsync(uri);
+            int bytes = Encoding.UTF8.GetByteCount(jsonString);
             Console.WriteLine($"✅ Successfully retrieved {bytes:N0} bytes ({bytes / 1_048_576.0:F2} MB)");
 
-            return json;
+            return jsonString;
         }
 
         /// <summary>
@@ -126,6 +126,21 @@ namespace ColorNamesBinaryMap
                 Name = inputColor.Name,
                 RGB = HexToRgb(inputColor.Hex)
             }).ToList();
+
+            // Converts hexadecimal color string to RGB
+            static ColorRGB HexToRgb(string? hex)
+            {
+                if (string.IsNullOrWhiteSpace(hex))
+                    return new ColorRGB { R = 0, G = 0, B = 0 };
+
+                hex = hex.TrimStart('#');
+                return new ColorRGB
+                {
+                    R = Convert.ToByte(hex[..2], 16),
+                    G = Convert.ToByte(hex.Substring(2, 2), 16),
+                    B = Convert.ToByte(hex.Substring(4, 2), 16)
+                };
+            }
         }
 
         /// <summary>
@@ -162,8 +177,8 @@ namespace ColorNamesBinaryMap
             // Populates the colors map with the closest named color for each unique color
             void PopulateColorsMap(ConcurrentDictionary<uint, byte> uniqueColors, List<ColorName> colorNames, ConcurrentDictionary<uint, string> colorsMap)
             {
-                long currentIteration = 0;
-                long totalIterations = uniqueColors.Count;
+                int currentIteration = 0;
+                int totalIterations = uniqueColors.Count;
                 object consoleLock = new();
 
                 Parallel.ForEach(uniqueColors.Keys, roundedColorKey =>
@@ -174,7 +189,7 @@ namespace ColorNamesBinaryMap
                     if (closestColor is not null)
                     {
                         colorsMap.TryAdd(roundedColorKey, closestColor.Name!);
-                        long iteration = Interlocked.Increment(ref currentIteration);
+                        int iteration = Interlocked.Increment(ref currentIteration);
 
                         if (iteration % 1000 == 0)
                         {
@@ -241,12 +256,12 @@ namespace ColorNamesBinaryMap
                (uint)(color.R << 16 | color.G << 8 | color.B);
 
             // Decodes color key to RGB
-            ColorRGB DecodeColorKey(uint roundedColorKey) =>
+            ColorRGB DecodeColorKey(uint colorKey) =>
                 new()
                 {
-                    R = (byte)(roundedColorKey >> 16 & 0xFF),
-                    G = (byte)(roundedColorKey >> 8 & 0xFF),
-                    B = (byte)(roundedColorKey & 0xFF)
+                    R = (byte)(colorKey >> 16 & 0xFF),
+                    G = (byte)(colorKey >> 8 & 0xFF),
+                    B = (byte)(colorKey & 0xFF)
                 };
         }
 
@@ -266,23 +281,6 @@ namespace ColorNamesBinaryMap
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
                 await File.WriteAllBytesAsync(filePath, data);
             }
-        }
-
-        /// <summary>
-        /// Converts hexadecimal color string to RGB
-        /// </summary>
-        public static ColorRGB HexToRgb(string? hex)
-        {
-            if (string.IsNullOrWhiteSpace(hex))
-                return new ColorRGB { R = 0, G = 0, B = 0 };
-
-            hex = hex.TrimStart('#');
-            return new ColorRGB
-            {
-                R = Convert.ToByte(hex[..2], 16),
-                G = Convert.ToByte(hex.Substring(2, 2), 16),
-                B = Convert.ToByte(hex.Substring(4, 2), 16)
-            };
         }
     }
 }

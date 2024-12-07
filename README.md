@@ -33,4 +33,4 @@
 
 ## 🚀 Build For Production (Windows)
 
-1. Publish to folder: colorpal_2.0.0.zip and corresponding folder will be created in the publish directory
+1. Publish to folder: colorpal_2.0.1.zip and corresponding folder will be created in the publish directory
